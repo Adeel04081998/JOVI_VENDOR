@@ -1,0 +1,73 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.jovi">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+     <!-- For Navigator -->
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+     <!-- For Camera -->
+     <uses-permission android:name="android.permission.CAMERA" />
+     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+     <!-- For Recording -->
+     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+     <!-- For Contacts -->
+<uses-permission android:name="android.permission.READ_CONTACTS" />
+<!-- For open app on notify -->
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <application
+      android:name=".MainApplication"
+      android:label="@string/app_name"
+      android:icon="@mipmap/${APP_MODE}"
+      android:roundIcon="@mipmap/${APP_MODE}"
+      android:allowBackup="false"
+      android:theme="@style/AppTheme"
+      android:windowSoftInputMode="adjustResize"
+      >
+
+     <!-- For background notification actions -->
+     <!-- <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" /> -->
+
+      <!-- Add this SplashActivity -->
+        <activity
+          android:name=".SplashActivity"
+          android:theme="@style/SplashTheme"
+          android:label="@string/app_name">
+          <!-- <intent-filter>
+              <action android:name="android.intent.action.MAIN" />
+              <category android:name="android.intent.category.LAUNCHER" />
+          </intent-filter> -->
+        </activity>
+
+      <activity
+        android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+        android:launchMode="singleTask"
+        android:windowSoftInputMode="adjustResize"
+        android:exported="true"
+        android:screenOrientation="portrait"
+        >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+                  <!--This intent for deeplinking-->
+ <intent-filter>
+ <action android:name="android.intent.action.VIEW" />
+ <category android:name="android.intent.category.DEFAULT" />
+ <category android:name="android.intent.category.BROWSABLE" />
+ <data android:scheme="jovi" />
+ </intent-filter>
+      </activity>
+      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+      <meta-data
+     android:name="com.google.android.geo.API_KEY"
+     android:value="AIzaSyBKJWO9UCRwJUDjUhRl9pEZgYnzayeARAg"/>
+     <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+     <!-- For local push notification small icon -->
+     <!-- <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/${APP_MODE}" /> -->
+    
+    </application>
+
+</manifest>

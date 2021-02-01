@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="70" height="70" viewBox="0 0 70 70">
+  <defs>
+    <filter id="Ellipse_331" x="0" y="0" width="70" height="70" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.431"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_1783" data-name="Group 1783" transform="translate(5971.156 -1996.844)">
+    <g transform="matrix(1, 0, 0, 1, -5971.16, 1996.84)" filter="url(#Ellipse_331)">
+      <circle id="Ellipse_331-2" data-name="Ellipse 331" cx="26" cy="26" r="26" transform="translate(9 9)" fill="#707070"/>
+    </g>
+    <path id="Subtraction_2" data-name="Subtraction 2" d="M16,22H0V11A11,11,0,0,1,11,0h5a11,11,0,0,1,7.778,18.778A10.928,10.928,0,0,1,16,22ZM18.654,9.4a1.68,1.68,0,1,0,1.636,1.679A1.66,1.66,0,0,0,18.654,9.4Zm-5.072,0a1.68,1.68,0,1,0,1.636,1.679A1.661,1.661,0,0,0,13.582,9.4Zm-5.073,0a1.68,1.68,0,1,0,1.636,1.679A1.66,1.66,0,0,0,8.509,9.4Z" transform="translate(-5949.156 2021.844)" fill="#fff"/>
+  </g>
+</svg>

@@ -1,0 +1,24 @@
+export const LIGHT_MODE = "LIGHT_MODE";
+export const DARK_MODE = "DARK_MODE";
+// Modal
+export const OPEN_MODAL = "OPEN_MODAL";
+export const CLOSE_MODAL = "CLOSE_MODAL";
+export const SHOW_HIDE_IMAGE_VIEW = "SHOW_HIDE_IMAGE_VIEW";
+// Loader
+export const SHOW_HIDE_LOADER = "SHOW_HIDE_LOADER";
+// User
+export const USER_ACTION = "USER_ACTION";
+export const LOGOUT_ACTION = "LOGOUT_ACTION";
+
+//Notifications 
+export const NOTIFY_ACTION = "NOTIFY_ACTION";
+export const UPDATE_NOTIFY_ACTION = "UPDATE_NOTIFY_ACTION";
+
+// CART
+export const CART_ACTION = "CART_ACTION";
+
+// GET SET ENUMS
+export const GET_SET_ENUMS_ACTION = "GET_SET_ENUMS_ACTION";
+
+// GET SET FOOTER TAB STATE
+export const GET_SET_FOOTER_TABS_ACTION = "GET_SET_FOOTER_TABS_ACTION";
