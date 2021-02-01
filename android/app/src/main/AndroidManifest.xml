@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.jovi">
+  package="com.jovivendors">
 
     <uses-permission android:name="android.permission.INTERNET" />
      <!-- For Navigator -->

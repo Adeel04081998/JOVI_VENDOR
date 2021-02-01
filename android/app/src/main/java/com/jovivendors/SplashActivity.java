@@ -1,4 +1,4 @@
-package com.jovi;   
+package com.jovivendors;   
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;

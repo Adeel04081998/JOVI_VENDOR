@@ -5,19 +5,19 @@ import RNFS from "react-native-fs";
 import commonSvgIcons from '../assets/svgIcons/common/common';
 
 export const MODES = {
-    CUSTOMER: Config["com_jovi"],
+    CUSTOMER: Config["com_jovivendors"],
     RIDER: Config["com_jovirider"]
 };
 
 // For Release Build (Proper APP_MODE will be identified)
-let APP_MODE = (Platform.OS === "android") ? Config[Config.APPLICATION_ID.replace(".", "_")] : MODES.CUSTOMER;
+let APP_MODE = MODES.CUSTOMER;
 
 let SENDING_LOCATIONS_ENABLED = true;
 
 if (Platform.OS === "android" && Config.BUILD_TYPE === "debug") {
     // For Development Build (Change the APP_MODE here if needed, changing APP_MODE here will not affect Release Build)
     // APP_MODE = MODES.CUSTOMER;
-    APP_MODE = MODES.RIDER;
+    APP_MODE = MODES.CUSTOMER;
 
     // APP_MODE = (Platform.Version === 29 /* || Dimensions.get("window").height < 767 */) ? MODES.RIDER : MODES.CUSTOMER;
     // APP_MODE = (Platform.Version === 28 || Dimensions.get("window").height < 767) ? MODES.RIDER : MODES.CUSTOMER;
@@ -31,7 +31,7 @@ if (Platform.OS === "android" && Config.BUILD_TYPE === "debug") {
 
 export { APP_MODE, SENDING_LOCATIONS_ENABLED };
 
-export const isJoviCustomerApp = APP_MODE === MODES.CUSTOMER ? true : false;
+export const isJoviCustomerApp =true;
 
 export const CONSTANTLATDELTA = 0.0122;
 export const CONSTANTLONGDELTA = (Dimensions.get("window").width / Dimensions.get("window").height) * 0.0122;

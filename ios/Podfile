@@ -45,8 +45,8 @@ def flipper_post_install(installer)
   end
 end
 
-target 'Jovi' do
-  # Pods for Jovi
+target 'JoviVendors' do
+  # Pods for JoviVendors
 
   #Permissions
   permissions_path = '../node_modules/react-native-permissions/ios'
@@ -89,7 +89,7 @@ target 'Jovi' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  target 'JoviTests' do
+  target 'JoviVendorsTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -106,10 +106,10 @@ target 'Jovi' do
   end
 end
 
-target 'Jovi-tvOS' do
-  # Pods for Jovi-tvOS
+target 'JoviVendors-tvOS' do
+  # Pods for JoviVendors-tvOS
 
-  target 'Jovi-tvOSTests' do
+  target 'JoviVendors-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

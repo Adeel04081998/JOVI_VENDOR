@@ -132,7 +132,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.jovi'
+        applicationId 'com.jovivendors'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

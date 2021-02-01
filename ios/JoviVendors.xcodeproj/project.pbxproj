@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* JoviTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* JoviTests.m */; };
+		00E356F31AD99517003FC87E /* JoviVendorsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* JoviVendorsTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		153592E7A1D281BDC8CF5986 /* libPods-Jovi-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D9DD471588DB134EDC9A2EA /* libPods-Jovi-tvOS.a */; };
-		17E3BA88C53F4395ACD5A944 /* libPods-Jovi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D86C3AAE5CFD4420F950B7D1 /* libPods-Jovi.a */; };
+		153592E7A1D281BDC8CF5986 /* libPods-JoviVendors-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D9DD471588DB134EDC9A2EA /* libPods-JoviVendors-tvOS.a */; };
+		17E3BA88C53F4395ACD5A944 /* libPods-JoviVendors.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D86C3AAE5CFD4420F950B7D1 /* libPods-JoviVendors.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2DCD954D1E0B4F2C00145EB5 /* JoviTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* JoviTests.m */; };
-		9ACC84DB74E78DF848984B80 /* libPods-Jovi-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 17ED7EC0414EEA3E9BBD433F /* libPods-Jovi-tvOSTests.a */; };
-		A471CB99268ED01C70654CD5 /* libPods-Jovi-JoviTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EADE40A8DF66793CFEEB96CF /* libPods-Jovi-JoviTests.a */; };
+		2DCD954D1E0B4F2C00145EB5 /* JoviVendorsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* JoviVendorsTests.m */; };
+		9ACC84DB74E78DF848984B80 /* libPods-JoviVendors-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 17ED7EC0414EEA3E9BBD433F /* libPods-JoviVendors-tvOSTests.a */; };
+		A471CB99268ED01C70654CD5 /* libPods-JoviVendors-JoviVendorsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EADE40A8DF66793CFEEB96CF /* libPods-JoviVendors-JoviVendorsTests.a */; };
 		FDB3470725653B9300291878 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FDB3470625653B9300291878 /* GoogleService-Info.plist */; };
 		FDF61C88248665FC006571BA /* Proxima Nova Alt Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = FDF61C7F248665FC006571BA /* Proxima Nova Alt Light.otf */; };
 		FDF61C89248665FC006571BA /* Proxima Nova Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = FDF61C80248665FC006571BA /* Proxima Nova Black.otf */; };
@@ -38,48 +38,48 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = Jovi;
+			remoteInfo = JoviVendors;
 		};
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
-			remoteInfo = "Jovi-tvOS";
+			remoteInfo = "JoviVendors-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		00E356EE1AD99517003FC87E /* JoviTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JoviTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* JoviVendorsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JoviVendorsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* JoviTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JoviTests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* Jovi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jovi.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Jovi/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Jovi/AppDelegate.m; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* JoviVendorsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JoviVendorsTests.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* JoviVendors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JoviVendors.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = JoviVendors/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = JoviVendors/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Jovi/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Jovi/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Jovi/main.m; sourceTree = "<group>"; };
-		158087708872F63914005A2D /* Pods-Jovi-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jovi-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Jovi-tvOSTests/Pods-Jovi-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		17ED7EC0414EEA3E9BBD433F /* libPods-Jovi-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Jovi-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		255E0D102D5FC85CD6D81D12 /* Pods-Jovi-JoviTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jovi-JoviTests.release.xcconfig"; path = "Target Support Files/Pods-Jovi-JoviTests/Pods-Jovi-JoviTests.release.xcconfig"; sourceTree = "<group>"; };
-		2D02E47B1E0B4A5D006451C7 /* Jovi-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Jovi-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D02E4901E0B4A5D006451C7 /* Jovi-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Jovi-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		385400003C03486A6355E10B /* Pods-Jovi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jovi.debug.xcconfig"; path = "Target Support Files/Pods-Jovi/Pods-Jovi.debug.xcconfig"; sourceTree = "<group>"; };
-		47A6E86E7BE1C1B9ECEEDF75 /* Pods-Jovi-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jovi-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Jovi-tvOS/Pods-Jovi-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		51160F4A62AEA020EFAA8CB5 /* Pods-Jovi-JoviTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jovi-JoviTests.debug.xcconfig"; path = "Target Support Files/Pods-Jovi-JoviTests/Pods-Jovi-JoviTests.debug.xcconfig"; sourceTree = "<group>"; };
-		5E945501F6E5CDC82140BE02 /* Pods-Jovi-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jovi-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Jovi-tvOSTests/Pods-Jovi-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		7D9DD471588DB134EDC9A2EA /* libPods-Jovi-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Jovi-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		950061AE8392FCAFC31EA335 /* Pods-Jovi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jovi.release.xcconfig"; path = "Target Support Files/Pods-Jovi/Pods-Jovi.release.xcconfig"; sourceTree = "<group>"; };
-		ABA751970662E4E541A8FC2E /* Pods-Jovi-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jovi-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Jovi-tvOS/Pods-Jovi-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		D86C3AAE5CFD4420F950B7D1 /* libPods-Jovi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Jovi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EADE40A8DF66793CFEEB96CF /* libPods-Jovi-JoviTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Jovi-JoviTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = JoviVendors/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = JoviVendors/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = JoviVendors/main.m; sourceTree = "<group>"; };
+		158087708872F63914005A2D /* Pods-JoviVendors-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoviVendors-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-JoviVendors-tvOSTests/Pods-JoviVendors-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		17ED7EC0414EEA3E9BBD433F /* libPods-JoviVendors-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JoviVendors-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		255E0D102D5FC85CD6D81D12 /* Pods-JoviVendors-JoviVendorsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoviVendors-JoviVendorsTests.release.xcconfig"; path = "Target Support Files/Pods-JoviVendors-JoviVendorsTests/Pods-JoviVendors-JoviVendorsTests.release.xcconfig"; sourceTree = "<group>"; };
+		2D02E47B1E0B4A5D006451C7 /* JoviVendors-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JoviVendors-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D02E4901E0B4A5D006451C7 /* JoviVendors-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "JoviVendors-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		385400003C03486A6355E10B /* Pods-JoviVendors.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoviVendors.debug.xcconfig"; path = "Target Support Files/Pods-JoviVendors/Pods-JoviVendors.debug.xcconfig"; sourceTree = "<group>"; };
+		47A6E86E7BE1C1B9ECEEDF75 /* Pods-JoviVendors-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoviVendors-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-JoviVendors-tvOS/Pods-JoviVendors-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		51160F4A62AEA020EFAA8CB5 /* Pods-JoviVendors-JoviVendorsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoviVendors-JoviVendorsTests.debug.xcconfig"; path = "Target Support Files/Pods-JoviVendors-JoviVendorsTests/Pods-JoviVendors-JoviVendorsTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5E945501F6E5CDC82140BE02 /* Pods-JoviVendors-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoviVendors-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-JoviVendors-tvOSTests/Pods-JoviVendors-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		7D9DD471588DB134EDC9A2EA /* libPods-JoviVendors-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JoviVendors-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		950061AE8392FCAFC31EA335 /* Pods-JoviVendors.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoviVendors.release.xcconfig"; path = "Target Support Files/Pods-JoviVendors/Pods-JoviVendors.release.xcconfig"; sourceTree = "<group>"; };
+		ABA751970662E4E541A8FC2E /* Pods-JoviVendors-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JoviVendors-tvOS.release.xcconfig"; path = "Target Support Files/Pods-JoviVendors-tvOS/Pods-JoviVendors-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		D86C3AAE5CFD4420F950B7D1 /* libPods-JoviVendors.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JoviVendors.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EADE40A8DF66793CFEEB96CF /* libPods-JoviVendors-JoviVendorsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JoviVendors-JoviVendorsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		FD10DDA42577AD1200C3A0E7 /* JoviRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = JoviRelease.entitlements; path = Jovi/JoviRelease.entitlements; sourceTree = "<group>"; };
+		FD10DDA42577AD1200C3A0E7 /* JoviVendorsRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = JoviVendorsRelease.entitlements; path = JoviVendors/JoviVendorsRelease.entitlements; sourceTree = "<group>"; };
 		FDB3470625653B9300291878 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Users/cibaksolutions/Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		FDB348E1256663B400291878 /* JoviDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = JoviDebug.entitlements; path = Jovi/JoviDebug.entitlements; sourceTree = "<group>"; };
+		FDB348E1256663B400291878 /* JoviVendorsDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = JoviVendorsDebug.entitlements; path = JoviVendors/JoviVendorsDebug.entitlements; sourceTree = "<group>"; };
 		FDF61C7F248665FC006571BA /* Proxima Nova Alt Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Proxima Nova Alt Light.otf"; path = "../src/assets/fonts/Proxima Nova Alt Light.otf"; sourceTree = "<group>"; };
 		FDF61C80248665FC006571BA /* Proxima Nova Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Proxima Nova Black.otf"; path = "../src/assets/fonts/Proxima Nova Black.otf"; sourceTree = "<group>"; };
 		FDF61C81248665FC006571BA /* Proxima Nova Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Proxima Nova Bold.otf"; path = "../src/assets/fonts/Proxima Nova Bold.otf"; sourceTree = "<group>"; };
@@ -96,7 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A471CB99268ED01C70654CD5 /* libPods-Jovi-JoviTests.a in Frameworks */,
+				A471CB99268ED01C70654CD5 /* libPods-JoviVendors-JoviVendorsTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,7 +104,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17E3BA88C53F4395ACD5A944 /* libPods-Jovi.a in Frameworks */,
+				17E3BA88C53F4395ACD5A944 /* libPods-JoviVendors.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,7 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				153592E7A1D281BDC8CF5986 /* libPods-Jovi-tvOS.a in Frameworks */,
+				153592E7A1D281BDC8CF5986 /* libPods-JoviVendors-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,20 +120,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9ACC84DB74E78DF848984B80 /* libPods-Jovi-tvOSTests.a in Frameworks */,
+				9ACC84DB74E78DF848984B80 /* libPods-JoviVendors-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* JoviTests */ = {
+		00E356EF1AD99517003FC87E /* JoviVendorsTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* JoviTests.m */,
+				00E356F21AD99517003FC87E /* JoviVendorsTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = JoviTests;
+			path = JoviVendorsTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -144,11 +144,11 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* Jovi */ = {
+		13B07FAE1A68108700A75B9A /* JoviVendors */ = {
 			isa = PBXGroup;
 			children = (
-				FD10DDA42577AD1200C3A0E7 /* JoviRelease.entitlements */,
-				FDB348E1256663B400291878 /* JoviDebug.entitlements */,
+				FD10DDA42577AD1200C3A0E7 /* JoviVendorsRelease.entitlements */,
+				FDB348E1256663B400291878 /* JoviVendorsDebug.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -157,7 +157,7 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = Jovi;
+			name = JoviVendors;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -165,10 +165,10 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				D86C3AAE5CFD4420F950B7D1 /* libPods-Jovi.a */,
-				EADE40A8DF66793CFEEB96CF /* libPods-Jovi-JoviTests.a */,
-				7D9DD471588DB134EDC9A2EA /* libPods-Jovi-tvOS.a */,
-				17ED7EC0414EEA3E9BBD433F /* libPods-Jovi-tvOSTests.a */,
+				D86C3AAE5CFD4420F950B7D1 /* libPods-JoviVendors.a */,
+				EADE40A8DF66793CFEEB96CF /* libPods-JoviVendors-JoviVendorsTests.a */,
+				7D9DD471588DB134EDC9A2EA /* libPods-JoviVendors-tvOS.a */,
+				17ED7EC0414EEA3E9BBD433F /* libPods-JoviVendors-tvOSTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -176,14 +176,14 @@
 		5EFAD558F07BB29DAE03C397 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				385400003C03486A6355E10B /* Pods-Jovi.debug.xcconfig */,
-				950061AE8392FCAFC31EA335 /* Pods-Jovi.release.xcconfig */,
-				51160F4A62AEA020EFAA8CB5 /* Pods-Jovi-JoviTests.debug.xcconfig */,
-				255E0D102D5FC85CD6D81D12 /* Pods-Jovi-JoviTests.release.xcconfig */,
-				47A6E86E7BE1C1B9ECEEDF75 /* Pods-Jovi-tvOS.debug.xcconfig */,
-				ABA751970662E4E541A8FC2E /* Pods-Jovi-tvOS.release.xcconfig */,
-				158087708872F63914005A2D /* Pods-Jovi-tvOSTests.debug.xcconfig */,
-				5E945501F6E5CDC82140BE02 /* Pods-Jovi-tvOSTests.release.xcconfig */,
+				385400003C03486A6355E10B /* Pods-JoviVendors.debug.xcconfig */,
+				950061AE8392FCAFC31EA335 /* Pods-JoviVendors.release.xcconfig */,
+				51160F4A62AEA020EFAA8CB5 /* Pods-JoviVendors-JoviVendorsTests.debug.xcconfig */,
+				255E0D102D5FC85CD6D81D12 /* Pods-JoviVendors-JoviVendorsTests.release.xcconfig */,
+				47A6E86E7BE1C1B9ECEEDF75 /* Pods-JoviVendors-tvOS.debug.xcconfig */,
+				ABA751970662E4E541A8FC2E /* Pods-JoviVendors-tvOS.release.xcconfig */,
+				158087708872F63914005A2D /* Pods-JoviVendors-tvOSTests.debug.xcconfig */,
+				5E945501F6E5CDC82140BE02 /* Pods-JoviVendors-tvOSTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -199,9 +199,9 @@
 			isa = PBXGroup;
 			children = (
 				FDB3470625653B9300291878 /* GoogleService-Info.plist */,
-				13B07FAE1A68108700A75B9A /* Jovi */,
+				13B07FAE1A68108700A75B9A /* JoviVendors */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* JoviTests */,
+				00E356EF1AD99517003FC87E /* JoviVendorsTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				5EFAD558F07BB29DAE03C397 /* Pods */,
@@ -215,10 +215,10 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* Jovi.app */,
-				00E356EE1AD99517003FC87E /* JoviTests.xctest */,
-				2D02E47B1E0B4A5D006451C7 /* Jovi-tvOS.app */,
-				2D02E4901E0B4A5D006451C7 /* Jovi-tvOSTests.xctest */,
+				13B07F961A680F5B00A75B9A /* JoviVendors.app */,
+				00E356EE1AD99517003FC87E /* JoviVendorsTests.xctest */,
+				2D02E47B1E0B4A5D006451C7 /* JoviVendors-tvOS.app */,
+				2D02E4901E0B4A5D006451C7 /* JoviVendors-tvOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -242,9 +242,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* JoviTests */ = {
+		00E356ED1AD99517003FC87E /* JoviVendorsTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "JoviTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "JoviVendorsTests" */;
 			buildPhases = (
 				463C8D323A05692404DF134F /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -257,14 +257,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = JoviTests;
-			productName = JoviTests;
-			productReference = 00E356EE1AD99517003FC87E /* JoviTests.xctest */;
+			name = JoviVendorsTests;
+			productName = JoviVendorsTests;
+			productReference = 00E356EE1AD99517003FC87E /* JoviVendorsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* Jovi */ = {
+		13B07F861A680F5B00A75B9A /* JoviVendors */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Jovi" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "JoviVendors" */;
 			buildPhases = (
 				51A7E186AD49D38B52973775 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -279,14 +279,14 @@
 			);
 			dependencies = (
 			);
-			name = Jovi;
-			productName = Jovi;
-			productReference = 13B07F961A680F5B00A75B9A /* Jovi.app */;
+			name = JoviVendors;
+			productName = JoviVendors;
+			productReference = 13B07F961A680F5B00A75B9A /* JoviVendors.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D02E47A1E0B4A5D006451C7 /* Jovi-tvOS */ = {
+		2D02E47A1E0B4A5D006451C7 /* JoviVendors-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Jovi-tvOS" */;
+			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "JoviVendors-tvOS" */;
 			buildPhases = (
 				4D42321E30BA4BA0F2081807 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
@@ -299,14 +299,14 @@
 			);
 			dependencies = (
 			);
-			name = "Jovi-tvOS";
-			productName = "Jovi-tvOS";
-			productReference = 2D02E47B1E0B4A5D006451C7 /* Jovi-tvOS.app */;
+			name = "JoviVendors-tvOS";
+			productName = "JoviVendors-tvOS";
+			productReference = 2D02E47B1E0B4A5D006451C7 /* JoviVendors-tvOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D02E48F1E0B4A5D006451C7 /* Jovi-tvOSTests */ = {
+		2D02E48F1E0B4A5D006451C7 /* JoviVendors-tvOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Jovi-tvOSTests" */;
+			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "JoviVendors-tvOSTests" */;
 			buildPhases = (
 				E4486A3EA31A5ABBA78814FD /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
@@ -318,9 +318,9 @@
 			dependencies = (
 				2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */,
 			);
-			name = "Jovi-tvOSTests";
-			productName = "Jovi-tvOSTests";
-			productReference = 2D02E4901E0B4A5D006451C7 /* Jovi-tvOSTests.xctest */;
+			name = "JoviVendors-tvOSTests";
+			productName = "JoviVendors-tvOSTests";
+			productReference = 2D02E4901E0B4A5D006451C7 /* JoviVendors-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -351,7 +351,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Jovi" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "JoviVendors" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -364,10 +364,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* Jovi */,
-				00E356ED1AD99517003FC87E /* JoviTests */,
-				2D02E47A1E0B4A5D006451C7 /* Jovi-tvOS */,
-				2D02E48F1E0B4A5D006451C7 /* Jovi-tvOSTests */,
+				13B07F861A680F5B00A75B9A /* JoviVendors */,
+				00E356ED1AD99517003FC87E /* JoviVendorsTests */,
+				2D02E47A1E0B4A5D006451C7 /* JoviVendors-tvOS */,
+				2D02E48F1E0B4A5D006451C7 /* JoviVendors-tvOSTests */,
 			);
 		};
 /* End PBXProject section */
@@ -451,7 +451,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Jovi/Pods-Jovi-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-JoviVendors/Pods-JoviVendors-resources.sh",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -460,7 +460,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Jovi/Pods-Jovi-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JoviVendors/Pods-JoviVendors-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3CFAB3698D6D6D02B8C46887 /* [CP-User] [RNFB] Core Configuration */ = {
@@ -488,7 +488,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Jovi-JoviTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-JoviVendors-JoviVendorsTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -510,7 +510,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Jovi-tvOS-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-JoviVendors-tvOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -532,7 +532,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Jovi-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-JoviVendors-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -545,7 +545,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Jovi-JoviTests/Pods-Jovi-JoviTests-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-JoviVendors-JoviVendorsTests/Pods-JoviVendors-JoviVendorsTests-resources.sh",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -554,7 +554,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Jovi-JoviTests/Pods-Jovi-JoviTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JoviVendors-JoviVendorsTests/Pods-JoviVendors-JoviVendorsTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E4486A3EA31A5ABBA78814FD /* [CP] Check Pods Manifest.lock */ = {
@@ -572,7 +572,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Jovi-tvOSTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-JoviVendors-tvOSTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -624,7 +624,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* JoviTests.m in Sources */,
+				00E356F31AD99517003FC87E /* JoviVendorsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,7 +650,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DCD954D1E0B4F2C00145EB5 /* JoviTests.m in Sources */,
+				2DCD954D1E0B4F2C00145EB5 /* JoviVendorsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -659,12 +659,12 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* Jovi */;
+			target = 13B07F861A680F5B00A75B9A /* JoviVendors */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 		2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2D02E47A1E0B4A5D006451C7 /* Jovi-tvOS */;
+			target = 2D02E47A1E0B4A5D006451C7 /* JoviVendors-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -676,7 +676,7 @@
 				13B07FB21A68108700A75B9A /* Base */,
 			);
 			name = LaunchScreen.xib;
-			path = Jovi;
+			path = JoviVendors;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -684,14 +684,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51160F4A62AEA020EFAA8CB5 /* Pods-Jovi-JoviTests.debug.xcconfig */;
+			baseConfigurationReference = 51160F4A62AEA020EFAA8CB5 /* Pods-JoviVendors-JoviVendorsTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = JoviTests/Info.plist;
+				INFOPLIST_FILE = JoviVendorsTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -701,17 +701,17 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Jovi.app/Jovi";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JoviVendors.app/JoviVendors";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 255E0D102D5FC85CD6D81D12 /* Pods-Jovi-JoviTests.release.xcconfig */;
+			baseConfigurationReference = 255E0D102D5FC85CD6D81D12 /* Pods-JoviVendors-JoviVendorsTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = JoviTests/Info.plist;
+				INFOPLIST_FILE = JoviVendorsTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -721,17 +721,17 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Jovi.app/Jovi";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JoviVendors.app/JoviVendors";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 385400003C03486A6355E10B /* Pods-Jovi.debug.xcconfig */;
+			baseConfigurationReference = 385400003C03486A6355E10B /* Pods-JoviVendors.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Jovi/JoviDebug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = JoviVendors/JoviVendorsDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -741,7 +741,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = Jovi/Info.plist;
+				INFOPLIST_FILE = JoviVendors/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -749,7 +749,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = Jovi;
+				PRODUCT_NAME = JoviVendors;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -759,16 +759,16 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 950061AE8392FCAFC31EA335 /* Pods-Jovi.release.xcconfig */;
+			baseConfigurationReference = 950061AE8392FCAFC31EA335 /* Pods-JoviVendors.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Jovi/JoviRelease.entitlements;
+				CODE_SIGN_ENTITLEMENTS = JoviVendors/JoviVendorsRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = RPC8L48R33;
-				INFOPLIST_FILE = Jovi/Info.plist;
+				INFOPLIST_FILE = JoviVendors/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -776,7 +776,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = Jovi;
+				PRODUCT_NAME = JoviVendors;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -785,7 +785,7 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 47A6E86E7BE1C1B9ECEEDF75 /* Pods-Jovi-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 47A6E86E7BE1C1B9ECEEDF75 /* Pods-JoviVendors-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -796,14 +796,14 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Jovi-tvOS/Info.plist";
+				INFOPLIST_FILE = "JoviVendors-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.Jovi-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.JoviVendors-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -813,7 +813,7 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ABA751970662E4E541A8FC2E /* Pods-Jovi-tvOS.release.xcconfig */;
+			baseConfigurationReference = ABA751970662E4E541A8FC2E /* Pods-JoviVendors-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -824,14 +824,14 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Jovi-tvOS/Info.plist";
+				INFOPLIST_FILE = "JoviVendors-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.Jovi-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.JoviVendors-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -841,7 +841,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 158087708872F63914005A2D /* Pods-Jovi-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = 158087708872F63914005A2D /* Pods-JoviVendors-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -851,24 +851,24 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Jovi-tvOSTests/Info.plist";
+				INFOPLIST_FILE = "JoviVendors-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.Jovi-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.JoviVendors-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Jovi-tvOS.app/Jovi-tvOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JoviVendors-tvOS.app/JoviVendors-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
 			name = Debug;
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5E945501F6E5CDC82140BE02 /* Pods-Jovi-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = 5E945501F6E5CDC82140BE02 /* Pods-JoviVendors-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -878,17 +878,17 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Jovi-tvOSTests/Info.plist";
+				INFOPLIST_FILE = "JoviVendors-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.Jovi-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.JoviVendors-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Jovi-tvOS.app/Jovi-tvOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JoviVendors-tvOS.app/JoviVendors-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
 			name = Release;
@@ -1009,7 +1009,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "JoviTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "JoviVendorsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -1018,7 +1018,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Jovi" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "JoviVendors" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -1027,7 +1027,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Jovi-tvOS" */ = {
+		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "JoviVendors-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D02E4971E0B4A5E006451C7 /* Debug */,
@@ -1036,7 +1036,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Jovi-tvOSTests" */ = {
+		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "JoviVendors-tvOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D02E4991E0B4A5E006451C7 /* Debug */,
@@ -1045,7 +1045,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Jovi" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "JoviVendors" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

@@ -50,7 +50,7 @@ const RootStack = (props) => {
             const appearOnTop = JSON.parse(await AsyncStorage.getItem("appearOnTop"));
             if (!User) {
                 // For Demo
-                // return setState({ ...state, loggedInUser: null, initRoute: checkIntroScreenView == 'true' ? "OTP" : "Introduction" });
+                return setState({ ...state, loggedInUser: null, initRoute: checkIntroScreenView == 'true' ? "OTP" : "Introduction" });
 
                 // For Dev and release
                 if (Config.BUILD_TYPE === "debug" || Platform.OS === 'ios') {
