@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68" height="68" viewBox="0 0 68 68">
+  <defs>
+    <filter id="Subtraction_1" x="0" y="0" width="68" height="68" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_1612" data-name="Group 1612" transform="translate(-829 -18059)">
+    <g transform="matrix(1, 0, 0, 1, 829, 18059)" filter="url(#Subtraction_1)">
+      <path id="Subtraction_1-2" data-name="Subtraction 1" d="M452.333-2358h33.333a8.333,8.333,0,0,1,8.333,8.333v33.333a8.333,8.333,0,0,1-8.333,8.333H452.333a8.333,8.333,0,0,1-8.333-8.333v-33.333A8.333,8.333,0,0,1,452.333-2358Z" transform="translate(-435 2364)" fill="#fff"/>
+    </g>
+    <g id="close" transform="translate(850 18077)">
+      <g id="Group_1191" data-name="Group 1191" transform="translate(0 0.001)">
+        <path id="Path_1705" data-name="Path 1705" d="M14.989,13.5l11.7-11.7A1.054,1.054,0,0,0,25.2.31L13.5,12,1.8.31A1.055,1.055,0,1,0,.309,1.8L12,13.5.309,25.2A1.055,1.055,0,1,0,1.8,26.691l11.7-11.7,11.7,11.7A1.055,1.055,0,0,0,26.69,25.2Z" transform="translate(0 -0.001)" fill="#7359be"/>
+      </g>
+    </g>
+  </g>
+</svg>

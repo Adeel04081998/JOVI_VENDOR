@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68" height="68" viewBox="0 0 68 68">
+<defs>
+  <filter id="Ellipse_331" x="0" y="0" width="68" height="68" filterUnits="userSpaceOnUse">
+    <feOffset input="SourceAlpha"/>
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feFlood flood-opacity="0.431"/>
+    <feComposite operator="in" in2="blur"/>
+    <feComposite in="SourceGraphic"/>
+  </filter>
+</defs>
+<g id="Group_1785" data-name="Group 1785" transform="translate(-262.274 -696.491)">
+  <g id="Group_1784" data-name="Group 1784" transform="translate(271 705.566)">
+    <g transform="matrix(1, 0, 0, 1, -8.73, -9.08)" filter="url(#Ellipse_331)">
+      <circle id="Ellipse_331-2" data-name="Ellipse 331" cx="25" cy="25" r="25" transform="translate(9 9)" fill="#7359be"/>
+    </g>
+    <g id="Rectangle_1205" data-name="Rectangle 1205" transform="translate(12.274 15.925)" fill="none" stroke="#fff" stroke-width="2">
+      <path d="M10,0h6A10,10,0,0,1,26,10v0A10,10,0,0,1,16,20H0a0,0,0,0,1,0,0V10A10,10,0,0,1,10,0Z" stroke="none"/>
+      <path d="M10,1h6a9,9,0,0,1,9,9v0a9,9,0,0,1-9,9H1.173A.173.173,0,0,1,1,18.827V10A9,9,0,0,1,10,1Z" fill="none"/>
+    </g>
+    <g id="Group_1783" data-name="Group 1783" transform="translate(18.544 24.346)">
+      <ellipse id="Ellipse_332" data-name="Ellipse 332" cx="1.585" cy="1.588" rx="1.585" ry="1.588" transform="translate(0)" fill="#fff"/>
+      <ellipse id="Ellipse_333" data-name="Ellipse 333" cx="1.585" cy="1.588" rx="1.585" ry="1.588" transform="translate(4.913)" fill="#fff"/>
+      <ellipse id="Ellipse_334" data-name="Ellipse 334" cx="1.585" cy="1.588" rx="1.585" ry="1.588" transform="translate(9.827)" fill="#fff"/>
+    </g>
+  </g>
+  <ellipse id="Ellipse_335" data-name="Ellipse 335" cx="11.5" cy="11" rx="11.5" ry="11" transform="translate(303.274 702.491)" fill="#fc3f93"/>
+  <text id="_1" data-name="1" transform="translate(313.274 716.491)" fill="#fff" font-size="10" font-family="ProximaNova-Bold, Proxima Nova" font-weight="700"><tspan x="0" y="0">${args.count}</tspan></text>
+</g>
+</svg>
