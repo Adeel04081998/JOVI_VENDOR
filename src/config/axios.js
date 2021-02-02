@@ -11,8 +11,8 @@ Axios.interceptors.request.use(
         if (!res) config.headers['content-type: application/json'];
         else {
             res = JSON.parse(res);
-            config.headers['Authorization'] = 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MjMzMzY2Njk5OTAiLCJqdGkiOiI1NmUzNTlhYy04YmM4LTRlYjQtOWMxZi03OGVmNjQyNjQ2NjUiLCJpYXQiOjE2MTIyNzAwMzIsInJvbCI6ImFwaV9hY2Nlc3MiLCJpZCI6ImExMWY1MWYwLWU3ZjgtNDRiMS05ZGNiLWFlMWExZmRjYTc4NSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiUm9sZU5hbWUiOiJBZG1pbiIsImlzQWRtaW4iOiJUcnVlIiwiaXNSaWRlciI6IkZhbHNlIiwibmJmIjoxNjEyMjcwMDMxLCJleHAiOjE2MTIyNzcyMzEsImlzcyI6IndlYkFwaSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDEifQ.PgXWMZPvoC_XrWeKUBngw6TakE1iBlEqFfy5PbVsQT4';
-            // config.headers['Authorization'] = 'Bearer ' + res.token.authToken;
+            // config.headers['Authorization'] = 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MjMzMzY2Njk5OTAiLCJqdGkiOiI1NmUzNTlhYy04YmM4LTRlYjQtOWMxZi03OGVmNjQyNjQ2NjUiLCJpYXQiOjE2MTIyNzAwMzIsInJvbCI6ImFwaV9hY2Nlc3MiLCJpZCI6ImExMWY1MWYwLWU3ZjgtNDRiMS05ZGNiLWFlMWExZmRjYTc4NSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiUm9sZU5hbWUiOiJBZG1pbiIsImlzQWRtaW4iOiJUcnVlIiwiaXNSaWRlciI6IkZhbHNlIiwibmJmIjoxNjEyMjcwMDMxLCJleHAiOjE2MTIyNzcyMzEsImlzcyI6IndlYkFwaSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDEifQ.PgXWMZPvoC_XrWeKUBngw6TakE1iBlEqFfy5PbVsQT4';
+            config.headers['Authorization'] = 'Bearer ' + res.token.authToken;
             config.headers['content-type: application/json'];
         }
         return config;
