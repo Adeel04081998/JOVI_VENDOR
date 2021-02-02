@@ -337,7 +337,7 @@ export default function AddOrEditAddress(props) {
                     }
                 </ScrollView>
                 <DefaultBtn
-                    title="Save and continue"
+                    title="Save"
                     disabled={sharedValidateAllProperties({ ...state.selectedRegion }, ['addressID', 'note', 'addressTypeStr']) ? false : true}
                     backgroundColor={sharedValidateAllProperties({ ...state.selectedRegion }, ['addressID', 'note', 'addressTypeStr']) ? props.activeTheme.default : props.activeTheme.lightGrey}
                     onPress={addUpdateAddressApi}

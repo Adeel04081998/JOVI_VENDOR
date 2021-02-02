@@ -1835,7 +1835,7 @@ function CustomerOrder({ navigation, route, userObj }) {
                     <KeyboardAvoidingView style={{ ...styles.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? handleDismissKeyboardIOS : null}>
 
                         {state.mode === "destPitstopDetails" ?
-                            <Text style={{ ...styles.caption, fontSize: 17, left: 1, marginVertical: 10, top: -12 }}>Please select final destination</Text>
+                            <Text style={{ ...styles.caption, fontSize: 17, left: 1, marginVertical: 10, top: -12 }}> destination</Text>
                             :
                             <Text style={{ ...styles.caption, fontSize: 17, left: 1, marginVertical: 10, top: -12 }}>Please add your pitstop details</Text>
                         }

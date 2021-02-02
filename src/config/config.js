@@ -105,11 +105,9 @@ export const extractBaseURLFromExternalConfigFile = async () => {
 };
 extractBaseURLFromExternalConfigFile();
 
-
-// Bottom Tabs
 export const BOTTOM_TABS = [
     {
-        title: "Supermarket",
+        title: "Categories",
         description: "Groceries",
         pitstopOrCheckOutItemType: 1,
         icon: color => commonSvgIcons.footerSuperMarket(color),
@@ -119,7 +117,7 @@ export const BOTTOM_TABS = [
         }
     },
     {
-        title: "Resturants",
+        title: "Products",
         description: "Resturants",
         pitstopOrCheckOutItemType: 2,
         icon: color => commonSvgIcons.footerResturants(color),
@@ -129,7 +127,7 @@ export const BOTTOM_TABS = [
         }
     },
     {
-        title: "Pharmacy",
+        title: "Brands",
         description: "Medicine",
         pitstopOrCheckOutItemType: 3,
         icon: color => commonSvgIcons.pills(color),
@@ -137,15 +135,47 @@ export const BOTTOM_TABS = [
             container: "super_market_home",
             screen: "dashboard"
         }
-    },
-    {
-        title: "Cart",
-        description: "Cart",
-        pitstopOrCheckOutItemType: 0,
-        icon: color => commonSvgIcons.footerCart(color),
-        route: {
-            container: "customer_cart_home",
-            screen: "customer_cart"
-        }
     }]
+// Bottom Tabs
+// export const BOTTOM_TABS = [
+//     {
+//         title: "Supermarket",
+//         description: "Groceries",
+//         pitstopOrCheckOutItemType: 1,
+//         icon: color => commonSvgIcons.footerSuperMarket(color),
+//         route: {
+//             container: "super_market_home",
+//             screen: "dashboard"
+//         }
+//     },
+//     {
+//         title: "Resturants",
+//         description: "Resturants",
+//         pitstopOrCheckOutItemType: 2,
+//         icon: color => commonSvgIcons.footerResturants(color),
+//         route: {
+//             container: "super_market_home",
+//             screen: "dashboard"
+//         }
+//     },
+//     {
+//         title: "Pharmacy",
+//         description: "Medicine",
+//         pitstopOrCheckOutItemType: 3,
+//         icon: color => commonSvgIcons.pills(color),
+//         route: {
+//             container: "super_market_home",
+//             screen: "dashboard"
+//         }
+//     },
+//     {
+//         title: "Cart",
+//         description: "Cart",
+//         pitstopOrCheckOutItemType: 0,
+//         icon: color => commonSvgIcons.footerCart(color),
+//         route: {
+//             container: "customer_cart_home",
+//             screen: "customer_cart"
+//         }
+//     }]
 

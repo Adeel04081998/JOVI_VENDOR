@@ -28,6 +28,7 @@ export default StyleSheet.create({
     }),
     tempWrapper: (activeTheme, keyboradState, screen) => ({
         flex: screen && screen === 1 ? 0 : keyboradState ? 5 : 3,
+        // flex: screen && screen === 1 ? 0 : keyboradState ? 5 : 10,
         alignSelf: 'flex-end',
         alignItems: 'center',
         flexDirection: 'column',

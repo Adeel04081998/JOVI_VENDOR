@@ -469,7 +469,7 @@ const MainDrawer = props => {
 
                 {/* Customer Screens */}
 
-                <Drawer.Screen name="home" children={drawerProps => <HomeStack style={animatedStyle} drawerProps={drawerProps} activeTheme={activeTheme} {...props} {...stackState} behavior={Platform.OS === 'ios' ? 'padding' : null} />} initialParams={{ dispatch: props.dispatch }} options={screenOpts} />
+                {/* <Drawer.Screen name="home" children={drawerProps => <HomeStack style={animatedStyle} drawerProps={drawerProps} activeTheme={activeTheme} {...props} {...stackState} behavior={Platform.OS === 'ios' ? 'padding' : null} />} initialParams={{ dispatch: props.dispatch }} options={screenOpts} /> */}
                 <Drawer.Screen name="complaints_feedback_container" children={drawerProps => <ComplaintFeedbackStack style={animatedStyle} drawerProps={drawerProps} activeTheme={activeTheme} {...props} {...stackState} options={screenOpts} behavior={Platform.OS === 'ios' ? 'padding' : null} />} options={screenOpts} />
                 <Drawer.Screen name="customer_order" component={CustomerOrder} initialParams={{ dispatch: props.dispatch, activeTheme: props.activeTheme }} options={screenOpts} />
                 <Drawer.Screen name="help_faq_stack" children={drawerProps => <HelpFaqsStack style={animatedStyle} drawerProps={drawerProps} activeTheme={activeTheme} {...props} options={screenOpts} behavior={Platform.OS === 'ios' ? 'padding' : null} />} options={screenOpts} />

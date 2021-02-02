@@ -3,9 +3,11 @@ import { View, Text, StatusBar, Platform, ImageBackground } from 'react-native';
 import { Header, Left, Body, Right } from 'native-base';
 import headerStyles from './headerStyles';
 import { SvgXml } from 'react-native-svg';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import dummy from '../../assets/bike.png';
 import Spinner from 'react-native-spinkit';
 import dropIcon from '../../assets/svgIcons/common/drop-down-arrow.svg';
+import CustomInput from '../input/Input';
 export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinationView, bodyContent, BodyComponent, rightIcon, imgObject, imgStyles, rightIconHandler, navigation, activeTheme, height, width, styles, left, screenName }) {
     // let tempVal = 50;
     // console.log(StatusBar.currentHeight)
@@ -106,4 +108,48 @@ export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinati
             }
         </Header>
     )
+}
+export const HeaderApp = (props) => {
+    const { state, caption, commonStyles, activeTheme } = props;
+    return <View
+        style={{ height: 95,paddingTop:10, backgroundColor: activeTheme.background, justifyContent: 'space-between', alignItems: 'center' }}
+        onTouchEnd={() => {
+            if (state.isSmModalOpen) showHideModal(false, 1);
+        }}
+    >
+        <View style={{ position: 'absolute', right: 20,top:27, backgroundColor: activeTheme.default, width: 43, borderRadius: 85, height: 45, borderWidth: 3, borderStyle: "solid", borderColor: "#F0F0F0", flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <TouchableOpacity style={{ width: 90, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => { }}>
+                <ImageBackground  style={{flex:1}} resizeMode="cover"  >
+                    <Spinner isVisible={true} size={30} type="Circle" color={activeTheme.white} />
+                </ImageBackground>
+            </TouchableOpacity>
+        </View>
+        <Text style={{ ...commonStyles.fontStyles(20, activeTheme.white, 4), flex: 1, alignSelf: 'flex-start', left: 20, top: 30 }}>{caption}</Text>
+        <View style={{ width: '100%', marginTop: 10, alignItems: 'center', flex: 1 }}>
+
+            <TextInput
+                style={{
+                    paddingHorizontal: 12,
+                    borderWidth: 1,
+                    width: '90%',
+                    borderRadius: 5,
+                    marginTop: 20,
+                    // left:20,
+                    zIndex: 999,
+                    borderColor: state.focusedField === 'note' ? props.activeTheme.default : 'rgba(0,0,0,0.1)',
+                    backgroundColor: 'white',
+                    height: 40,
+                    justifyContent: "center",
+                    alignItems: 'center',
+                    // flexDirection: 'row'
+                }}
+                placeholder="Search"
+
+            />
+        </View>
+        {/* <View style={{ alignItems: 'center', justifyContent: 'center', right: 10, flex: 0.8 }}>
+        <Text style={commonStyles.fontStyles(12, props.activeTheme.white, 4)}>YOUR BALANCE</Text>
+        <Text style={commonStyles.fontStyles(12, props.activeTheme.white, 4)}>RS {sharedCommasAmountConveter(userObj.balance)}</Text>
+    </View> */}
+    </View>
 }

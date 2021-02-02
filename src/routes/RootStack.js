@@ -19,6 +19,7 @@ import Config from 'react-native-config';
 import { sharedConfirmationAlert } from '../utils/sharedActions';
 import CustomToast from '../components/toast/CustomToast';
 import { closeModalAction } from '../redux/actions/modal';
+import Home from '../screens/home/Home';
 
 
 // import jwt_decode from 'jwt-decode';
@@ -50,7 +51,7 @@ const RootStack = (props) => {
             const appearOnTop = JSON.parse(await AsyncStorage.getItem("appearOnTop"));
             if (!User) {
                 // For Demo
-                return setState({ ...state, loggedInUser: null, initRoute: checkIntroScreenView == 'true' ? "OTP" : "Introduction" });
+                // return setState({ ...state, loggedInUser: null, initRoute: checkIntroScreenView == 'true' ? "OTP" : "Introduction" });
 
                 // For Dev and release
                 if (Config.BUILD_TYPE === "debug" || Platform.OS === 'ios') {
@@ -110,7 +111,8 @@ const RootStack = (props) => {
                 <Stack.Screen name="Registration" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><UserRegister {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
                 <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
                 <Stack.Screen name="ExistLogin" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><SignIn {...state} {...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
-                <Stack.Screen name="Dashboard" children={navigatorPros => <MainDrawer {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} />
+                {/* <Stack.Screen name="Dashboard" children={navigatorPros => <MainDrawer {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} /> */}
+                <Stack.Screen name="Dashboard" children={navigatorPros => <Home {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} />
                 <Stack.Screen name="Exceptions" children={navigatorPros => <View><Text>error</Text></View>} />
             </Stack.Navigator>
             :
