@@ -25,9 +25,8 @@ import dummy from '../../assets/bike.png';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
-function Home(props) {
+function Products(props) {
     const { navigation, userObj, activeTheme } = props;
-    console.log(navigation)
     const [state, setState] = useState({
         "isImgLoad": false,
         brandData: [],
@@ -169,9 +168,6 @@ function Home(props) {
     const onFooterItemPressed = async (pressedTab, index) => {
         if(pressedTab.title==='Add Brand'){
             addBrandModal();
-        }else{
-            // navigateWithResetScreen(null, [{ name: 'Products', params: { screen: 'dashboard' } }]);
-            navigation.navigate("Products",{});
         }
         // if (!pressedTab.pitstopOrCheckOutItemType) {
         //     props.dispatch(setFooterTabsAction({ pressedTab: { ...pressedTab, index, from: "home" } }));
@@ -208,52 +204,17 @@ function Home(props) {
 
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Brands</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Products</Text>
                     <Text style={{ marginRight: 14 }}>Total 1042</Text>
                 </View>
                 <ScrollView style={{ flex: 1 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
                     <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}>
-                        {state.brandData.length>0?
-                            state.brandData.map((item, i) => {
-                                return <View key={i} style={{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }}>
-                                    <View style={{ flex: 0.38, overflow: 'hidden', borderRadius: 10 }}>
-                                        <ImageBackground
-                                            resizeMode="center"
-                                            source={item.brandImageList && item.brandImageList.length > 0 ? { uri: renderPicture(item.brandImageList[0], props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{
-                                                flex: 1,
-                                                top: 1,
-                                                // height: 'auto'
-                                                marginLeft: 10,
-                                                width: '90%',
-                                                // "backgroundColor": 'transparent',
-                                                // "opacity": 0.6,
-                                                "height": "90%",
-                                                // "width": '100%',
-                                            }}
-                                        />
-                                    </View>
-                                    <TouchableOpacity style={{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 }} onPress={() => addBrandModal()}>
-                                        <View style={{ flex: 0.9 }}>
-                                            <Text style={{ marginTop: 0, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.brandName}</Text>
-                                            <Text style={{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 }}>{item.description.toLocaleUpperCase()}</Text>
-                                            {/* <TouchableOpacity style={{ alignSelf: 'flex-start', borderRadius: 25, padding: 9,marginLeft:30, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default, left: 20, top: 5 }}>
-                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 4) }}>Edit</Text>
-                             </TouchableOpacity> */}
-                                        </View>
-                                    </TouchableOpacity>
-                                    <View style={{ flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
-                                        <Text style={{ color: 'white' }}>{i + 1}</Text>
-                                    </View>
-                                </View>
-                            })
-                            :
+                            
                             <View style={{flex:1,height:100,justifyContent:'center',alignItems:'center'}}>
-                                <Text>No Brands Found</Text>
+                                <Text>No Products Found</Text>
                             </View>
-                        }
                         {/* {
                             [{ title: 'Pearl', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Lipton', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Lux', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Dettol', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Life Bouy', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Dell', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }].map((item, i) => {
                                 return <View key={i} style={{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff',borderColor:'#929293',borderWidth:0.5,borderRadius:15, flexDirection: 'row', marginVertical: 5 }}>
@@ -297,7 +258,7 @@ const mapStateToProps = (store) => {
     }
 };
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(Products);
 
 
 

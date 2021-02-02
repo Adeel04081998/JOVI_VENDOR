@@ -107,30 +107,27 @@ extractBaseURLFromExternalConfigFile();
 
 export const BOTTOM_TABS = [
     {
-        title: "Categories",
-        description: "Groceries",
+        title: "Add Brand",
+        description: "Add new brand in supermart",
         pitstopOrCheckOutItemType: 1,
         icon: color => commonSvgIcons.footerSuperMarket(color),
-        route: {
-            container: "super_market_home",
-            screen: "dashboard"
-        }
+        
     },
+    // {
+    //     title: "Products",
+    //     description: "Resturants",
+    //     pitstopOrCheckOutItemType: 2,
+    //     icon: color => commonSvgIcons.footerResturants(color),
+    //     route: {
+    //         container: "super_market_home",
+    //         screen: "dashboard"
+    //     }
+    // },
     {
-        title: "Products",
-        description: "Resturants",
-        pitstopOrCheckOutItemType: 2,
-        icon: color => commonSvgIcons.footerResturants(color),
-        route: {
-            container: "super_market_home",
-            screen: "dashboard"
-        }
-    },
-    {
-        title: "Brands",
+        title: "Orders",
         description: "Medicine",
         pitstopOrCheckOutItemType: 3,
-        icon: color => commonSvgIcons.pills(color),
+        icon: color => commonSvgIcons.footerCart(color),
         route: {
             container: "super_market_home",
             screen: "dashboard"
