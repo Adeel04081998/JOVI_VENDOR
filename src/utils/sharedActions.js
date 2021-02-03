@@ -828,7 +828,8 @@ export const sharedlogoutUser = async (navigation, postRequest, dispatch, userOb
                 setFloatingAmountOnServer(0, postRequest, dispatch, async () => {
                     sharedHubConnectionStopper();
                     await AsyncStorage.removeItem("User");
-                    navigation.reset({ routes: [{ name: 'OTP', params: 'logout' }] });
+                    navigation.reset({ routes: [{ name: 'Login', params: 'logout' }] });
+                    // navigation.reset({ routes: [{ name: 'OTP', params: 'logout' }] });
                 });
             },
             (error) => {

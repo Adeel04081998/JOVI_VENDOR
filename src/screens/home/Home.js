@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
-import { hybridLocationPermission, navigateWithResetScreen, renderPicture, sharedCommasAmountConveter, sharedConfirmationAlert, sharedGetUserCartHandler } from "../../utils/sharedActions";
+import { hybridLocationPermission, navigateWithResetScreen, renderPicture, sharedCommasAmountConveter, sharedConfirmationAlert, sharedGetUserCartHandler, sharedlogoutUser } from "../../utils/sharedActions";
 import AsyncStorage from '@react-native-community/async-storage';
 import { calculateTimeDifference } from "../../utils/sharedActions";
 import { getRequest, postRequest } from '../../services/api';
@@ -208,7 +208,7 @@ function Home(props) {
 
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Brands</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={()=>{sharedlogoutUser(navigation,postRequest,props.dispatch,props.user,false)}}>Brands</Text>
                     <Text style={{ marginRight: 14 }}>Total 1042</Text>
                 </View>
                 <ScrollView style={{ flex: 1 }} onTouchEnd={() => {
@@ -235,7 +235,7 @@ function Home(props) {
                                             }}
                                         />
                                     </View>
-                                    <TouchableOpacity style={{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 }} onPress={() => addBrandModal()}>
+                                    <TouchableOpacity style={{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 }} onPress={() => navigation.navigate('Products',{key:'products',item:{item,data:state.brandData}})}>
                                         <View style={{ flex: 0.9 }}>
                                             <Text style={{ marginTop: 0, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.brandName}</Text>
                                             <Text style={{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 }}>{item.description.toLocaleUpperCase()}</Text>

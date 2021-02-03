@@ -66,7 +66,7 @@ const BottomAlignedModal = props => {
     }
 
     return (
-        <View style={styles.centeredView(centeredViewFlex)}>
+        <View style={{...styles.centeredView(centeredViewFlex)}}>
             <Modal
                 animationType='fade'
                 transparent={transparent}
@@ -74,7 +74,7 @@ const BottomAlignedModal = props => {
                 onRequestClose={onRequestCloseHandler ? onRequestCloseHandler : () => dispatch(closeModalAction())}
             >
                 <Animated.View style={styles.fadeAreaView(state, props)}>
-                    <TouchableOpacity onPress={onRequestCloseHandler ? onRequestCloseHandler : () => dispatch(closeModalAction())} style={styles.emptyView(props)} />
+                    <TouchableOpacity onPress={onRequestCloseHandler ? onRequestCloseHandler : () => dispatch(closeModalAction())} style={{...styles.emptyView(props)}} />
                     <View style={{ flex: 1 }}>
                         <View style={styles.centeredView(centeredViewFlex)}>
                             <View style={styles.modalView(modelViewPadding, modalHeight, ModalContent?.props?.alignItems ?? "center")}>
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     }),
     fadeAreaView: (state, props) => ({
         flex: 1,
+        ...props.fadeAreaViewStyle,
         // This height is commented because of bottom issue of modal in s8
         // height: state.animationView,
         backgroundColor: 'rgba(0,0,0,0.5)',

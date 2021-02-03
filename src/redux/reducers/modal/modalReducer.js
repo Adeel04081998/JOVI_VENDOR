@@ -9,6 +9,7 @@ let initState = {
     modalFlex: null,
     modelViewPadding: 35,
     fadeAreaViewFlex: 1,
+    fadeAreaViewStyle: {},
     imageViewState: {},
 }
 export default (state = initState, action) => {

@@ -24,11 +24,8 @@ export default function SignInScreen(props) {
         // riders abcz@gamil.com / connor@gmail.com
         // 'email': "",
         // 'password': "",
-        'email':'tabishAdmin@gmail.com',
-        'password':'Kaplan224400',
-        // 'password': "",
-        // 'email': isJoviCustomerApp ? "malikjrw147@gmail.com" : "connor@gmail.com",
-        // 'password': isJoviCustomerApp ? 'Abc12345' : "Abc12345",
+        'email': isJoviCustomerApp ? "malikjrw147@gmail.com" : "connor@gmail.com",
+        'password': isJoviCustomerApp ? 'Abc12345' : "Abc12345",
         'focusedField': '',
         'isValid': user.email ? true : false,
         "showHidePasswordBool": false
