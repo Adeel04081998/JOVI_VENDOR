@@ -34,7 +34,7 @@ const DisableProductModal = (props) => {
         props.dispatch(closeModalAction());
     }
     const renderSelectionList = () => {
-        let data = [{text:'Deactivate',value:'Deactivated'},{text:'Activate',value:'Activated'}];
+        let data = [{text:'Activate',value:'Activated'},{text:'Deactivate',value:'Deactivated'}];
         return data.map((r, i) => (
             <TouchableOpacity onPress={() => {setState(prevState=>({...prevState,selectedDropdown:r.value,showDropdown:!prevState.showDropdown}))}} key={i} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
@@ -105,6 +105,7 @@ const DisableProductModal = (props) => {
                             onChange={(e)=>onChangeHandler(e)}
                             editable
                             style={{borderWidth: 1,
+                                maxHeight:200,
                                 borderRadius: 5,
                                 borderColor: 'rgba(0,0,0,0.1)'}}
                         />

@@ -40,7 +40,7 @@ export default ({ activeTheme, activeTab, drawerProps, mainDrawerComponentProps,
                     }
                 </View>
                 <TouchableOpacity style={{width:30,height:30,...styles.absoluteTouchableOpacity(activeTheme)}} onPress={() => navigateWithResetScreen(null, [{ name: 'home', params: {} }])}>
-                    <SvgXml xml={commonIcons.footerJovi()} height={30} width={40} />
+                    <SvgXml xml={commonIcons.footerHome()} height={30} width={40} />
                 </TouchableOpacity>
             </View>
         </View >

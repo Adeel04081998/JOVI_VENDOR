@@ -118,9 +118,9 @@ export const HeaderApp = (props) => {
         }}
     >
         <View style={{ position: 'absolute', right: 20,top:27, backgroundColor: activeTheme.default, width: 43, borderRadius: 85, height: 45, borderWidth: 3, borderStyle: "solid", borderColor: "#F0F0F0", flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <TouchableOpacity style={{ width: 90, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => { }}>
-                <ImageBackground  style={{flex:1}} resizeMode="cover"  >
-                    <Spinner isVisible={true} size={30} type="Circle" color={activeTheme.white} />
+            <TouchableOpacity style={{ width: 90, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => { }}>
+                <ImageBackground source={dummy} style={{flex:1,marginRight: 2, height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}} resizeMode="center"  >
+                    <Spinner isVisible={false} size={30} type="Circle" color={activeTheme.white} />
                 </ImageBackground>
             </TouchableOpacity>
         </View>

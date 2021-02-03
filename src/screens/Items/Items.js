@@ -15,18 +15,19 @@ import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
 import { CheckBox } from 'native-base';
 import DisableProductModal from '../../components/modals/DisableProductModal';
-function Products(props) {
+function Items(props) {
     const { navigation, userObj, activeTheme } = props;
-    console.log(navigation.dangerouslyGetState());
-    const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'Products')[0]?.params?.item;
-    console.log('Data:', data)
+    // console.log(navigation.dangerouslyGetState());
+    const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'Items')[0]?.params?.item;
+    console.log('Data Items:', data)
     const [state, setState] = useState({
-        brandData: data.data,
-        productData: [],
-        selectedBrand: data.item,
+        brandData: data.brandObj,
+        productData: data.data,
+        selectedProduct: data.item,
+        itemsData:[]
     })
     const setChangedStatus = (obj) => {
-        let tempArr = state.productData.map((item)=>{
+        let tempArr = state.itemsData.map((item)=>{
             if(item.productID === obj.productID){
                 return{...item,active:obj.active};
             }else{
@@ -34,7 +35,7 @@ function Products(props) {
             }
         });
         setState(prevState=>({
-            ...prevState,productData:tempArr
+            ...prevState,itemsData:tempArr
         }))
     }
     const disableEnableProduct = (item) => {
@@ -86,7 +87,7 @@ function Products(props) {
                 let check = false;
                 setState(prevState => ({
                     ...prevState,
-                    productData: res.data.getProductListViewModel.productData.map((item)=>{check=!check;return{...item,active:check}})
+                    itemsData: res.data.getProductListViewModel.productData.map((item)=>{check=!check;return{...item,active:check}})
                 }))
             }, (err) => {
                 if (err) CustomToast.error("Something went wrong");
@@ -98,10 +99,10 @@ function Products(props) {
         };
     }, []), []);
 
-    const onSelectBrand = (item) => {
+    const onSelectProduct = (item) => {
         setState(prevState => ({
             ...prevState,
-            selectedBrand: item
+            selectedProduct: item
         }))
     }
     const onFooterItemPressed = async (pressedTab, index) => {
@@ -136,7 +137,7 @@ function Products(props) {
 
 
             <HeaderApp
-                caption={state.selectedBrand.brandName}
+                caption={state.selectedProduct.productName}
                 commonStyles={commonStyles}
                 state={state}
                 activeTheme={activeTheme}
@@ -145,19 +146,19 @@ function Products(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Home') }}>Choose Brand</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Products') }}>Choose Product</Text>
                     <Text style={{ marginRight: 14 }}>Total 1042</Text>
                 </View>
                 <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}>
                     <ScrollView horizontal contentContainerStyle={{ height: 160, flexDirection: 'row' }}>
                         {
-                            state.brandData.map((item, i) => {
+                            state.productData.map((item, i) => {
                                 return <View key={i} style={{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' }} >
-                                    <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={() => onSelectBrand(item)}>
+                                    <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={() => onSelectProduct(item)}>
                                         <View style={{ backgroundColor: 'white', width: '85%', borderColor: '#929293', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, height: '80%' }}>
                                             <ImageBackground
                                                 resizeMode="center"
-                                                source={item.brandImageList && item.brandImageList.length > 0 ? { uri: renderPicture(item.brandImageList[0], props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
+                                                source={item.productImagesList && item.productImagesList.length > 0 ? { uri: renderPicture(item.productImagesList[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{
                                                     flex: 1,
                                                     top: 1,
@@ -179,10 +180,9 @@ function Products(props) {
                     </ScrollView>
                     <ScrollView contentContainerStyle={{ marginTop: 20, paddingBottom: 20, justifyContent: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
                         {
-                            state.productData.map((item, i) => {
+                            state.itemsData.map((item, i) => {
                                 return <View key={i} style={{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
-                                    <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={() => navigation.navigate('Items',{key:'items',item:{item,data:state.productData,brandObj:state.selectedBrand}})}>
-                                    {item.active === true&&<View style={{height:'100%',width:'100%', borderWidth: 0.1, borderRadius: 15,position:'absolute',backgroundColor:'rgba(0,0,0,0.2)',zIndex:901}}></View>}
+                                    {item.active === false&&<View style={{height:'100%',width:'100%', borderWidth: 0.1, borderRadius: 15,position:'absolute',backgroundColor:'rgba(0,0,0,0.2)',zIndex:901}}></View>}
                                     <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                                         <ImageBackground
                                             resizeMode="center"
@@ -199,8 +199,7 @@ function Products(props) {
                                             <Text style={{ color: 'white' }}>{i + 1}</Text>
                                         </View>
                                     </View>
-                                    <View style={{ flex: 1,justifyContent:'center',alignItems:'center' }}><Text>{item.productName}</Text></View>
-                                    </TouchableOpacity>
+                                    <View style={{ flex: 1 }}><Text>{item.productName}</Text></View>
                                 </View>
                             })
                         }
@@ -216,4 +215,4 @@ const mapStateToProps = (store) => {
         userObj: store.userReducer
     }
 };
-export default connect(mapStateToProps)(Products);
+export default connect(mapStateToProps)(Items);
