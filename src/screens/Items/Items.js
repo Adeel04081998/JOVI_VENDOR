@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
-import { renderPicture} from "../../utils/sharedActions";
+import { renderPicture } from "../../utils/sharedActions";
 import AsyncStorage from '@react-native-community/async-storage';
 import { getRequest, postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
@@ -24,18 +24,18 @@ function Items(props) {
         brandData: data.brandObj,
         productData: data.data,
         selectedProduct: data.item,
-        itemsData:[]
+        itemsData: []
     })
     const setChangedStatus = (obj) => {
-        let tempArr = state.itemsData.map((item)=>{
-            if(item.productID === obj.productID){
-                return{...item,active:obj.active};
-            }else{
+        let tempArr = state.itemsData.map((item) => {
+            if (item.productID === obj.productID) {
+                return { ...item, active: obj.active };
+            } else {
                 return item;
             }
         });
-        setState(prevState=>({
-            ...prevState,itemsData:tempArr
+        setState(prevState => ({
+            ...prevState, itemsData: tempArr
         }))
     }
     const disableEnableProduct = (item) => {
@@ -45,10 +45,10 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <DisableProductModal onSaveStatus={(obj)=>setChangedStatus(obj)} dispatch={props.dispatch} product={item} {...props} />
+                <DisableProductModal onSaveStatus={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} product={item} {...props} />
             ),
             // modalFlex: 0,
-            modalHeight: Dimensions.get('window').height * 0.65,
+            modalHeight: Dimensions.get('window').height * 0.85,
             modelViewPadding: 0,
             fadeAreaViewFlex: plateformSpecific(1, 0.6),
             screenProps: { ...props }
@@ -87,7 +87,7 @@ function Items(props) {
                 let check = false;
                 setState(prevState => ({
                     ...prevState,
-                    itemsData: res.data.getProductListViewModel.productData.map((item)=>{check=!check;return{...item,active:check}})
+                    itemsData: res.data.getProductListViewModel.productData.map((item) => { check = !check; return { ...item, active: check } })
                 }))
             }, (err) => {
                 if (err) CustomToast.error("Something went wrong");
@@ -182,24 +182,26 @@ function Items(props) {
                         {
                             state.itemsData.map((item, i) => {
                                 return <View key={i} style={{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
-                                    {item.active === false&&<View style={{height:'100%',width:'100%', borderWidth: 0.1, borderRadius: 15,position:'absolute',backgroundColor:'rgba(0,0,0,0.2)',zIndex:901}}></View>}
-                                    <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                        <ImageBackground
-                                            resizeMode="center"
-                                            source={item.productImagesList && item.productImagesList.length > 0 ? { uri: renderPicture(item.productImagesList[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{
-                                                width: '90%',
-                                                marginLeft: 17,
-                                                zIndex: 900,
-                                                "height": "90%",
-                                            }}
-                                        />
-                                        <CheckBox checked={item.active} color={activeTheme.background} onPress={()=>disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} />
-                                        <View style={{ position:'absolute',top:5,right:10,zIndex:999,width:20, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
-                                            <Text style={{ color: 'white' }}>{i + 1}</Text>
+                                    <TouchableOpacity style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: "center" }} onPress={() => disableEnableProduct(item)}>
+                                        {item.active === false && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
+                                        <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                                            <ImageBackground
+                                                resizeMode="center"
+                                                source={item.productImagesList && item.productImagesList.length > 0 ? { uri: renderPicture(item.productImagesList[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                                style={{
+                                                    width: '90%',
+                                                    marginLeft: 17,
+                                                    zIndex: 900,
+                                                    "height": "90%",
+                                                }}
+                                            />
+                                            {/* <CheckBox checked={item.active} color={activeTheme.background} onPress={()=>disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} /> */}
+                                            <View style={{ position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
+                                                <Text style={{ color: 'white' }}>{i + 1}</Text>
+                                            </View>
                                         </View>
-                                    </View>
-                                    <View style={{ flex: 1 }}><Text>{item.productName}</Text></View>
+                                        <View style={{ flex: 1 }}><Text>{item.productName}</Text></View>
+                                    </TouchableOpacity>
                                 </View>
                             })
                         }
