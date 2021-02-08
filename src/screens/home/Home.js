@@ -64,7 +64,7 @@ function Home(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal {...props} />
+                <AddBrandModal {...props} brandList={state.brandData} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -133,18 +133,21 @@ function Home(props) {
         // const permissions = async () => await askForWholeAppPermissions();
         const getData = () => {
 
-            postRequest('api/Admin/Pitstop/BrandGeneric/List', {
-                "pageNumber": 1,
-                "itemsPerPage": 20,
-                "isAscending": true,
-                "brandType": 1,
-                "isPagination": false,
-                "genericSearch": ""
-            }, {}, props.dispatch, (res) => {
+            getRequest('Api/Vendor/Pitstop/BrandsList', {
+            // postRequest('api/Admin/Pitstop/BrandGeneric/List', {
+                // "pageNumber": 1,
+                // "itemsPerPage": 20,
+                // "isAscending": true,
+                // "brandType": 1,
+                // "isPagination": false,
+                // "genericSearch": ""
+            
+            }
+            , props.dispatch, (res) => {
                 console.log('Brand Request:', res)
                 setState(prevState => ({
                     ...prevState,
-                    brandData: res.data.genericBrandListViewModels.brandData
+                    brandData: res.data.pitstopBrands.pitstopBrandsList
                 }))
             }, (err) => {
                 if (err) CustomToast.error("Something went wrong");
@@ -159,6 +162,10 @@ function Home(props) {
         locationHandler();
         // const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButtonPressed);
         return () => {
+            setState({
+                ...state,
+                brandData:[]
+            })
             // backHandler.remove();
 
         };
@@ -221,7 +228,7 @@ function Home(props) {
                                     <View style={{ flex: 0.38, overflow: 'hidden', borderRadius: 10 }}>
                                         <ImageBackground
                                             resizeMode="center"
-                                            source={item.brandImageList && item.brandImageList.length > 0 ? { uri: renderPicture(item.brandImageList[0], props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                            source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                             style={{
                                                 flex: 1,
                                                 top: 1,
@@ -238,14 +245,14 @@ function Home(props) {
                                     <TouchableOpacity style={{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 }} onPress={() => navigation.navigate('Products',{key:'products',item:{item,data:state.brandData}})}>
                                         <View style={{ flex: 0.9 }}>
                                             <Text style={{ marginTop: 0, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.brandName}</Text>
-                                            <Text style={{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 }}>{item.description.toLocaleUpperCase()}</Text>
+                                            <Text style={{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 }}>{item.brandDescription.toLocaleUpperCase()}</Text>
                                             {/* <TouchableOpacity style={{ alignSelf: 'flex-start', borderRadius: 25, padding: 9,marginLeft:30, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default, left: 20, top: 5 }}>
                                  <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 4) }}>Edit</Text>
                              </TouchableOpacity> */}
                                         </View>
                                     </TouchableOpacity>
                                     <View style={{ flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
-                                        <Text style={{ color: 'white' }}>{i + 1}</Text>
+                                        <Text style={{ color: 'white' }}>{item.noOfProducts}</Text>
                                     </View>
                                 </View>
                             })

@@ -17,6 +17,7 @@ import { statusBarHandler } from './src/utils/sharedActions';
 import AsyncStorage from '@react-native-community/async-storage';
 import ErrorBoundary from './src/exceptions';
 import CustomImageView from './src/components/imageView';
+import Home from './src/screens/home/Home';
 
 // import Temp from './Temp';
 // import HomeDrawer from './src/routes/navigations';

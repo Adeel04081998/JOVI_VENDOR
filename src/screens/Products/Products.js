@@ -22,7 +22,7 @@ function Products(props) {
     console.log('Data:', data)
     const [state, setState] = useState({
         brandData: data.data,
-        productData: [],
+        productData: data.item.brandProducts?data.item.brandProducts:[],
         selectedBrand: data.item,
     })
     const setChangedStatus = (obj) => {
@@ -92,7 +92,7 @@ function Products(props) {
                 if (err) CustomToast.error("Something went wrong");
             }, '');
         }
-        getData();
+        // getData();
         return () => {
             // backHandler.remove();
         };
@@ -101,7 +101,8 @@ function Products(props) {
     const onSelectBrand = (item) => {
         setState(prevState => ({
             ...prevState,
-            selectedBrand: item
+            selectedBrand: item,
+            productData:item.brandProducts
         }))
     }
     const onFooterItemPressed = async (pressedTab, index) => {
@@ -148,7 +149,7 @@ function Products(props) {
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Home') }}>Choose Brand</Text>
                     <Text style={{ marginRight: 14 }}>Total 1042</Text>
                 </View>
-                <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}>
+                <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 15 }}>
                     <ScrollView horizontal contentContainerStyle={{ height: 160, flexDirection: 'row' }}>
                         {
                             state.brandData.map((item, i) => {
@@ -157,7 +158,7 @@ function Products(props) {
                                         <View style={{ backgroundColor: 'white', width: '85%', borderColor: '#929293', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, height: '80%' }}>
                                             <ImageBackground
                                                 resizeMode="center"
-                                                source={item.brandImageList && item.brandImageList.length > 0 ? { uri: renderPicture(item.brandImageList[0], props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
+                                                source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
                                                 style={{
                                                     flex: 1,
                                                     top: 1,
@@ -186,7 +187,7 @@ function Products(props) {
                                     <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                                         <ImageBackground
                                             resizeMode="center"
-                                            source={item.productImagesList && item.productImagesList.length > 0 ? { uri: renderPicture(item.productImagesList[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                            source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                             style={{
                                                 width: '90%',
                                                 marginLeft: 17,
@@ -204,6 +205,7 @@ function Products(props) {
                                 </View>
                             })
                         }
+                        
                     </ScrollView>
                 </View>
             </View>

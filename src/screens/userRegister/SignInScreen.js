@@ -24,8 +24,10 @@ export default function SignInScreen(props) {
         // riders abcz@gamil.com / connor@gmail.com
         // 'email': "",
         // 'password': "",
-        'email':'tabishAdmin@gmail.com',
-        'password':'Kaplan224400',
+        // 'email':'tabishAdmin@gmail.com',
+        // 'password':'Kaplan224400',
+        'email':'vendorj@jovi.com',
+        'password':'Vendor123',
         // 'password': "",
         // 'email': isJoviCustomerApp ? "malikjrw147@gmail.com" : "connor@gmail.com",
         // 'password': isJoviCustomerApp ? 'Abc12345' : "Abc12345",
@@ -108,7 +110,8 @@ export default function SignInScreen(props) {
         Keyboard.dismiss();
         // debugger;
         postRequest(
-            `/api/User/Admin/Login`,
+            `/Api/Vendor/Vendor/Login`,
+            // `/api/User/Admin/Login`,
             // `/api/User/${APP_MODE === MODES.CUSTOMER ? "Customer" : "Rider"}/Login`,
             {
                 'email': email,
