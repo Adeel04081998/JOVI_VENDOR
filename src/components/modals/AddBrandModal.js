@@ -255,7 +255,7 @@ const AddBrandModal = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TouchableOpacity onPress={ type!==2 ? () => { } : () => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                    <TouchableOpacity onPress={ type===3 ? () => { } : () => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                         <Text>{state.product.text ? state.product.text : 'Choose Product'}</Text>
                                     </TouchableOpacity>
                                 </View>
