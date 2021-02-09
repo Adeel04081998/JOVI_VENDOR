@@ -8,6 +8,7 @@ import dummy from '../../assets/bike.png';
 import Spinner from 'react-native-spinkit';
 import dropIcon from '../../assets/svgIcons/common/drop-down-arrow.svg';
 import CustomInput from '../input/Input';
+import { renderPicture } from '../../utils/sharedActions';
 export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinationView, bodyContent, BodyComponent, rightIcon, imgObject, imgStyles, rightIconHandler, navigation, activeTheme, height, width, styles, left, screenName }) {
     // let tempVal = 50;
     // console.log(StatusBar.currentHeight)
@@ -110,7 +111,7 @@ export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinati
     )
 }
 export const HeaderApp = (props) => {
-    const { state, caption, commonStyles, activeTheme } = props;
+    const { state, caption, commonStyles, activeTheme,onChangeText,user } = props;
     return <View
         style={{ height: 95,paddingTop:10, backgroundColor: activeTheme.background, justifyContent: 'space-between', alignItems: 'center' }}
         onTouchEnd={() => {
@@ -119,7 +120,7 @@ export const HeaderApp = (props) => {
     >
         <View style={{ position: 'absolute', right: 20,top:27, backgroundColor: activeTheme.default, width: 43, borderRadius: 85, height: 45, borderWidth: 3, borderStyle: "solid", borderColor: "#F0F0F0", flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <TouchableOpacity style={{ width: 90, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => { }}>
-                <ImageBackground source={dummy} style={{flex:1,marginRight: 2, height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}} resizeMode="center"  >
+                <ImageBackground source={user&&user.picture?{uri:renderPicture(user.picture,user.tokenObj &&user.tokenObj.token.authToken)}:dummy} style={{flex:1,marginRight: 2, height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}} resizeMode="center"  >
                     <Spinner isVisible={false} size={30} type="Circle" color={activeTheme.white} />
                 </ImageBackground>
             </TouchableOpacity>
@@ -144,7 +145,7 @@ export const HeaderApp = (props) => {
                     // flexDirection: 'row'
                 }}
                 placeholder="Search"
-
+                onChangeText={onChangeText?(val)=>onChangeText(val):()=>{}}
             />
         </View>
         {/* <View style={{ alignItems: 'center', justifyContent: 'center', right: 10, flex: 0.8 }}>

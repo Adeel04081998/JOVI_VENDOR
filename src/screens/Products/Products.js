@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
-import { renderPicture} from "../../utils/sharedActions";
+import { renderPicture } from "../../utils/sharedActions";
 import AsyncStorage from '@react-native-community/async-storage';
 import { getRequest, postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
@@ -22,19 +22,20 @@ function Products(props) {
     console.log('Data:', data)
     const [state, setState] = useState({
         brandData: data.data,
-        productData: data.item.brandProducts?data.item.brandProducts:[],
+        productData: data.item.brandProducts ? data.item.brandProducts : [],
+        productDataTemp: data.item.brandProducts ? data.item.brandProducts : [],
         selectedBrand: data.item,
     })
     const setChangedStatus = (obj) => {
-        let tempArr = state.productData.map((item)=>{
-            if(item.productID === obj.productID){
-                return{...item,active:obj.active};
-            }else{
+        let tempArr = state.productData.map((item) => {
+            if (item.productID === obj.productID) {
+                return { ...item, active: obj.active };
+            } else {
                 return item;
             }
         });
-        setState(prevState=>({
-            ...prevState,productData:tempArr
+        setState(prevState => ({
+            ...prevState, productData: tempArr
         }))
     }
     const disableEnableProduct = (item) => {
@@ -44,7 +45,7 @@ function Products(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <DisableProductModal onSaveStatus={(obj)=>setChangedStatus(obj)} dispatch={props.dispatch} product={item} {...props} />
+                <DisableProductModal onSaveStatus={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} product={item} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.65,
@@ -61,7 +62,7 @@ function Products(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal {...props} />
+                <AddBrandModal brandObj={state.selectedBrand} type={2} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -71,30 +72,41 @@ function Products(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
+    const onProductSearch = (val) => {
+        setState(pre=>({
+            ...pre,
+            productData:val===''?pre.productDataTemp:pre.productDataTemp.filter(item => { return item.productName.toLowerCase().includes(val.toLowerCase())})
+        }))
+    }
     useEffect(useCallback(() => {
-        const getData = () => {
-            postRequest('api/Admin/Pitstop/ProductGeneric/List', {
-                "pageNumber": 1,
-                "itemsPerPage": 20,
-                "isAscending": true,
-                // "brandID": state.selectedBrand.brandID,
-                "isPagination": false,
-                "productType": 1,
-                "genericSearch": ""
-            }, {}, props.dispatch, (res) => {
-                console.log('Product Request:', res);
-                let check = false;
-                setState(prevState => ({
-                    ...prevState,
-                    productData: res.data.getProductListViewModel.productData.map((item)=>{check=!check;return{...item,active:check}})
-                }))
-            }, (err) => {
-                if (err) CustomToast.error("Something went wrong");
-            }, '');
-        }
+        // const getData = () => {
+        //     postRequest('api/Admin/Pitstop/ProductGeneric/List', {
+        //         "pageNumber": 1,
+        //         "itemsPerPage": 20,
+        //         "isAscending": true,
+        //         // "brandID": state.selectedBrand.brandID,
+        //         "isPagination": false,
+        //         "productType": 1,
+        //         "genericSearch": ""
+        //     }, {}, props.dispatch, (res) => {
+        //         console.log('Product Request:', res);
+        //         let check = false;
+        //         setState(prevState => ({
+        //             ...prevState,
+        //             productData: res.data.getProductListViewModel.productData.map((item) => { check = !check; return { ...item, active: check } })
+        //         }))
+        //     }, (err) => {
+        //         if (err) CustomToast.error("Something went wrong");
+        //     }, '');
+        // }
         // getData();
         return () => {
             // backHandler.remove();
+            setState({
+                brandData:[],
+                productData: [],
+                selectedBrand: {},
+            })
         };
     }, []), []);
 
@@ -102,7 +114,8 @@ function Products(props) {
         setState(prevState => ({
             ...prevState,
             selectedBrand: item,
-            productData:item.brandProducts
+            productData: item.brandProducts,
+            productDataTemp:item.brandProducts
         }))
     }
     const onFooterItemPressed = async (pressedTab, index) => {
@@ -134,23 +147,22 @@ function Products(props) {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
-
-
             <HeaderApp
                 caption={state.selectedBrand.brandName}
                 commonStyles={commonStyles}
                 state={state}
+                user={props.user}
                 activeTheme={activeTheme}
+                onChangeText={onProductSearch}
             />
-
             <View style={{ flex: 1, marginTop: 30 }}>
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Home') }}>Choose Brand</Text>
                     <Text style={{ marginRight: 14 }}>Total 1042</Text>
                 </View>
-                <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 15 }}>
-                    <ScrollView horizontal contentContainerStyle={{ height: 160, flexDirection: 'row' }}>
+                <View style={{ flex: 1 }}>
+                    <ScrollView horizontal contentContainerStyle={{ height: 160,paddingLeft:10, flexDirection: 'row' }}>
                         {
                             state.brandData.map((item, i) => {
                                 return <View key={i} style={{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' }} >
@@ -174,38 +186,42 @@ function Products(props) {
                                         </View>
                                     </TouchableOpacity>
                                 </View>
-
                             })
                         }
                     </ScrollView>
-                    <ScrollView contentContainerStyle={{ marginTop: 20, paddingBottom: 20, justifyContent: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
-                        {
+                </View>
+                <View style={{ flex: 3, marginHorizontal: 12, marginBottom: 15 }}>
+                    <ScrollView contentContainerStyle={{ paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {state.productData.length<1?
+                        <View style={{flex:1,height:100,justifyContent:'center',alignItems:'center'}}>
+                            <Text>No Products Found</Text>
+                        </View>
+                        :
                             state.productData.map((item, i) => {
                                 return <View key={i} style={{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
-                                    <TouchableOpacity style={{width:'100%',height:'100%'}} onPress={() => navigation.navigate('Items',{key:'items',item:{item,data:state.productData,brandObj:state.selectedBrand}})}>
-                                    {item.active === true&&<View style={{height:'100%',width:'100%', borderWidth: 0.1, borderRadius: 15,position:'absolute',backgroundColor:'rgba(0,0,0,0.2)',zIndex:901}}></View>}
-                                    <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                        <ImageBackground
-                                            resizeMode="center"
-                                            source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{
-                                                width: '90%',
-                                                marginLeft: 17,
-                                                zIndex: 900,
-                                                "height": "90%",
-                                            }}
-                                        />
-                                        <CheckBox checked={item.active} color={activeTheme.background} onPress={()=>disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} />
-                                        <View style={{ position:'absolute',top:5,right:10,zIndex:999,width:20, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
-                                            <Text style={{ color: 'white' }}>{i + 1}</Text>
+                                    <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={() => navigation.navigate('Items', { key: 'items', item: { item, data: state.productData, brandObj: state.selectedBrand } })}>
+                                        {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
+                                        <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                                            <ImageBackground
+                                                resizeMode="center"
+                                                source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                                style={{
+                                                    width: '90%',
+                                                    marginLeft: 17,
+                                                    zIndex: 900,
+                                                    "height": "90%",
+                                                }}
+                                            />
+                                            {/* <CheckBox checked={item.active} color={activeTheme.background} onPress={() => disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} /> */}
+                                            <View style={{ position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
+                                                <Text style={{ color: 'white' }}>{i + 1}</Text>
+                                            </View>
                                         </View>
-                                    </View>
-                                    <View style={{ flex: 1,justifyContent:'center',alignItems:'center' }}><Text>{item.productName}</Text></View>
+                                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>{item.productName}</Text></View>
                                     </TouchableOpacity>
                                 </View>
                             })
                         }
-                        
                     </ScrollView>
                 </View>
             </View>

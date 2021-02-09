@@ -1,7 +1,7 @@
 import { Picker, Text, View } from 'native-base';
 import colors from "../../styles/colors";
-import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Keyboard } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
@@ -13,25 +13,37 @@ import commonStyles from '../../styles/styles';
 import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
+import { postRequest } from '../../services/api';
 const AddBrandModal = (props) => {
-    const {brandList} = props;
+    const { brandList,type,productObj,brandObj } = props;
+    console.log('OBJ:',brandObj)
     const [state, setState] = useState({
         showDropdown: '',
         // selectedDropdown: props.product.active === true ? 'Activated' : 'Deactivated',
-        brand: '',
-        product: '',
+        brand:brandObj?{...brandObj,text:brandObj.brandName}: '',
+        product:productObj?{...productObj,text:productObj.productName}: '',
         itemName: '',
+        item: [],
         addedItems: [],
         itemSize: '',
         itemColor: '',
         itemFitting: '',
+        itemsPerPage: 0,
         itemPrice: '',
-        brandList: brandList?brandList.map(item=>{return{...item,text:item.brandName,value:item.brandID}}):[],
+        brandList: [],
+        paginationInfo: {},
+        // brandList: brandList?brandList.map(item=>{return{...item,text:item.brandName,value:item.brandID}}):[],
         productList: [],
         itemsList: [],
     })
+    const [horizontalScrollState, setHorizontalScrollState] = useState({
+        lastOffset: 0
+    });
     const onDropdownClick = (dropdownTitle) => {
-        setState(prevState => ({ ...prevState, showDropdown:prevState.showDropdown!==''?'': dropdownTitle }));
+        setState(prevState => ({ ...prevState, itemsPerPage: 0,  showDropdown: prevState.showDropdown !== '' ? '' : dropdownTitle }));
+        setHorizontalScrollState({
+            lastOffset: 0
+        });
     }
     const onChangeHandler = (e) => {
         let value = e.target.value;
@@ -44,19 +56,39 @@ const AddBrandModal = (props) => {
         props.onSaveStatus({ productID: props.product.productID, active: state.selectedDropdown === 'Activated' ? true : false, description: state.description });
         props.dispatch(closeModalAction());
     }
-    const renderSelectionList = (options, onChange,) => {
+    const renderSelectionList = (options, onChange, filter = false) => {
         // let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
-        return options.map((r, i) => (
+        let optionsFilter = filter !== false ? options.filter(item => { return item.text.toLowerCase().includes(filter.toLowerCase()) }) : options;
+        if(optionsFilter.length<1){
+            return <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' }));}} style={{
+                borderBottomColor: props.activeTheme.lightGrey,
+                height: 40,
+                justifyContent: "space-between",
+                backgroundColor: 'white',
+                zIndex: 999,
+                borderColor: props.activeTheme.lightGrey,
+                // borderWidth: 1,
+                // borderBottomLeftRadius: 10,
+                // borderBottomRightRadius: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderBottomWidth: 0,
+
+            }}>
+                <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>No Data Found</Text>
+            </TouchableOpacity>
+        }
+        return optionsFilter.map((r, i) => (
             <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' })); onChange(r) }} key={i} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
                 height: 40,
                 justifyContent: "space-between",
-                backgroundColor:'white',
-                zIndex:999,
+                backgroundColor: 'white',
+                zIndex: 999,
                 borderColor: props.activeTheme.lightGrey,
-                                        // borderWidth: 1,
-                                        // borderBottomLeftRadius: 10,
-                                        // borderBottomRightRadius: 10,
+                // borderWidth: 1,
+                // borderBottomLeftRadius: 10,
+                // borderBottomRightRadius: 10,
                 flexDirection: 'row',
                 alignItems: 'center',
                 borderBottomWidth: i === (options.length - 1) ? 0 : 1,
@@ -66,6 +98,90 @@ const AddBrandModal = (props) => {
             </TouchableOpacity>
         ));
     }
+    const getItemsAgainstProduct = (product) => {
+        postRequest('Api/Vendor/Pitstop/GetItemsByProducts/List', {
+            "pageNumber": 1,
+            "itemsPerPage": 2,
+            "isPagination": false,
+            "isAscending": true,
+            "productID": product ? product.productID : state.product.productID
+        }, {}
+            , props.dispatch, (res) => {
+                console.log('Item Request Against Product:', res)
+                if (res.data.statusCode === 200) {
+                    setState(prevState => ({
+                        ...prevState,
+                        itemsPerPage: prevState.itemsPerPage + 10,
+                        itemsList: res.data.getSMProductItemListVM?.itemData?.map(item => { return { ...item, value: item.itemID, text: item.itemName } }),
+                        // paginationInfo: res.data.getProductListViewModel?.paginationInfo
+                    }));
+                }
+            }, (err) => {
+                if (err) CustomToast.error("Something went wrong");
+            }, '',false);
+    }
+    const getProductAgainstBrand = (brand) => {
+        postRequest('Api/Vendor/Pitstop/ProductGeneric/List', {
+            "pageNumber": 1,
+            "itemsPerPage": state.itemsPerPage + 10,
+            "isAscending": true,
+            "brandID": brand ? brand.brandID : state.brand.brandID,
+            "isPagination": true,
+            "productType": 1,
+            "genericSearch": ""
+        }, {}
+            , props.dispatch, (res) => {
+                console.log('Product Request Against Brand:', res)
+                if(res.data.statusCode === 200){
+                    setState(prevState => ({
+                        ...prevState,
+                        itemsPerPage: prevState.itemsPerPage + 10,
+                        productList: res.data.getProductListViewModel?.productData?.map(item => { return { ...item, value: item.productID, text: item.productName } }),
+                        paginationInfo: res.data.getProductListViewModel?.paginationInfo
+                    }));
+                }
+            }, (err) => {
+                if (err) CustomToast.error("Something went wrong");
+            }, '',false);
+    }
+    const getData = () => {
+        postRequest('Api/Vendor/Pitstop/BrandGeneric/List', {
+            "pageNumber": 1,
+            "itemsPerPage": state.itemsPerPage + 10,
+            "isAscending": true,
+            "brandType": 1,
+            "isPagination": true,
+            "genericSearch": ""
+        }, {}
+            , props.dispatch, (res) => {
+                console.log('Generic Brand Request:', res)
+                setState(prevState => ({
+                    ...prevState,
+                    itemsPerPage: prevState.itemsPerPage + 10,
+                    brandList: res.data.genericBrandListViewModels.brandData.map(item => { return { ...item, text: item.brandName, value: item.brandID } }),
+                    paginationInfo: res.data.genericBrandListViewModels.paginationInfo
+                }))
+            }, (err) => {
+                if (err) CustomToast.error("Something went wrong");
+            }, '',false);
+    }
+    useEffect(useCallback(() => {
+        if(type===1){
+            getData();
+        }
+        if(type === 2){
+            getProductAgainstBrand();
+        }
+        if(type === 3){
+            getItemsAgainstProduct();
+        }
+        return () => {
+            setState({
+                ...state,
+                brandList: []
+            })
+        };
+    }, []), []);
     return (
         <View style={{ ...StyleSheet.absoluteFill }}>
 
@@ -73,11 +189,11 @@ const AddBrandModal = (props) => {
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                         <Text style={styles.catpion(props.activeTheme)}>Add Brand</Text>
-                        <ScrollView  style={{ flex: 1,marginBottom:30 }} keyboardShouldPersistTaps="always">
-                            <View style={{ paddingHorizontal: 7, width: '100%', flex: 1 }}>
+                        <ScrollView style={{ flex: 1, marginBottom: 30 }} keyboardShouldPersistTaps="always">
+                            <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Brand Name
-                            </Text>
+                                </Text>
                                 <View style={{
                                     paddingHorizontal: 12,
                                     borderWidth: 1,
@@ -89,15 +205,24 @@ const AddBrandModal = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TouchableOpacity onPress={() => onDropdownClick('brand')} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                        <Text>{state.brand !== '' ? state.brand : 'Choose Brand'}</Text>
+                                    <TouchableOpacity onPress={type!==1?()=>{}: () => onDropdownClick('brand')} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                        <Text>{state.brand.text ? state.brand.text : 'Choose Brand'}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                {state.showDropdown === 'brand' ? <ScrollView nestedScrollEnabled style={{
-                                    marginHorizontal: 15, width: '95%',height:200, borderColor: props.activeTheme.lightGrey,
+                                {state.showDropdown === 'brand' ? <ScrollView nestedScrollEnabled onScrollEndDrag={(e) => {
+                                    e.persist();
+                                    setHorizontalScrollState(pre => ({ ...pre, lastOffset: e.nativeEvent.contentOffset.y }));
+                                    if (e.nativeEvent.contentOffset.y > horizontalScrollState.lastOffset) {
+                                        console.log(e.nativeEvent.contentOffset.y,horizontalScrollState.lastOffset,state.paginationInfo)
+                                        if (state.paginationInfo.itemsPerPage < state.paginationInfo.totalItems) {
+                                            getData();
+                                        }
+                                    }
+                                }} style={{
+                                    marginHorizontal: 15, width: '95%', height: 200, borderColor: props.activeTheme.lightGrey,
                                     borderWidth: 1,
                                     borderBottomLeftRadius: 10,
-                                    borderBottomRightRadius: 10, position: 'absolute', marginTop: 80,backgroundColor:'white', zIndex: 1000, paddingHorizontal: 3
+                                    borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                 }} keyboardShouldPersistTaps="always">
                                     {/* <View style={{
                                         // marginHorizontal: 5,
@@ -109,7 +234,7 @@ const AddBrandModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10
                                     }} > */}
-                                        {renderSelectionList(state.brandList, (e) => { setState(prevState=>({...prevState,brand:e.text}))})}
+                                    {renderSelectionList(state.brandList, (e) => { setState(prevState => ({ ...prevState, brand: e,product:'',item:[],itemName:'' })); getProductAgainstBrand(e); })}
 
                                     {/* </View> */}
                                 </ScrollView>
@@ -118,7 +243,7 @@ const AddBrandModal = (props) => {
                                 }
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Product Name
-                            </Text>
+                                </Text>
                                 <View style={{
                                     paddingHorizontal: 12,
                                     borderWidth: 1,
@@ -130,11 +255,19 @@ const AddBrandModal = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                        <Text>{state.product !== '' ? state.product : 'Choose Product'}</Text>
+                                    <TouchableOpacity onPress={ type!==2 ? () => { } : () => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                        <Text>{state.product.text ? state.product.text : 'Choose Product'}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                {state.showDropdown==='product' ? <ScrollView nestedScrollEnabled style={{
+                                {state.showDropdown === 'product' ? <ScrollView onScrollEndDrag={(e) => {
+                                    e.persist();
+                                    setHorizontalScrollState(pre => ({ ...pre, lastOffset: e.nativeEvent.contentOffset.y }));
+                                    if (e.nativeEvent.contentOffset.y > horizontalScrollState.lastOffset) {
+                                        if (state.paginationInfo.itemsPerPage < state.paginationInfo.totalItems) {
+                                            getProductAgainstBrand();
+                                        }
+                                    }
+                                }} nestedScrollEnabled style={{
                                     marginHorizontal: 15, width: '95%', position: 'absolute', marginTop: 160, backgroundColor: 'white', zIndex: 999, paddingHorizontal: 3
                                 }} keyboardShouldPersistTaps="always">
                                     <View style={{
@@ -147,7 +280,7 @@ const AddBrandModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10
                                     }} >
-                                        {/* {renderSelectionList()} */}
+                                        {renderSelectionList(state.productList, (e) => { setState(prevState => ({ ...prevState, product: e })); getItemsAgainstProduct(e); })}
 
                                     </View>
                                 </ScrollView>
@@ -156,6 +289,71 @@ const AddBrandModal = (props) => {
                                 }
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Items
+                                </Text>
+                                <View style={{
+                                    paddingHorizontal: 12,
+                                    borderWidth: 1,
+                                    borderRadius: 5,
+                                    borderColor: 'rgba(0,0,0,0.1)',
+                                    backgroundColor: 'transparent',
+                                    height: 40,
+                                    justifyContent: "space-between",
+                                    alignItems: 'center',
+                                    flexDirection: 'row'
+                                }}>
+                                    <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                        {/* <Text>{state.itemName !=='' ? state.itemName : 'Choose Items'}</Text> */}
+                                        <TextInput value={state.itemName !== '' ? state.itemName : ''} placeholder={'Choose Item'} editable={state.product!==''} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'items', itemName: val }))} />
+                                    </TouchableOpacity>
+                                </View>
+                                {state.showDropdown === 'items' ? <ScrollView nestedScrollEnabled style={{
+                                    marginHorizontal: 15, width: '95%', position: 'absolute', marginTop: 240, backgroundColor: 'white', zIndex: 999, paddingHorizontal: 3
+                                }} keyboardShouldPersistTaps="always">
+                                    <View style={{
+                                        // marginHorizontal: 5,
+                                        // marginBottom: 210,
+                                        // width: '83%',
+                                        // elevation: 0.5,
+                                        borderColor: props.activeTheme.lightGrey,
+                                        borderWidth: 1,
+                                        borderBottomLeftRadius: 10,
+                                        borderBottomRightRadius: 10
+                                    }} >
+                                        {renderSelectionList(state.itemsList, (e) => { setState(pre => ({ ...pre, item: pre.item.filter(item => item.itemID === e.itemID).length < 1 ? [...pre.item, e] : pre.item, itemName: '' })) }, state.itemName)}
+
+                                    </View>
+                                </ScrollView>
+                                    :
+                                    null
+                                }
+                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                    Add Items
+                                </Text>
+                                <ScrollView nestedScrollEnabled style={{ width: '100%', flexDirection: 'row', flexWrap: 'wrap', height: 180, padding: 5, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
+                                    {
+                                        state.item.map((item, i) => {
+                                            return <View key={i} style={{ height: 40, justifyContent: 'center', paddingTop: 4, width: 230, margin: 5, marginTop: 10, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
+                                                <Text style={[commonStyles.fontStyles(15, props.activeTheme.white, 1), { backgroundColor: 'black', marginLeft: 5, paddingTop: 2, width: '75%', position: 'absolute', top: -10, paddingLeft: 3, height: 25 }]}>{item.text}</Text>
+                                                <Text style={[commonStyles.fontStyles(13, props.activeTheme.black, 1), { marginLeft: 5 }]}>Rs: {item.price}</Text>
+                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() => setState(pre => ({ ...pre, item: pre.item.filter(it => it.itemID !== item.itemID) }))}>X</Text>
+                                            </View>
+                                        })
+                                    }
+                                </ScrollView>
+                                {/* <TextInput
+                                    multiline={true}
+                                    numberOfLines={10}
+                                    onChange={(e) => onChangeHandler(e)}
+                                    editable
+                                    style={{
+                                        borderWidth: 1,
+                                        maxHeight: 200,
+                                        borderRadius: 5,
+                                        borderColor: 'rgba(0,0,0,0.1)'
+                                    }}
+                                /> */}
+                                {/* <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                    Price
                             </Text>
                                 <View style={{
                                     paddingHorizontal: 12,
@@ -169,158 +367,45 @@ const AddBrandModal = (props) => {
                                     flexDirection: 'row'
                                 }}>
                                     <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                        <Text>{state.itemName !== '' ? state.itemName : 'Choose Items'}</Text>
+                                        <TextInput value={state.itemPrice !== '' ? state.itemPrice : ''} placeholder={'Item Price'} onChangeText={(val)=>setState(pre =>({...pre,itemPrice:val}))}  />
                                     </TouchableOpacity>
                                 </View>
-                                {state.showDropdown ? <ScrollView nestedScrollEnabled style={{
-                                    marginHorizontal: 15, width: '95%', position: 'absolute', marginTop: 240, backgroundColor: 'white', zIndex: 999, paddingHorizontal: 3
-                                }} keyboardShouldPersistTaps="always">
-                                    <View style={{
-                                        // marginHorizontal: 5,
-                                        // marginBottom: 210,
-                                        // width: '83%',
-                                        // elevation: 0.5,
-                                        borderColor: props.activeTheme.lightGrey,
-                                        borderWidth: 1,
-                                        borderBottomLeftRadius: 10,
-                                        borderBottomRightRadius: 10
-                                    }} >
-                                        {/* {renderSelectionList()} */}
-
-                                    </View>
-                                </ScrollView>
-                                    :
-                                    null
-                                }
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Add Items
+                                    Color
                             </Text>
-                                <TextInput
-                                    multiline={true}
-                                    numberOfLines={10}
-                                    onChange={(e) => onChangeHandler(e)}
-                                    editable
-                                    style={{
-                                        borderWidth: 1,
-                                        maxHeight: 200,
-                                        borderRadius: 5,
-                                        borderColor: 'rgba(0,0,0,0.1)'
-                                    }}
-                                />
-                            <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                Size
-                            </Text>
-                            <View style={{
-                                paddingHorizontal: 12,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderColor: 'rgba(0,0,0,0.1)',
-                                backgroundColor: 'transparent',
-                                height: 40,
-                                justifyContent: "space-between",
-                                alignItems: 'center',
-                                flexDirection: 'row'
-                            }}>
-                                <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                    <Text>{state.itemSize !== '' ? state.itemSize : 'Choose Item Size'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                            {state.showDropdown ? <ScrollView nestedScrollEnabled style={{
-                                marginHorizontal: 15, width: '95%', position: 'absolute', marginTop: 240, backgroundColor: 'white', zIndex: 999, paddingHorizontal: 3
-                            }} keyboardShouldPersistTaps="always">
                                 <View style={{
-                                    // marginHorizontal: 5,
-                                    // marginBottom: 210,
-                                    // width: '83%',
-                                    // elevation: 0.5,
-                                    borderColor: props.activeTheme.lightGrey,
+                                    paddingHorizontal: 12,
                                     borderWidth: 1,
-                                    borderBottomLeftRadius: 10,
-                                    borderBottomRightRadius: 10
-                                }} >
-                                    {/* {renderSelectionList()} */}
-
+                                    borderRadius: 5,
+                                    borderColor: 'rgba(0,0,0,0.1)',
+                                    backgroundColor: 'transparent',
+                                    height: 40,
+                                    justifyContent: "space-between",
+                                    alignItems: 'center',
+                                    flexDirection: 'row'
+                                }}>
+                                    <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                        <Text>{state.itemPrice !== '' ? state.itemPrice : 'Choose Color'}</Text>
+                                    </TouchableOpacity>
                                 </View>
-                            </ScrollView>
-                                :
-                                null
-                            }
-                            <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                Color
+                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                    Fitting
                             </Text>
-                            <View style={{
-                                paddingHorizontal: 12,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderColor: 'rgba(0,0,0,0.1)',
-                                backgroundColor: 'transparent',
-                                height: 40,
-                                justifyContent: "space-between",
-                                alignItems: 'center',
-                                flexDirection: 'row'
-                            }}>
-                                <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                    <Text>{state.itemName !== '' ? state.itemName : 'Choose Color'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                            {state.showDropdown ? <ScrollView nestedScrollEnabled style={{
-                                marginHorizontal: 15, width: '95%', position: 'absolute', marginTop: 240, backgroundColor: 'white', zIndex: 999, paddingHorizontal: 3
-                            }} keyboardShouldPersistTaps="always">
                                 <View style={{
-                                    // marginHorizontal: 5,
-                                    // marginBottom: 210,
-                                    // width: '83%',
-                                    // elevation: 0.5,
-                                    borderColor: props.activeTheme.lightGrey,
+                                    paddingHorizontal: 12,
                                     borderWidth: 1,
-                                    borderBottomLeftRadius: 10,
-                                    borderBottomRightRadius: 10
-                                }} >
-                                    {/* {renderSelectionList()} */}
-
-                                </View>
-                            </ScrollView>
-                                :
-                                null
-                            }
-                            <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                Fitting
-                            </Text>
-                            <View style={{
-                                paddingHorizontal: 12,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                borderColor: 'rgba(0,0,0,0.1)',
-                                backgroundColor: 'transparent',
-                                height: 40,
-                                justifyContent: "space-between",
-                                alignItems: 'center',
-                                flexDirection: 'row'
-                            }}>
-                                <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                    <Text>{state.itemName !== '' ? state.itemName : 'Choose Fitting'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                            {state.showDropdown ? <ScrollView nestedScrollEnabled style={{
-                                marginHorizontal: 15, width: '95%', position: 'absolute', marginTop: 240, backgroundColor: 'white', zIndex: 999, paddingHorizontal: 3
-                            }} keyboardShouldPersistTaps="always">
-                                <View style={{
-                                    // marginHorizontal: 5,
-                                    // marginBottom: 210,
-                                    // width: '83%',
-                                    // elevation: 0.5,
-                                    borderColor: props.activeTheme.lightGrey,
-                                    borderWidth: 1,
-                                    borderBottomLeftRadius: 10,
-                                    borderBottomRightRadius: 10
-                                }} >
-                                    {/* {renderSelectionList()} */}
-
-                                </View>
-                            </ScrollView>
-                                :
-                                null
-                            }
+                                    borderRadius: 5,
+                                    borderColor: 'rgba(0,0,0,0.1)',
+                                    backgroundColor: 'transparent',
+                                    height: 40,
+                                    justifyContent: "space-between",
+                                    alignItems: 'center',
+                                    flexDirection: 'row'
+                                }}>
+                                    <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                        <Text>{state.itemName !== '' ? state.itemName : 'Choose Fitting'}</Text>
+                                    </TouchableOpacity>
+                                </View> */}
                             </View>
                         </ScrollView>
                         <DefaultBtn

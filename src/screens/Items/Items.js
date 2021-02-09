@@ -23,7 +23,7 @@ function Items(props) {
     const [state, setState] = useState({
         brandData: data.brandObj,
         productData: data.data,
-        selectedProduct: data.item,
+        selectedProduct: data.item?data.item:0,
         itemsData: []
     })
     const setChangedStatus = (obj) => {
@@ -45,7 +45,7 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <DisableProductModal onSaveStatus={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} product={item} {...props} />
+                <DisableProductModal onSaveStatus={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} brandObj={state.brandData} productObj={state.selectedProduct} item={item} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -62,7 +62,7 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal {...props} />
+                <AddBrandModal type={3} productObj={state.selectedProduct} brandObj={state.brandData} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -72,27 +72,29 @@ function Items(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-    useEffect(useCallback(() => {
-        const getData = () => {
-            postRequest('api/Admin/Pitstop/ProductGeneric/List', {
-                "pageNumber": 1,
-                "itemsPerPage": 20,
-                "isAscending": true,
-                // "brandID": state.selectedBrand.brandID,
-                "isPagination": false,
-                "productType": 1,
-                "genericSearch": ""
-            }, {}, props.dispatch, (res) => {
-                console.log('Product Request:', res);
-                let check = false;
-                setState(prevState => ({
-                    ...prevState,
-                    itemsData: res.data.getProductListViewModel.productData.map((item) => { check = !check; return { ...item, active: check } })
-                }))
+    const getData = (changeProduct =false) => {
+        // postRequest('Api/Vendor/Pitstop/GetItemsByProducts/List', {
+        getRequest(`Api/Vendor/Pitstop/ItemsByProductId/${changeProduct!==false?changeProduct.productID:state.selectedProduct!==0?state.selectedProduct.productID:data.item.productID}`, {
+            // "pageNumber": 1,
+            // "itemsPerPage": 2,
+            // "isPagination": false,
+            // "isAscending": true,
+            // "pitstopProductID":changeProduct!==false?changeProduct.productID:state.selectedProduct!==0?state.selectedProduct.productID:data.item.productID
+        }
+            , props.dispatch, (res) => {
+                console.log('Product Items Request:', res)
+                if (res.data.statusCode === 200) {
+                    setState(prevState => ({
+                        ...prevState,
+                        itemsData: res.data.productItems?.productItemsList,
+                    }));
+                }
             }, (err) => {
                 if (err) CustomToast.error("Something went wrong");
             }, '');
-        }
+    }
+    useEffect(useCallback(() => {
+        
         getData();
         return () => {
             // backHandler.remove();
@@ -103,7 +105,8 @@ function Items(props) {
         setState(prevState => ({
             ...prevState,
             selectedProduct: item
-        }))
+        }));
+        getData(item);
     }
     const onFooterItemPressed = async (pressedTab, index) => {
         if (pressedTab.title === 'Add Brand') {
@@ -139,6 +142,7 @@ function Items(props) {
             <HeaderApp
                 caption={state.selectedProduct.productName}
                 commonStyles={commonStyles}
+                user={props.user}
                 state={state}
                 activeTheme={activeTheme}
             />
@@ -149,8 +153,8 @@ function Items(props) {
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Products') }}>Choose Product</Text>
                     <Text style={{ marginRight: 14 }}>Total 1042</Text>
                 </View>
-                <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}>
-                    <ScrollView horizontal contentContainerStyle={{ height: 160, flexDirection: 'row' }}>
+                <View style={{flex:1}}>
+                <ScrollView horizontal contentContainerStyle={{ height: 160,paddingLeft:10, flexDirection: 'row' }}>
                         {
                             state.productData.map((item, i) => {
                                 return <View key={i} style={{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' }} >
@@ -158,7 +162,7 @@ function Items(props) {
                                         <View style={{ backgroundColor: 'white', width: '85%', borderColor: '#929293', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, height: '80%' }}>
                                             <ImageBackground
                                                 resizeMode="center"
-                                                source={item.productImagesList && item.productImagesList.length > 0 ? { uri: renderPicture(item.productImagesList[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                                source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{
                                                     flex: 1,
                                                     top: 1,
@@ -178,8 +182,14 @@ function Items(props) {
                             })
                         }
                     </ScrollView>
-                    <ScrollView contentContainerStyle={{ marginTop: 20, paddingBottom: 20, justifyContent: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
-                        {
+                </View>
+                <View style={{ flex: 3, marginHorizontal: 12, marginBottom: 35 }}>
+                    <ScrollView contentContainerStyle={{ marginTop: 20,paddingLeft:15, paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {state.itemsData.length<1?
+                        <View style={{flex:1,height:100,justifyContent:'center',alignItems:'center'}}>
+                            <Text>No Items Found</Text>
+                        </View>
+                        :
                             state.itemsData.map((item, i) => {
                                 return <View key={i} style={{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
                                     <TouchableOpacity style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: "center" }} onPress={() => disableEnableProduct(item)}>
@@ -187,7 +197,7 @@ function Items(props) {
                                         <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                                             <ImageBackground
                                                 resizeMode="center"
-                                                source={item.productImagesList && item.productImagesList.length > 0 ? { uri: renderPicture(item.productImagesList[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                                source={item.itemImages && item.itemImages.length > 0 ? { uri: renderPicture(item.itemImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{
                                                     width: '90%',
                                                     marginLeft: 17,
@@ -196,11 +206,11 @@ function Items(props) {
                                                 }}
                                             />
                                             {/* <CheckBox checked={item.active} color={activeTheme.background} onPress={()=>disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} /> */}
-                                            <View style={{ position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
+                                            {/* <View style={{ position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
                                                 <Text style={{ color: 'white' }}>{i + 1}</Text>
-                                            </View>
+                                            </View> */}
                                         </View>
-                                        <View style={{ flex: 1 }}><Text>{item.productName}</Text></View>
+                                        <View style={{ flex: 1 }}><Text>{item.itemName}</Text></View>
                                     </TouchableOpacity>
                                 </View>
                             })

@@ -87,7 +87,7 @@ const RootStack = (props) => {
         getSetUserAsync();
         Keyboard.addListener('keyboardDidShow', () => _keyboardShowHideDetecter(true));
         Keyboard.addListener('keyboardDidHide', () => _keyboardShowHideDetecter(false));
-        const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButtonPressed);
+        // const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButtonPressed);
         return () => {
             console.log('RootStack State Clearing...');
             dispatch(closeModalAction());
@@ -110,7 +110,7 @@ const RootStack = (props) => {
                 <Stack.Screen name="Code" children={navigatorPros => <OtpCode {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} />
                 <Stack.Screen name="Email_Otp_verify" children={navigatorPros => <EmailOtpVerify {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} />
                 <Stack.Screen name="Reset_Password" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ResetPassword {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
-                <Stack.Screen name="Registration" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><UserRegister {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
+                {/* <Stack.Screen name="Registration" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><UserRegister {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
                 <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
                 <Stack.Screen name="ExistLogin" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><SignIn {...state} {...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
                 {/* <Stack.Screen name="Dashboard" children={navigatorPros => <MainDrawer {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} /> */}

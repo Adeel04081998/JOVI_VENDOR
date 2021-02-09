@@ -64,7 +64,7 @@ function Home(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal {...props} brandList={state.brandData} />
+                <AddBrandModal type={1} {...props} brandList={state.brandData} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -129,30 +129,30 @@ function Home(props) {
         sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
         return true;
     };
+    const getData = () => {
+
+        postRequest('Api/Vendor/Pitstop/BrandsList', {
+            "itemsPerPage": state.itemsPerPage,
+            "pageNumber": 1,
+            "isPagination": false,
+            "searchKeyWords": "",
+          },{}
+        , props.dispatch, (res) => {
+            console.log('Brand Request:', res)
+            setState(prevState => ({
+                ...prevState,
+                brandData: res.data.pitstopBrands.pitstopBrandsList
+            }))
+        }, (err) => {
+            if (err) CustomToast.error("Something went wrong");
+        }, '');
+    }
+    const searchBrand = (val) => {
+
+    }
     useEffect(useCallback(() => {
         // const permissions = async () => await askForWholeAppPermissions();
-        const getData = () => {
-
-            getRequest('Api/Vendor/Pitstop/BrandsList', {
-            // postRequest('api/Admin/Pitstop/BrandGeneric/List', {
-                // "pageNumber": 1,
-                // "itemsPerPage": 20,
-                // "isAscending": true,
-                // "brandType": 1,
-                // "isPagination": false,
-                // "genericSearch": ""
-            
-            }
-            , props.dispatch, (res) => {
-                console.log('Brand Request:', res)
-                setState(prevState => ({
-                    ...prevState,
-                    brandData: res.data.pitstopBrands.pitstopBrandsList
-                }))
-            }, (err) => {
-                if (err) CustomToast.error("Something went wrong");
-            }, '');
-        }
+        
         getData();
         const locationHandler = async () => {
             sharedGetUserCartHandler(getRequest, false, 0);
@@ -200,16 +200,17 @@ function Home(props) {
         //         navigation.navigate("customer_order", { fetchPreviousOrder: false, openOrderID: null, selectDestination: true, fromHome: true, homeFooterHandler: { name: pressedTab.title, confirmFinalDestCallback, cancelFinalDestCallback } });
         //     }
         // }
-    };
-
+    }; 
     return (
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
 
 
             <HeaderApp
-                caption={'Punjab Cash and Carry'}
+                caption={props.user.firstName+' '+props.user.lastName}
                 commonStyles={commonStyles}
                 state={state}
+                user={props.user}
+                onChangeText={searchBrand}
                 activeTheme={activeTheme}
             />
 
@@ -225,7 +226,7 @@ function Home(props) {
                         {state.brandData.length>0?
                             state.brandData.map((item, i) => {
                                 return <View key={i} style={{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }}>
-                                    <View style={{ flex: 0.38, overflow: 'hidden', borderRadius: 10 }}>
+                                    <View style={{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 }}>
                                         <ImageBackground
                                             resizeMode="center"
                                             source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
