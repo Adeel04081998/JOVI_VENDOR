@@ -160,7 +160,7 @@ function Items(props) {
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Products') }}>Choose Product</Text>
-                    <Text style={{ marginRight: 14 }}>Total 1042</Text>
+                    <Text style={{ marginRight: 14 }}>Total {state.productData.length}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                     <ScrollView horizontal contentContainerStyle={{ height: 160, paddingLeft: 10, flexDirection: 'row' }}>

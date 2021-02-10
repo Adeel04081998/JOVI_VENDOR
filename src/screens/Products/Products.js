@@ -38,23 +38,23 @@ function Products(props) {
             ...prevState, productData: tempArr
         }))
     }
-    const disableEnableProduct = (item) => {
-        let ModalComponent = {
-            visible: true,
-            transparent: true,
-            okHandler: () => { },
-            onRequestCloseHandler: null,
-            ModalContent: (
-                <DisableProductModal onSaveStatus={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} product={item} {...props} />
-            ),
-            // modalFlex: 0,
-            modalHeight: Dimensions.get('window').height * 0.65,
-            modelViewPadding: 0,
-            fadeAreaViewFlex: plateformSpecific(1, 0.6),
-            screenProps: { ...props }
-        };
-        props.dispatch(openModalAction(ModalComponent));
-    }
+    // const disableEnableProduct = (item) => {
+    //     let ModalComponent = {
+    //         visible: true,
+    //         transparent: true,
+    //         okHandler: () => { },
+    //         onRequestCloseHandler: null,
+    //         ModalContent: (
+    //             <DisableProductModal onSaveStatus={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} product={item} {...props} />
+    //         ),
+    //         // modalFlex: 0,
+    //         modalHeight: Dimensions.get('window').height * 0.65,
+    //         modelViewPadding: 0,
+    //         fadeAreaViewFlex: plateformSpecific(1, 0.6),
+    //         screenProps: { ...props }
+    //     };
+    //     props.dispatch(openModalAction(ModalComponent));
+    // }
     const addBrandModal = () => {
         let ModalComponent = {
             visible: true,
@@ -62,7 +62,7 @@ function Products(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal brandObj={state.selectedBrand} type={2} {...props} />
+                <AddBrandModal onSave={()=>getData()} brandObj={state.selectedBrand} type={2} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -73,12 +73,42 @@ function Products(props) {
         props.dispatch(openModalAction(ModalComponent));
     }
     const onProductSearch = (val) => {
-        setState(pre=>({
+        setState(pre => ({
             ...pre,
-            productData:val===''?pre.productDataTemp:pre.productDataTemp.filter(item => { return item.productName.toLowerCase().includes(val.toLowerCase())})
+            productData: val === '' ? pre.productDataTemp : pre.productDataTemp.filter(item => { return item.productName.toLowerCase().includes(val.toLowerCase()) })
         }))
     }
+    const getData = (keywords = false) => {
+
+        postRequest('Api/Vendor/Pitstop/BrandsList', {
+            "itemsPerPage": state.itemsPerPage,
+            "pageNumber": 1,
+            "isPagination": false,
+            "searchKeyWords": keywords !== false ? keywords : "",
+        }, {}
+            , props.dispatch, (res) => {
+                console.log('Brand Request:', res)
+                if (res.data.statusCode === 200) {
+                    setState(prevState => ({
+                        ...prevState,
+                        brandData: res.data.pitstopBrands.pitstopBrandsList,
+                        productData: res.data.pitstopBrands.pitstopBrandsList.filter(item=>item.brandID === data.item.brandID)[0]?.brandProducts,
+                        productDataTemp: res.data.pitstopBrands.pitstopBrandsList.filter(item=>item.brandID === data.item.brandID)[0]?.brandProducts,
+
+                    }))
+                } else {
+                    CustomToast.error("Not Found");
+                    setState(prevState => ({
+                        ...prevState,
+                        brandData: []
+                    }))
+                }
+            }, (err) => {
+                if (err) CustomToast.error("Something went wrong");
+            }, '');
+    }
     useEffect(useCallback(() => {
+        getData();
         // const getData = () => {
         //     postRequest('api/Admin/Pitstop/ProductGeneric/List', {
         //         "pageNumber": 1,
@@ -103,7 +133,7 @@ function Products(props) {
         return () => {
             // backHandler.remove();
             setState({
-                brandData:[],
+                brandData: [],
                 productData: [],
                 selectedBrand: {},
             })
@@ -115,8 +145,8 @@ function Products(props) {
             ...prevState,
             selectedBrand: item,
             productData: item.brandProducts,
-            productDataTemp:item.brandProducts
-        }))
+            productDataTemp: item.brandProducts
+        }));
     }
     const onFooterItemPressed = async (pressedTab, index) => {
         if (pressedTab.title === 'Add Brand') {
@@ -159,10 +189,10 @@ function Products(props) {
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Home') }}>Choose Brand</Text>
-                    <Text style={{ marginRight: 14 }}>Total 1042</Text>
+                    <Text style={{ marginRight: 14 }}>Total {state.brandData.length}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
-                    <ScrollView horizontal contentContainerStyle={{ height: 160,paddingLeft:10, flexDirection: 'row' }}>
+                    <ScrollView horizontal contentContainerStyle={{ height: 160, paddingLeft: 10, flexDirection: 'row' }}>
                         {
                             state.brandData.map((item, i) => {
                                 return <View key={i} style={{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' }} >
@@ -192,11 +222,11 @@ function Products(props) {
                 </View>
                 <View style={{ flex: 3, marginHorizontal: 12, marginBottom: 15 }}>
                     <ScrollView contentContainerStyle={{ paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}>
-                        {state.productData.length<1?
-                        <View style={{flex:1,height:100,justifyContent:'center',alignItems:'center'}}>
-                            <Text>No Products Found</Text>
-                        </View>
-                        :
+                        {state.productData.length < 1 ?
+                            <View style={{ flex: 1, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>No Products Found</Text>
+                            </View>
+                            :
                             state.productData.map((item, i) => {
                                 return <View key={i} style={{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
                                     <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={() => navigation.navigate('Items', { key: 'items', item: { item, data: state.productData, brandObj: state.selectedBrand } })}>

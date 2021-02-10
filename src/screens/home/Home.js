@@ -36,6 +36,7 @@ function Home(props) {
             "height": 0,
             "width": 0
         },
+        paginationInfo:{},
         "activeSlide": 0,
         "isSmModalOpen": false,
         // modal types = {
@@ -133,9 +134,10 @@ function Home(props) {
     const getData = (keywords=false) => {
 
         postRequest('Api/Vendor/Pitstop/BrandsList', {
-            "itemsPerPage": state.itemsPerPage,
+            "itemsPerPage": 50,
+            // "itemsPerPage": state.itemsPerPage,
             "pageNumber": 1,
-            "isPagination": false,
+            "isPagination": true,
             "searchKeyWords":keywords!==false?keywords: "",
           },{}
         , props.dispatch, (res) => {
@@ -143,7 +145,8 @@ function Home(props) {
             if(res.data.statusCode === 200){
                 setState(prevState => ({
                     ...prevState,
-                    brandData: res.data.pitstopBrands.pitstopBrandsList
+                    brandData: res.data.pitstopBrands.pitstopBrandsList,
+                    paginationInfo:res.data.pitstopBrands.paginations
                 }))
             }else{
                 CustomToast.error("Not Found");
@@ -226,14 +229,14 @@ function Home(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={()=>{sharedlogoutUser(navigation,postRequest,props.dispatch,props.user,false)}}>Brands</Text>
-                    <Text style={{ marginRight: 14 }}>Total 1042</Text>
+                    <Text style={{ marginRight: 14 }}>Total {state.paginationInfo?.totalItems}</Text>
                 </View>
                 <ScrollView style={{ flex: 1 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
                     <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}>
                         {state.brandData.length>0?
-                            state.brandData.map((item, i) => {
+                            [...state.brandData,...state.brandData,...state.brandData,...state.brandData].map((item, i) => {
                                 return <View key={i} style={{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }}>
                                     <View style={{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 }}>
                                         <ImageBackground
