@@ -25,6 +25,7 @@ import dummy from '../../assets/bike.png';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
+import { debounce } from 'debounce';
 function Home(props) {
     const { navigation, userObj, activeTheme } = props;
     console.log(navigation)
@@ -64,7 +65,7 @@ function Home(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal type={1} {...props} brandList={state.brandData} />
+                <AddBrandModal type={1} {...props} onSave={()=>{getData()}} brandList={state.brandData} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -129,27 +130,35 @@ function Home(props) {
         sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
         return true;
     };
-    const getData = () => {
+    const getData = (keywords=false) => {
 
         postRequest('Api/Vendor/Pitstop/BrandsList', {
             "itemsPerPage": state.itemsPerPage,
             "pageNumber": 1,
             "isPagination": false,
-            "searchKeyWords": "",
+            "searchKeyWords":keywords!==false?keywords: "",
           },{}
         , props.dispatch, (res) => {
             console.log('Brand Request:', res)
-            setState(prevState => ({
-                ...prevState,
-                brandData: res.data.pitstopBrands.pitstopBrandsList
-            }))
+            if(res.data.statusCode === 200){
+                setState(prevState => ({
+                    ...prevState,
+                    brandData: res.data.pitstopBrands.pitstopBrandsList
+                }))
+            }else{
+                CustomToast.error("Not Found");
+                setState(prevState => ({
+                    ...prevState,
+                    brandData: []
+                }))
+            }
         }, (err) => {
             if (err) CustomToast.error("Something went wrong");
         }, '');
     }
-    const searchBrand = (val) => {
-
-    }
+    const searchBrand = debounce((val) => {
+        getData(val);
+    },900)
     useEffect(useCallback(() => {
         // const permissions = async () => await askForWholeAppPermissions();
         
@@ -206,7 +215,7 @@ function Home(props) {
 
 
             <HeaderApp
-                caption={props.user.firstName+' '+props.user.lastName}
+                caption={props.user?.vendorPitstopDetailsList?.companyName}
                 commonStyles={commonStyles}
                 state={state}
                 user={props.user}
@@ -243,7 +252,7 @@ function Home(props) {
                                             }}
                                         />
                                     </View>
-                                    <TouchableOpacity style={{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 }} onPress={() => navigation.navigate('Products',{key:'products',item:{item,data:state.brandData}})}>
+                                    <TouchableOpacity style={{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 }} onPress={() => {getData();navigation.navigate('Products',{key:'products',item:{item,data:state.brandData}})}}>
                                         <View style={{ flex: 0.9 }}>
                                             <Text style={{ marginTop: 0, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.brandName}</Text>
                                             <Text style={{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 }}>{item.brandDescription.toLocaleUpperCase()}</Text>

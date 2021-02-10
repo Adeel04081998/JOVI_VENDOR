@@ -1,6 +1,6 @@
 import { Picker, Text, View } from 'native-base';
 import colors from "../../styles/colors";
-import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Keyboard,Dimensions } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated from 'react-native-reanimated';
@@ -53,8 +53,16 @@ const AddBrandModal = (props) => {
         }))
     }
     const onSave = () => {
-        props.onSaveStatus({ productID: props.product.productID, active: state.selectedDropdown === 'Activated' ? true : false, description: state.description });
-        props.dispatch(closeModalAction());
+        postRequest('api/Vendor/Pitstop/PitstopItemList/AddOrUpdate',{
+            "productID": state.product.productID,
+            "itemIDs": state.item.map(item=>{return item.itemID})
+          },{},props.dispatch,(res)=>{
+              if(props.onSave)
+              {
+                props.onSave();
+              }
+              props.dispatch(closeModalAction());
+        },(err)=>{},'');
     }
     const renderSelectionList = (options, onChange, filter = false) => {
         // let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
@@ -97,6 +105,16 @@ const AddBrandModal = (props) => {
                 <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>{r.text}</Text>
             </TouchableOpacity>
         ));
+    }
+    const checkValidation = () =>{
+        let check = false;
+        if(type === 3 &&(state.brand === ''||state.product === '' ||state.item.length<1)){
+            check = true;
+        }else
+        if(state.brand === ''||state.product === ''){
+            check = true;
+        }
+        return check;
     }
     const getItemsAgainstProduct = (product) => {
         postRequest('Api/Vendor/Pitstop/GetItemsByProducts/List', {
@@ -158,7 +176,7 @@ const AddBrandModal = (props) => {
                 setState(prevState => ({
                     ...prevState,
                     itemsPerPage: prevState.itemsPerPage + 10,
-                    brandList: res.data.genericBrandListViewModels.brandData.map(item => { return { ...item, text: item.brandName, value: item.brandID } }),
+                    brandList: res.data.genericBrandListViewModels.brandData.sort((a,b)=>{if(a['brandName']<b['brandName']){return -1;}else if(a['brandName']>b['brandName']){return 1;}else{return 0; }}).map(item => { return { ...item, text: item.brandName, value: item.brandID } }),
                     paginationInfo: res.data.genericBrandListViewModels.paginationInfo
                 }))
             }, (err) => {
@@ -183,13 +201,12 @@ const AddBrandModal = (props) => {
         };
     }, []), []);
     return (
-        <View style={{ ...StyleSheet.absoluteFill }}>
-
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }}>
+        <View style={{ ...StyleSheet.absoluteFill}}>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }} keyboardVerticalOffset={-550}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                         <Text style={styles.catpion(props.activeTheme)}>Add Brand</Text>
-                        <ScrollView style={{ flex: 1, marginBottom: 30 }} keyboardShouldPersistTaps="always">
+                        <ScrollView style={{ flex:1, marginBottom: 30 }} keyboardShouldPersistTaps="always">
                             <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Brand Name
@@ -206,6 +223,8 @@ const AddBrandModal = (props) => {
                                     flexDirection: 'row'
                                 }}>
                                     <TouchableOpacity onPress={type!==1?()=>{}: () => onDropdownClick('brand')} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                    {/* <TextInput value={state.brand.text !== '' ? state.brand.text : ''} placeholder={'Choose Brand'}  onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'brand', brand:{...pre.brand,text:val} }))} /> */}
+
                                         <Text>{state.brand.text ? state.brand.text : 'Choose Brand'}</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -234,7 +253,7 @@ const AddBrandModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10
                                     }} > */}
-                                    {renderSelectionList(state.brandList, (e) => { setState(prevState => ({ ...prevState, brand: e,product:'',item:[],itemName:'' })); getProductAgainstBrand(e); })}
+                                    {renderSelectionList(state.brandList, (e) => {Keyboard.dismiss(); setState(prevState => ({ ...prevState, brand: e,product:'',item:[],itemName:'' })); getProductAgainstBrand(e); })}
 
                                     {/* </View> */}
                                 </ScrollView>
@@ -409,9 +428,9 @@ const AddBrandModal = (props) => {
                             </View>
                         </ScrollView>
                         <DefaultBtn
-                            title="Save and continue"
-                            disabled={false}
-                            backgroundColor={props.activeTheme.default}
+                            title="Save"
+                            disabled={checkValidation()?true:false}
+                            backgroundColor={checkValidation()?props.activeTheme.grey:props.activeTheme.default}
                             onPress={() => onSave()}
                         />
                     </View>

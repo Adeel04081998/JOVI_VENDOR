@@ -63,10 +63,12 @@ const RootStack = (props) => {
                 }
             } else {
                 // console.log("user token obj :", User.token)
-                getRequest(`/api/User/Details`,
+                getRequest(`/api/Vendor/Details`,
+                // getRequest(`/api/User/Details`,
                     { "Authorization": "Bearer " + User.token.authToken },
                     dispatch,
                     async res => {
+                        console.log('Res Details:',res);
                         setState({ ...state, loggedInUser: { ...res.data.userDetails, userID: User.token.id, tokenObj: User }, initRoute: 'Dashboard' });
                         dispatch(userAction({ ...props.user, ...res.data.userDetails, userID: User.token.id, tokenObj: User, appTutorialsEnabled, appearOnTop }));
                         sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);

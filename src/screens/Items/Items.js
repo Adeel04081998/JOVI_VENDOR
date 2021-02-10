@@ -10,6 +10,7 @@ import commonStyles from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
 import SharedFooter from '../../components/footer/SharedFooter';
 import dummy from '../../assets/bike.png';
+import blockSvg from '../../assets/svgIcons/common/block.svg';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
@@ -23,13 +24,13 @@ function Items(props) {
     const [state, setState] = useState({
         brandData: data.brandObj,
         productData: data.data,
-        selectedProduct: data.item?data.item:0,
+        selectedProduct: data.item ? data.item : 0,
         itemsData: []
     })
     const setChangedStatus = (obj) => {
         let tempArr = state.itemsData.map((item) => {
-            if (item.productID === obj.productID) {
-                return { ...item, active: obj.active };
+            if (item.itemID === obj.itemID) {
+                return { ...obj };
             } else {
                 return item;
             }
@@ -45,7 +46,7 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <DisableProductModal onSaveStatus={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} brandObj={state.brandData} productObj={state.selectedProduct} item={item} {...props} />
+                <DisableProductModal onSave={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} brandObj={state.brandData} productObj={state.selectedProduct} item={item} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -72,9 +73,15 @@ function Items(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-    const getData = (changeProduct =false) => {
+    const onItemSearch = (val) => {
+        setState(pre => ({
+            ...pre,
+            itemsData: val === '' ? pre.itemsDataTemp : pre.itemsDataTemp.filter(item => { return item.itemName.toLowerCase().includes(val.toLowerCase()) })
+        }))
+    }
+    const getData = (changeProduct = false) => {
         // postRequest('Api/Vendor/Pitstop/GetItemsByProducts/List', {
-        getRequest(`Api/Vendor/Pitstop/ItemsByProductId/${changeProduct!==false?changeProduct.productID:state.selectedProduct!==0?state.selectedProduct.productID:data.item.productID}`, {
+        getRequest(`Api/Vendor/Pitstop/ItemsByProductId/${changeProduct !== false ? changeProduct.productID : state.selectedProduct !== 0 ? state.selectedProduct.productID : data.item.productID}`, {
             // "pageNumber": 1,
             // "itemsPerPage": 2,
             // "isPagination": false,
@@ -87,6 +94,7 @@ function Items(props) {
                     setState(prevState => ({
                         ...prevState,
                         itemsData: res.data.productItems?.productItemsList,
+                        itemsDataTemp: res.data.productItems?.productItemsList
                     }));
                 }
             }, (err) => {
@@ -94,7 +102,7 @@ function Items(props) {
             }, '');
     }
     useEffect(useCallback(() => {
-        
+
         getData();
         return () => {
             // backHandler.remove();
@@ -144,6 +152,7 @@ function Items(props) {
                 commonStyles={commonStyles}
                 user={props.user}
                 state={state}
+                onChangeText={onItemSearch}
                 activeTheme={activeTheme}
             />
 
@@ -153,8 +162,8 @@ function Items(props) {
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Products') }}>Choose Product</Text>
                     <Text style={{ marginRight: 14 }}>Total 1042</Text>
                 </View>
-                <View style={{flex:1}}>
-                <ScrollView horizontal contentContainerStyle={{ height: 160,paddingLeft:10, flexDirection: 'row' }}>
+                <View style={{ flex: 1 }}>
+                    <ScrollView horizontal contentContainerStyle={{ height: 160, paddingLeft: 10, flexDirection: 'row' }}>
                         {
                             state.productData.map((item, i) => {
                                 return <View key={i} style={{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' }} >
@@ -184,16 +193,19 @@ function Items(props) {
                     </ScrollView>
                 </View>
                 <View style={{ flex: 3, marginHorizontal: 12, marginBottom: 35 }}>
-                    <ScrollView contentContainerStyle={{ marginTop: 20,paddingLeft:15, paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}>
-                        {state.itemsData.length<1?
-                        <View style={{flex:1,height:100,justifyContent:'center',alignItems:'center'}}>
-                            <Text>No Items Found</Text>
-                        </View>
-                        :
+                    <ScrollView contentContainerStyle={{ marginTop: 20, paddingLeft: 15, paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {state.itemsData.length < 1 ?
+                            <View style={{ flex: 1, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>No Items Found</Text>
+                            </View>
+                            :
                             state.itemsData.map((item, i) => {
                                 return <View key={i} style={{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
                                     <TouchableOpacity style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: "center" }} onPress={() => disableEnableProduct(item)}>
-                                        {item.active === false && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
+                                        {item.availabilityStatus === 'Out of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
+                                        {item.availabilityStatus === 'Discontinued' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901,justifyContent:'center',alignItems:'center' }}>
+                                            <SvgXml xml={blockSvg} height={'60%'} width={'60%'} />
+                                        </View>}
                                         <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                                             <ImageBackground
                                                 resizeMode="center"

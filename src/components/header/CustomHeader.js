@@ -120,14 +120,14 @@ export const HeaderApp = (props) => {
     >
         <View style={{ position: 'absolute', right: 20,top:27, backgroundColor: activeTheme.default, width: 43, borderRadius: 85, height: 45, borderWidth: 3, borderStyle: "solid", borderColor: "#F0F0F0", flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <TouchableOpacity style={{ width: 90, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => { }}>
-                <ImageBackground source={user&&user.picture?{uri:renderPicture(user.picture,user.tokenObj &&user.tokenObj.token.authToken)}:dummy} style={{flex:1,marginRight: 2, height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}} resizeMode="center"  >
+                <ImageBackground source={user&&user.picture?{uri:renderPicture(user.picture,user.tokenObj &&user.tokenObj.token.authToken)}:dummy} style={{ marginRight: 52, height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }} resizeMode='cover'  >
+                {/* <ImageBackground source={user&&user.picture?{uri:renderPicture(user.picture,user.tokenObj &&user.tokenObj.token.authToken)}:dummy} style={{flex:1,marginRight: 2, height: 32, width: 32, borderRadius: 16,backgroundColor:'red', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}} resizeMode='cover'  > */}
                     <Spinner isVisible={false} size={30} type="Circle" color={activeTheme.white} />
                 </ImageBackground>
             </TouchableOpacity>
         </View>
         <Text style={{ ...commonStyles.fontStyles(20, activeTheme.white, 4), flex: 1, alignSelf: 'flex-start', left: 20, top: 30 }}>{caption}</Text>
-        <View style={{ width: '100%', marginTop: 10, alignItems: 'center', flex: 1 }}>
-
+        <View style={{ width: '100%', marginTop: 10,zIndex:1000, alignItems: 'center', flex: 1 }}>
             <TextInput
                 style={{
                     paddingHorizontal: 12,
@@ -136,7 +136,7 @@ export const HeaderApp = (props) => {
                     borderRadius: 5,
                     marginTop: 20,
                     // left:20,
-                    zIndex: 999,
+                    zIndex: 1500,
                     borderColor: state.focusedField === 'note' ? props.activeTheme.default : 'rgba(0,0,0,0.1)',
                     backgroundColor: 'white',
                     height: 40,
