@@ -7,7 +7,7 @@ import { navigateWithResetScreen, sharedTotalCartItems } from '../../utils/share
 import { BOTTOM_TABS } from '../../config/config';
 import { setFooterTabsAction } from '../../redux/actions/sharedReduxActions';
 
-export default ({ activeTheme, activeTab, drawerProps, mainDrawerComponentProps, onPress }) => {
+export default ({ activeTheme, activeTab,hideOptions, drawerProps, mainDrawerComponentProps, onPress }) => {
     // console.log("mainDrawerComponentProps :", mainDrawerComponentProps);
     // const bottomNavigationHandler = pressedTab => navigateWithResetScreen(null, [{ name: pressedTab.route.container, params: { screen: pressedTab.route.screen } }]);
     const bottomNavigationHandler = (pressedTab, index) => {
@@ -23,7 +23,7 @@ export default ({ activeTheme, activeTab, drawerProps, mainDrawerComponentProps,
             <View>
                 <View style={styles.footerContainer()}>
                     {
-                        (BOTTOM_TABS || []).map((t, j) => (
+                        hideOptions&&hideOptions===true?<TouchableOpacity style={{ width: '25%',height:45, alignItems: 'center' }}></TouchableOpacity>:(BOTTOM_TABS || []).map((t, j) => (
                             <TouchableOpacity key={j} style={{ width: '25%', alignItems: 'center' }} onPress={() => bottomNavigationHandler(t, j)}>
                                 <SvgXml xml={t.icon(activeTab === j ? "#7359BE" : "#c1c0c6")} height={25} width={25} />
                                 <Text style={{ ...commonStyles.fontStyles(14, activeTab === j ? activeTheme.default : "#c1c0c6", activeTab === j ? 4 : 1), paddingTop: 10 }}>{t.title}</Text>

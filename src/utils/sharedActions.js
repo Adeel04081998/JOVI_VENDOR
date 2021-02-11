@@ -813,6 +813,13 @@ export const renderPicture = (picturePath, token) => {
     return `${BASE_URL}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${token}`;
 
 };
+export const renderPictureResizeable = (picturePath,size, token) => {
+
+    // console.log("picturePath :", picturePath);
+    // 'Temp live/2/2020/8/21/jovipng_113.png
+    return `${BASE_URL}/api/Common/S3File/${size}/${encodeURIComponent(picturePath)}?access_token=${token}`;
+
+};
 export const sharedlogoutUser = async (navigation, postRequest, dispatch, userObj, isAutomatedLogout) => {
     userObj?.tokenObj?.refreshToken &&
         postRequest(

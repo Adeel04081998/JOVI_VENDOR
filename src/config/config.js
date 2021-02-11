@@ -125,7 +125,7 @@ export const BOTTOM_TABS = [
     // },
     {
         title: "Orders",
-        description: "Medicine",
+        description: "Orders",
         pitstopOrCheckOutItemType: 3,
         icon: color => commonSvgIcons.footerCart(color),
         route: {

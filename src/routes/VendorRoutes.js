@@ -6,6 +6,7 @@ import Home from '../screens/home/Home';
 import Products from '../screens/Products/Products';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Items from '../screens/Items/Items';
+import Orders from '../screens/order/Orders';
 
 
 // import jwt_decode from 'jwt-decode';
@@ -60,6 +61,7 @@ const VendorRoutes = (props) => {
                 <Stack.Screen name="homee" drawerProps={drawerProps} children={navigatorPros => <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
                 <Stack.Screen name="Products"   drawerProps={drawerProps} children={navigatorPros => <Products {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
                 <Stack.Screen name="Items"   drawerProps={drawerProps} children={navigatorPros => <Items {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+                <Stack.Screen name="Orders"   drawerProps={drawerProps} children={navigatorPros => <Orders {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
                 <Stack.Screen name="Exceptions"  drawerProps={drawerProps} children={navigatorPros => <View><Text>error</Text></View>} />
             </Stack.Navigator>} />
         </Drawer.Navigator>

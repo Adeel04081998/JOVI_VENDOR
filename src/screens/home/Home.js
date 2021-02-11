@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
+import { Text, ImageBackground,StyleSheet, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
-import { hybridLocationPermission, navigateWithResetScreen, renderPicture, sharedCommasAmountConveter, sharedConfirmationAlert, sharedGetUserCartHandler, sharedlogoutUser } from "../../utils/sharedActions";
+import { hybridLocationPermission, navigateWithResetScreen, renderPicture, renderPictureResizeable, sharedCommasAmountConveter, sharedConfirmationAlert, sharedGetUserCartHandler, sharedlogoutUser } from "../../utils/sharedActions";
 import AsyncStorage from '@react-native-community/async-storage';
 import { calculateTimeDifference } from "../../utils/sharedActions";
 import { getRequest, postRequest } from '../../services/api';
@@ -77,55 +77,6 @@ function Home(props) {
         props.dispatch(openModalAction(ModalComponent));
     }
 
-    let valueFromCustomerOrderScreen = navigation.dangerouslyGetState()?.routes?.[0]?.state?.routes[0]?.params?.valueToHomeScreen;
-    valueFromCustomerOrderScreen = (typeof (valueFromCustomerOrderScreen) === "number") ? valueFromCustomerOrderScreen : null;
-
-
-    useFocusEffect(
-        useCallback(() => {
-            const handleFocusOnMenu = async () => {
-                const finalDestination = await AsyncStorage.getItem("customerOrder_finalDestination");
-                getRequest("/api/Dashboard/GetOpenOrderDetails/List",
-                    {},
-                    props.dispatch,
-                    res => {
-                        const handleCase = async () => {
-                            let tempArr = res.data.getOpenOrderDetails.openOrderList.length > 3 ?
-                                res.data.getOpenOrderDetails.openOrderList.slice(res.data.getOpenOrderDetails.openOrderList.length - 3, res.data.getOpenOrderDetails.openOrderList.length)
-                                :
-                                res.data.getOpenOrderDetails.openOrderList;
-
-                            let openOrderDetails = {
-                                noOfOrders: tempArr.length,
-                                openOrderList: tempArr
-                            };
-
-                            await AsyncStorage.setItem("home_tasksData", JSON.stringify(openOrderDetails));
-
-                            setState(prevState => ({
-                                ...prevState,
-                                openOrderDetails: openOrderDetails,
-                                finalDestObj: finalDestination ? JSON.parse(finalDestination)?.[0] : null
-                            }));
-                        };
-                        handleCase();
-                    },
-                    err => {
-                        if (err) CustomToast.error("Something went wrong");
-                        setState(prevState => ({
-                            ...prevState,
-                            finalDestObj: finalDestination ? JSON.parse(finalDestination)?.[0] : null
-                        }));
-                    },
-                    ""
-                );
-            };
-            // sharedGetNotificationsHandler(postRequest, 1, 20, true, props.dispatch);
-            handleFocusOnMenu();
-        }, []),
-        [valueFromCustomerOrderScreen]
-    );
-
 
     const handleBackButtonPressed = bool => {
         sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
@@ -184,13 +135,17 @@ function Home(props) {
     }, []), []);
 
     const showHideModal = (bool, modalType) => setState(prevState => ({ ...prevState, isSmModalOpen: bool, modalType }));
-
+    const onBrandPress = (item) => {getData();navigation.navigate('Products',{key:'products',item:{item}})}
     const onFooterItemPressed = async (pressedTab, index) => {
         if(pressedTab.title==='Add Brand'){
             addBrandModal();
-        }else{
+        }else if(pressedTab.title === 'Orders'){
+            navigation.navigate("Orders",{});
+
+        }
+         else{
             // navigateWithResetScreen(null, [{ name: 'Products', params: { screen: 'dashboard' } }]);
-            navigation.navigate("Products",{});
+            // navigation.navigate("Products",{});
         }
         // if (!pressedTab.pitstopOrCheckOutItemType) {
         //     props.dispatch(setFooterTabsAction({ pressedTab: { ...pressedTab, index, from: "home" } }));
@@ -234,37 +189,25 @@ function Home(props) {
                 <ScrollView style={{ flex: 1 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
-                    <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}>
+                    {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
                         {state.brandData.length>0?
-                            [...state.brandData,...state.brandData,...state.brandData,...state.brandData].map((item, i) => {
-                                return <View key={i} style={{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }}>
-                                    <View style={{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 }}>
+                            [...state.brandData,...state.brandData,...state.brandData,...state.brandData,...state.brandData,...state.brandData].map((item, i) => {
+                                return <View key={i} style={{...stylesHome.homeTab}}>
+                                    <View style={{...stylesHome.homeTabView}}>
                                         <ImageBackground
-                                            resizeMode="center"
-                                            source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{
-                                                flex: 1,
-                                                top: 1,
-                                                // height: 'auto'
-                                                marginLeft: 10,
-                                                width: '90%',
-                                                // "backgroundColor": 'transparent',
-                                                // "opacity": 0.6,
-                                                "height": "90%",
-                                                // "width": '100%',
-                                            }}
+                                            resizeMode='stretch'
+                                            source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                            // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                            style={{...stylesHome.homeTabImage}}
                                         />
                                     </View>
-                                    <TouchableOpacity style={{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 }} onPress={() => {getData();navigation.navigate('Products',{key:'products',item:{item,data:state.brandData}})}}>
+                                    <TouchableOpacity style={stylesHome.homeTabText} onPress={()=>onBrandPress(item)}>
                                         <View style={{ flex: 0.9 }}>
-                                            <Text style={{ marginTop: 0, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.brandName}</Text>
-                                            <Text style={{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 }}>{item.brandDescription.toLocaleUpperCase()}</Text>
-                                            {/* <TouchableOpacity style={{ alignSelf: 'flex-start', borderRadius: 25, padding: 9,marginLeft:30, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default, left: 20, top: 5 }}>
-                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 4) }}>Edit</Text>
-                             </TouchableOpacity> */}
+                                            <Text style={{...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300')}}>{item.brandName}</Text>
+                                            <Text style={{...stylesHome.homeTabDesc(props)}}>{item.brandDescription.toLocaleUpperCase()}</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    <View style={{ flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
+                                    <View style={{...stylesHome.homeTabCounter(props)}}>
                                         <Text style={{ color: 'white' }}>{item.noOfProducts}</Text>
                                     </View>
                                 </View>
@@ -274,36 +217,6 @@ function Home(props) {
                                 <Text>No Brands Found</Text>
                             </View>
                         }
-                        {/* {
-                            [{ title: 'Pearl', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Lipton', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Lux', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Dettol', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Life Bouy', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }, { title: 'Dell', desc: 'A brand is a name, term, design, symbol or any other feature that identifies one seller\'s good or service', image: '' }].map((item, i) => {
-                                return <View key={i} style={{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff',borderColor:'#929293',borderWidth:0.5,borderRadius:15, flexDirection: 'row', marginVertical: 5 }}>
-                                   <View style={{ flex: 0.38, overflow: 'hidden', borderRadius: 10 }}>
-                                        <ImageBackground
-                                            resizeMode="contain"
-                                            source={dummy}
-                                            style={{
-                                                flex: 1,
-                                                top: 1
-                                            }}
-                                        />
-                                    </View>
-                                    <TouchableOpacity style={{flex:0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 }} onPress={() => addBrandModal()}>
-                                        <View style={{ flex: 0.9 }}>
-                                            <Text style={{ marginTop:0,...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300')}}>{item.title}</Text>
-                                            <Text style={{  maxWidth:'90%',...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 }}>{item.desc.toLocaleUpperCase()}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                <View style={{flex:0.1,width:5,height:30,margin:3,justifyContent:'center',alignItems:'center',borderColor:activeTheme.background,borderWidth:1,borderRadius:90,backgroundColor:activeTheme.background}}>
-                                    <Text style={{color:'white'}}>{i}</Text>
-                                </View>
-                                    
-
-                                </View>
-                            })
-                        } */}
-
-
-                    </View>
                 </ScrollView>
             </View>
             <SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
@@ -316,80 +229,21 @@ const mapStateToProps = (store) => {
         userObj: store.userReducer
     }
 };
+const stylesHome = StyleSheet.create({
+    homeTab:{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 },
+    homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
+    homeTabImage:{
+        flex: 1,
+        top: 1,
+        marginLeft: 10,
+        width: '90%',
+        "height": "90%",
+    },
+    homeTabText:{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
+    homeTabBrandName:{ marginTop: 0},
+    homeTabDesc:(props)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2} },
+    homeTabCounter:(props)=>{return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
 
+});
 export default connect(mapStateToProps)(Home);
 
-
-
-                // {/* Carousal Start */}
-                // <View style={[menuStyles.carouselView]}>
-                //     <CustomCarousel
-                //         data={data}
-                //         _onSnapToItemHandler={_onSnapToItemHandler}
-                //         carouselRef={carouselRef}
-                //         _renderItem={({ item, index }) => {
-                //             return <ReacImage resizeMode="cover" source={item.slider} style={{
-                //                 "backgroundColor": 'transparent',
-                //                 "opacity": 0.6,
-                //                 "height": 170,
-                //                 "width": '100%',
-                //             }} key={index} />
-                //         }}
-                //         winWidth={370}
-                //     />
-                //     <View style={{ height: '100%', width: '100%', justifyContent: 'flex-end', alignItems: 'center', flexDirection: 'column', position: 'absolute' }}>
-                //         <View style={{ height: 20, width: 100, borderWidth: 0.1, borderColor: '#FFFFFF', borderRadius: 20, backgroundColor: '#FFFFFF', opacity: 0.6, marginBottom: 3 }}>
-                //             <CustomPagination
-                //                 dotsLength={data.length}
-                //                 activeSlide={activeSlide}
-                //                 paginationRef={paginationRef}
-                //                 carouselRef={carouselRef}
-
-                //             />
-                //         </View>
-                //     </View>
-                // </View>
-                // {/* Carousal End */}
-                // <View style={menuStyles.contentView} onTouchEnd={() => {
-                //     if (state.isSmModalOpen) showHideModal(false, 1);
-                //     else fillPredefinedPlacesAndProceedToOrderBooking(false);
-                // }}>
-                //     <View style={{ flex: 1, flexDirection: 'row' }}>
-                //         <View style={{ position: 'absolute', top: 30, marginHorizontal: 10 }}>
-                //             <Text style={menuStyles.contentText}>Buy anything anywhere</Text>
-                //             <TouchableOpacity hitSlop={{ top: 50 }} style={{
-                //                 top: 10, height: 50, width: 100, backgroundColor: '#FFFFFF', borderRadius: 5, borderWidth: 0.2, borderColor: '#7359BE', flexDirection: 'row', justifyContent: "space-around", alignItems: 'center', shadowColor: "#000",
-                //                 elevation: 3,
-                //                 shadowOffset: {
-                //                     width: 0,
-                //                     height: 2,
-                //                 },
-                //                 shadowOpacity: 0.25,
-                //                 shadowRadius: 3.84,
-                //             }}>
-                //                 <Text style={menuStyles.btnText}> Jovi</Text>
-                //                 <SvgXml xml={svgIcons.arrowRight} height={25} width={25} />
-                //             </TouchableOpacity>
-                //         </View>
-                //         <View style={{
-                //             flex: 1
-                //         }}>
-                //             <ReacImage source={require('../../assets/Menu/maskGroup17.png')} resizeMode="cover" style={{ backgroundColor: 'transparent', width: DEVICE_SCREEN_WIDTH * 0.9, height: DEVICE_SCREEN_WIDTH * 0.5 * 1.76 }} />
-                //         </View>
-                //     </View>
-                // </View>
-                // {/* Footer start */}
-                // <View style={[menuStyles.footerWrapper]}>
-                //     {
-                //         (BOTTOM_TABS || []).map((rec, i) => i <= 2 ? (
-                //             <TouchableOpacity onPress={() => onFooterItemPressed(rec, i)} style={{ ...menuStyles.footerTabs, marginLeft: 0, position: 'relative', bottom: 50, justifyContent: "space-around", alignItems: 'center', flexDirection: 'column' }} key={i}>
-                //                 <SvgXml xml={footerTabItems[i].img} style={{}} />
-                //                 <Text style={menuStyles.thinText}>{rec.description}</Text>
-                //                 <Text style={menuStyles.mainText}>{i === 0 ? 2 : i === 2 ? 14 : 0 + ' stores'}</Text>
-                //             </TouchableOpacity>
-
-                //         ) : null)
-                //     }
-
-                // </View>
-                // {/* Footer end */}
