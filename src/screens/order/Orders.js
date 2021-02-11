@@ -5,7 +5,7 @@ import CustomToast from '../../components/toast/CustomToast';
 import { connect } from 'react-redux';
 import { HeaderApp } from '../../components/header/CustomHeader';
 import { debounce } from 'debounce';
-import { postRequest } from '../../services/api';
+import { getRequest, postRequest } from '../../services/api';
 import SharedFooter from '../../components/footer/SharedFooter';
 function Orders(props) {
     const { navigation, userObj, activeTheme } = props;
@@ -15,20 +15,14 @@ function Orders(props) {
         paginationInfo: {}
     });
     const getData = (keywords = false) => {
-        postRequest('api/Vendor/OrdersSummary', {
-            "itemsPerPage": 50,
-            // "itemsPerPage": state.itemsPerPage,
-            "pageNumber": 1,
-            "isPagination": true,
-            "searchKeyWords": keywords !== false ? keywords : "",
-        }, {}
+        getRequest('api/Vendor/OrdersSummary', {}
             , props.dispatch, (res) => {
                 console.log('Order Request:', res)
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        orderList: res.data.pitstopBrands.pitstopBrandsList,
-                        paginationInfo: res.data.pitstopBrands.paginations
+                        orderList: res.data.vendorOrdersViewModel.ordersDataList,
+                        paginationInfo: res.data?.pitstopBrands?.paginations
                     }))
                 } else {
                     CustomToast.error("Not Found");
@@ -73,16 +67,20 @@ function Orders(props) {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
                     {
-                        [{ orderNo: '12312', orderItems: 5, },{ orderNo: '12312', orderItems: 5, },{ orderNo: '12312', orderItems: 5, },{ orderNo: '12312', orderItems: 5, },{ orderNo: '12312', orderItems: 5, },{ orderNo: '12312', orderItems: 5, },{ orderNo: '12312', orderItems: 5, },{ orderNo: '12312', orderItems: 5, },{ orderNo: '12312', orderItems: 5, }].map((item, i) => {
+                        // [{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', }].map((item, i) => {
+                        state.orderList.length<1?
+                        <Text>No Order Found</Text>
+                        :
+                        state.orderList.map((item, i) => {
                             return <View key={i} style={{ ...stylesOrder.productTab }}>
                                 <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => { }}>
                                     {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
                                     <View style={{ ...stylesOrder.productImageContainer, borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 150, margin: 10, width: '70%', height: '40%' }}>
-                                        <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.default, 5) }}>{item.orderItems}</Text>
+                                        <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.default, 10) }}>{item.noOfItems}</Text>
                                     </View>
                                     <View style={{ ...stylesOrder.productName }}>
                                         <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Order No: </Text><Text>{item.orderNo}</Text>
-                                        <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.orderNo}</Text>
+                                        <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.totalPrice}</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
