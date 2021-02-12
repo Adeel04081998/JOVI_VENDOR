@@ -112,7 +112,8 @@ function OrderDetails(props) {
     return (
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
             <HeaderApp
-                caption={props.user?.vendorPitstopDetailsList?.companyName}
+                caption={'Order No: '+state.orderObj.orderNo}
+                // caption={props.user?.vendorPitstopDetailsList?.companyName}
                 commonStyles={commonStyles}
                 state={state}
                 user={props.user}
