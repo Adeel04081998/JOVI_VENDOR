@@ -19,26 +19,37 @@ import { openModalAction } from '../../redux/actions/modal';
 function OrderDetails(props) {
     const { navigation, userObj, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'OrderDetails')[0]?.params?.item;
-    console.log(data)
     const [state, setState] = useState({
         "loader": false,
         orderList: [],
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
     });
     const changeStatusItem = (item) => {
-        setState(pre => ({
+        let arr = state.orderList.map(it => {
+            if (it.jobItemID === item.jobItemID) {
+                return { ...it, jobItemStatus: it.jobItemStatus === 1 ? 2 : 1, jobItemStatusStr: it.jobItemStatusStr === 'Available' ? 'Out Of Stock' : 'Available' };
+            } else {
+                return it;
+            }
+        });
+        setState(pre=>({
             ...pre,
-            orderList: pre.orderList.map(it => {
-                if (it.jobItemID === item.jobItemID) {
-                    return { ...it, jobItemStatus: it.jobItemStatus === 1 ? 2 : 1, jobItemStatusStr: it.jobItemStatusStr === 'Available' ? 'Out of Stock' : 'Available' };
-                } else {
-                    return it;
-                }
-            })
+            orderList:arr
         }))
+        // setState(pre => ({
+        //     ...pre,
+        //     orderList: pre.orderList.map(it => {
+        //         if (it.jobItemID === item.jobItemID) {
+        //             return { ...it, jobItemStatus: it.jobItemStatus === 1 ? 2 : 1, jobItemStatusStr: it.jobItemStatusStr === 'Available' ? 'Out Of Stock' : 'Available' };
+        //         } else {
+        //             return it;
+        //         }
+        //     })
+        // }));
+        confirmOrder(arr);
     }
-    const confirmOrder = () => {
-        let payloadArr = state.orderList.map(item => {
+    const confirmOrder = (latestArr = false) => {
+        let payloadArr =(latestArr!==false?latestArr:state.orderList).map(item => {
             return {
                 "jobItemID": item.jobItemID,
                 "name": item.jobItemName,
@@ -145,8 +156,8 @@ function OrderDetails(props) {
                             }}
                         >
                             <View style={{ ...stylesOrder.homeTab, margin: 5 }}>
-                                {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out of Stock</Text>
+                                {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
                                 </View>}
                                 <View style={{ ...stylesOrder.homeTabView }}>
                                     <ImageBackground
@@ -252,7 +263,7 @@ function OrderDetails(props) {
 
                 </View>
                 <View style={{ width: '100%', height: 60, flexDirection: 'row' }}>
-                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => { }}>
+                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => {navigation?.navigate('ContactUsPage')}}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Report</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default }} onPress={() => confirmOrder()}>
