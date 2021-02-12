@@ -94,26 +94,26 @@ function DrawerContent(props) {
     // console.log('DEVICE_SCREEN_HEIGHT :', DEVICE_SCREEN_HEIGHT)
 
     const setRiderStatusAsOffline = (next) => {
-        props?.U?.userID &&
-            postRequest(
-                'api/User/Rider/ChangeOnlineStatus',
-                {
-                    "riderID": props.U.userID,
-                    "activate": false
-                },
-                null,
-                props.dispatch,
-                (response) => {
-                    setFloatingAmountOnServer(0, postRequest, props.dispatch, () => {
-                        props.dispatch(userAction({ ...props.U, isActive: false, floatingAmount: 0 }));
-                        next && next();
-                    });
-                },
-                (error) => {
-                    console.log(((error?.response) ? error.response : {}), error);
-                },
-                true
-            );
+        // props?.U?.userID &&
+            // postRequest(
+            //     'api/User/Rider/ChangeOnlineStatus',
+            //     {
+            //         "riderID": props.U.userID,
+            //         "activate": false
+            //     },
+            //     null,
+            //     props.dispatch,
+            //     (response) => {
+            //         setFloatingAmountOnServer(0, postRequest, props.dispatch, () => {
+            //             props.dispatch(userAction({ ...props.U, isActive: false, floatingAmount: 0 }));
+            //             next && next();
+            //         });
+            //     },
+            //     (error) => {
+            //         console.log(((error?.response) ? error.response : {}), error);
+            //     },
+            //     true
+            // );
     };
 
 

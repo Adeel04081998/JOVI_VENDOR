@@ -68,10 +68,10 @@ export default function SignInScreen(props) {
                 dispatch(userAction({ ...props.user,userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }))
                 getRequest(`/api/Vendor/Details`,
                 // getRequest(`/api/User/Details`,
-                    { "Authorization": "Bearer " + User.token.authToken },
+                    { "Authorization": "Bearer " + res.data.loginResult.token.authToken },
                     dispatch,
-                    async res => {
-                        dispatch(userAction({ ...props.user, ...res.data.userDetails, userID: User.token.id, tokenObj: User, appTutorialsEnabled, appearOnTop }));
+                    async ress => {
+                        dispatch(userAction({ ...props.user, ...ress.data.userDetails, userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }));
                         sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
                     },
                     err => {
