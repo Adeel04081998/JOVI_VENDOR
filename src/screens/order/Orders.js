@@ -63,33 +63,35 @@ function Orders(props) {
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
                     <Text style={{ marginRight: 14 }}>Total 12{state.paginationInfo?.totalItems}</Text>
                 </View>
-                <ScrollView contentContainerStyle={{...stylesOrder.productListContainer,marginLeft:10,marginRight:10}} onTouchEnd={() => {
+                <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
                     {
                         // [{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', }].map((item, i) => {
-                        state.orderList.length<1?
-                        <Text>No Order Found</Text>
-                        :
-                        state.orderList.map((item, i) => {
-                            return <View key={i} style={{ ...stylesOrder.productTab }}>
-                                <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => { }}>
-                                    {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
-                                    <View style={{ ...stylesOrder.productImageContainer, borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 150, margin: 10, width: '70%', height: '40%' }}>
-                                        <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.default, 10) }}>{item.noOfItems}</Text>
-                                    </View>
-                                    <View style={{ ...stylesOrder.productName }}>
-                                        <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Order No: </Text><Text>{item.orderNo}</Text>
-                                        <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.totalPrice}</Text>
-                                    </View>
-                                </TouchableOpacity>
+                        state.orderList.length < 1 ?
+                            <View style={{ flex: 1, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>No Orders Found</Text>
                             </View>
-                        })
+                            :
+                            state.orderList.map((item, i) => {
+                                return <View key={i} style={{ ...stylesOrder.productTab }}>
+                                    <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.navigate('OrderDetails',{key:'orderDetails',item:{item}})}>
+                                        {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
+                                        <View style={{ ...stylesOrder.productImageContainer, borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 150, margin: 10, width: '70%', height: '40%' }}>
+                                            <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.default, 10) }}>{item.noOfItems}</Text>
+                                        </View>
+                                        <View style={{ ...stylesOrder.productName }}>
+                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Order No: </Text><Text>{item.orderNo}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.totalPrice}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            })
                     }
-                    
+
                 </ScrollView>
             </View>
-            <SharedFooter activeTheme={activeTheme} hideOptions={true} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={()=>{}} />
+            <SharedFooter activeTheme={activeTheme} hideOptions={true} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={() => { }} />
         </View>
     )
 }

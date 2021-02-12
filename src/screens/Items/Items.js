@@ -12,7 +12,7 @@ import SharedFooter from '../../components/footer/SharedFooter';
 import dummy from '../../assets/bike.png';
 import blockSvg from '../../assets/svgIcons/common/block.svg';
 import plateformSpecific from '../../utils/plateformSpecific';
-import { openModalAction } from '../../redux/actions/modal';
+import { closeModalAction, openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
 import { CheckBox } from 'native-base';
 import DisableProductModal from '../../components/modals/DisableProductModal';
@@ -46,7 +46,7 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <DisableProductModal onSave={(obj) => setChangedStatus(obj)} dispatch={props.dispatch} brandObj={state.brandData} productObj={state.selectedProduct} item={item} {...props} />
+                <DisableProductModal onSave={()=>{getData();props.dispatch(closeModalAction())}} dispatch={props.dispatch} brandObj={state.brandData} productObj={state.selectedProduct} item={item} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -120,27 +120,10 @@ function Items(props) {
         if (pressedTab.title === 'Add Brand') {
             addBrandModal();
             // navigateWithResetScreen(null,[{name:'homee', params: {}}]);
-        }
-        // if (!pressedTab.pitstopOrCheckOutItemType) {
-        //     props.dispatch(setFooterTabsAction({ pressedTab: { ...pressedTab, index, from: "home" } }));
-        //     navigateWithResetScreen(null, [{ name: 'customer_cart_home', params: { screen: 'customer_cart' } }]);
-        // } else {
-        //     const confirmFinalDestCallback = (origin) => {
-        //         props.dispatch(setFooterTabsAction({ pressedTab: { ...pressedTab, index } }));
-        //         navigateWithResetScreen(null, [{ name: 'super_market_home', params: { screen: 'dashboard' } }]);
-        //     };
-        //     const cancelFinalDestCallback = (origin) => {
-        //         navigateWithResetScreen(null, [{ name: 'home', params: {} }]);
-        //     };
+        }else if(pressedTab.title === 'Orders'){
+            navigation.navigate("Orders",{});
 
-        //     const finalDestination = await AsyncStorage.getItem("customerOrder_finalDestination");
-        //     if (finalDestination) {
-        //         confirmFinalDestCallback(pressedTab.title);
-        //     }
-        //     else {
-        //         navigation.navigate("customer_order", { fetchPreviousOrder: false, openOrderID: null, selectDestination: true, fromHome: true, homeFooterHandler: { name: pressedTab.title, confirmFinalDestCallback, cancelFinalDestCallback } });
-        //     }
-        // }
+        }
     };
 
     return (
@@ -202,7 +185,7 @@ function Items(props) {
                             state.itemsData.map((item, i) => {
                                 return <View key={i} style={{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
                                     <TouchableOpacity style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: "center" }} onPress={() => disableEnableProduct(item)}>
-                                        {item.availabilityStatus === 'Out of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
+                                        {item.availabilityStatus === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
                                         {item.availabilityStatus === 'Discontinued' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901,justifyContent:'center',alignItems:'center' }}>
                                             <SvgXml xml={blockSvg} height={'60%'} width={'60%'} />
                                         </View>}

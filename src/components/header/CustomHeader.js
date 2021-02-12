@@ -111,7 +111,7 @@ export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinati
     )
 }
 export const HeaderApp = (props) => {
-    const { state, caption, commonStyles, activeTheme,onChangeText,user } = props;
+    const { state, caption,noSearch, commonStyles, activeTheme,onChangeText,user } = props;
     return <View
         style={{ height: 95,paddingTop:10, backgroundColor: activeTheme.background, justifyContent: 'space-between', alignItems: 'center' }}
         onTouchEnd={() => {
@@ -127,7 +127,7 @@ export const HeaderApp = (props) => {
             </TouchableOpacity>
         </View>
         <Text style={{ ...commonStyles.fontStyles(20, activeTheme.white, 4), flex: 1, alignSelf: 'flex-start', left: 20, top: 30 }}>{caption}</Text>
-        <View style={{ width: '100%', marginTop: 10,zIndex:1000, alignItems: 'center', flex: 1 }}>
+        {noSearch&&noSearch===true?<></>:<View style={{ width: '100%', marginTop: 10,zIndex:1000, alignItems: 'center', flex: 1 }}>
             <TextInput
                 style={{
                     paddingHorizontal: 12,
@@ -147,7 +147,7 @@ export const HeaderApp = (props) => {
                 placeholder="Search"
                 onChangeText={onChangeText?(val)=>onChangeText(val):()=>{}}
             />
-        </View>
+        </View>}
         {/* <View style={{ alignItems: 'center', justifyContent: 'center', right: 10, flex: 0.8 }}>
         <Text style={commonStyles.fontStyles(12, props.activeTheme.white, 4)}>YOUR BALANCE</Text>
         <Text style={commonStyles.fontStyles(12, props.activeTheme.white, 4)}>RS {sharedCommasAmountConveter(userObj.balance)}</Text>

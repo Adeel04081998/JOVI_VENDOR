@@ -66,6 +66,23 @@ export default function SignInScreen(props) {
                 // debugger;
                 // Keyboard.dismiss();
                 dispatch(userAction({ ...props.user,userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }))
+                getRequest(`/api/Vendor/Details`,
+                // getRequest(`/api/User/Details`,
+                    { "Authorization": "Bearer " + User.token.authToken },
+                    dispatch,
+                    async res => {
+                        dispatch(userAction({ ...props.user, ...res.data.userDetails, userID: User.token.id, tokenObj: User, appTutorialsEnabled, appearOnTop }));
+                        sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
+                    },
+                    err => {
+                        console.log("Problem is here--- :", JSON.stringify(err))
+                        if (err) CustomToast.error("Something went wrong!")
+
+                        // Commented line were creating an ambigous behaviour when logged in user open app after a while 
+                        // if (err) setState({ ...state, loggedInUser: null, initRoute: "Login" });
+                    },
+                    '',
+                );
                 // getRequest(`/api/User/Details`,
                 // { "Authorization": "Bearer " + res.data.loginResult.token.authToken },
                 // dispatch,

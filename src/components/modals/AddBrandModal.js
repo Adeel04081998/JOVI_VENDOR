@@ -15,7 +15,7 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
 import { postRequest } from '../../services/api';
 const AddBrandModal = (props) => {
-    const { brandList,type,productObj,brandObj } = props;
+    const { brandList,type,productObj,itemReplace,brandObj } = props;
     console.log('OBJ:',brandObj)
     const [state, setState] = useState({
         showDropdown: '',
@@ -322,7 +322,7 @@ const AddBrandModal = (props) => {
                                 }}>
                                     <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                         {/* <Text>{state.itemName !=='' ? state.itemName : 'Choose Items'}</Text> */}
-                                        <TextInput value={state.itemName !== '' ? state.itemName : ''} placeholder={'Choose Item'} editable={state.product!==''} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'items', itemName: val }))} />
+                                        <TextInput value={state.itemName !== '' ? state.itemName : ''} placeholder={'Choose Item'} editable={itemReplace?state.product!==''&&state.item.length<1:state.product!==''}  onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'items', itemName: val }))} />
                                     </TouchableOpacity>
                                 </View>
                                 {state.showDropdown === 'items' ? <ScrollView nestedScrollEnabled style={{
@@ -346,7 +346,7 @@ const AddBrandModal = (props) => {
                                     null
                                 }
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Add Items
+                                    Add Item(s)
                                 </Text>
                                 <ScrollView nestedScrollEnabled style={{ width: '100%', flexDirection: 'row', flexWrap: 'wrap', height: 180, padding: 5, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
                                     {

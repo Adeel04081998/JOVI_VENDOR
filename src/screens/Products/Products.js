@@ -102,6 +102,10 @@ function Products(props) {
             addBrandModal();
             // navigateWithResetScreen(null,[{name:'homee', params: {}}]);
         }
+        else if(pressedTab.title === 'Orders'){
+            navigation.navigate("Orders",{});
+
+        }
     };
 
     return (
