@@ -199,7 +199,7 @@ const styleProduct = StyleSheet.create({
         "height": "90%",
     },
     productListContainer:{ paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' },
-    productTab:{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
+    productTab:{ height: 200, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
     productImageContainer:{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' },
     productImage:{
         width: '90%',
@@ -207,7 +207,7 @@ const styleProduct = StyleSheet.create({
         zIndex: 900,
         "height": "90%",
     },
-    productName:{ flex: 1, justifyContent: 'center', alignItems: 'center' },
+    productName:{ flex: 2,maxWidth:'100%', justifyContent: 'center', alignItems: 'center' },
     counter:(props) =>{return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
 
 })
