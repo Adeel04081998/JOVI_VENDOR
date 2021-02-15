@@ -187,12 +187,12 @@ function Home(props) {
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={()=>{sharedlogoutUser(navigation,postRequest,props.dispatch,props.user,false)}}>Brands</Text>
                     <Text style={{ marginRight: 14 }}>Total {state.paginationInfo?.totalItems}</Text>
                 </View>
-                <ScrollView style={{ flex: 1 }} onTouchEnd={() => {
+                <ScrollView style={{ flex: 1,marginHorizontal:8 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
                         {state.brandData.length>0?
-                            [...state.brandData,...state.brandData,...state.brandData,...state.brandData,...state.brandData,...state.brandData].map((item, i) => {
+                            state.brandData.map((item, i) => {
                                 return <View key={i} style={{...stylesHome.homeTab}}>
                                     <View style={{...stylesHome.homeTabView}}>
                                         <ImageBackground

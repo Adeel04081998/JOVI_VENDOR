@@ -57,6 +57,7 @@ const AddBrandModal = (props) => {
             "productID": state.product.productID,
             "itemIDs": state.item.map(item=>{return item.itemID})
           },{},props.dispatch,(res)=>{
+              console.log('On Assign Brand:',res,state.item.map(item=>{return item.itemID}),state.product);
               if(props.onSave)
               {
                 props.onSave();

@@ -23,6 +23,7 @@ function OrderDetails(props) {
         "loader": false,
         orderList: [],
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
+        counter: 20
     });
     const changeStatusItem = (item) => {
         let arr = state.orderList.map(it => {
@@ -32,9 +33,9 @@ function OrderDetails(props) {
                 return it;
             }
         });
-        setState(pre=>({
+        setState(pre => ({
             ...pre,
-            orderList:arr
+            orderList: arr
         }))
         // setState(pre => ({
         //     ...pre,
@@ -49,7 +50,7 @@ function OrderDetails(props) {
         confirmOrder(arr);
     }
     const confirmOrder = (latestArr = false) => {
-        let payloadArr =(latestArr!==false?latestArr:state.orderList).map(item => {
+        let payloadArr = (latestArr !== false ? latestArr : state.orderList).map(item => {
             return {
                 "jobItemID": item.jobItemID,
                 "name": item.jobItemName,
@@ -60,11 +61,11 @@ function OrderDetails(props) {
                 "pitstopItemID": item.pitstopItemID
             }
         });
-        postRequest('Api/Vendor/Pitstop/JobItemsList/Update',{jobItemListViewModel:payloadArr},{},props.dispatch,(res)=>{
-            if(res.data.statusCode ===200){
+        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr }, {}, props.dispatch, (res) => {
+            if (res.data.statusCode === 200) {
                 CustomToast.success('Order Updated')
             }
-        },(err)=>{if(err) CustomToast.error('Something went wrong!')},'');
+        }, (err) => { if (err) CustomToast.error('Something went wrong!') }, '');
     }
     const replaceItem = (item) => {
         let ModalComponent = {
@@ -123,11 +124,11 @@ function OrderDetails(props) {
     return (
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
             <HeaderApp
-                caption={'Order No: '+state.orderObj.orderNo}
+                caption={'Order No: ' + state.orderObj.orderNo}
                 // caption={props.user?.vendorPitstopDetailsList?.companyName}
                 commonStyles={commonStyles}
                 state={state}
-                screenProps={{...props}}
+                screenProps={{ ...props }}
                 user={props.user}
                 noSearch={true}
                 activeTheme={activeTheme}
@@ -170,11 +171,18 @@ function OrderDetails(props) {
                                 </View>
                                 <TouchableOpacity style={stylesOrder.homeTabText} onPress={() => { }}>
                                     <View style={{ flex: 0.9 }}>
-                                        <Text style={{ ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.jobItemName}</Text>
+                                        <Text style={{ ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(16, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
                                         <Text style={{ ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map(it => { return it.productAttrName + " " })}</Text>
                                         <Text style={{ ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
                                     </View>
                                 </TouchableOpacity>
+                                <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
+                                    {
+                                        ['-', state.counter, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: '#fff', height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => setState(pre => ({ ...pre, counter: idx === 0 ? (pre.counter < 1 ? 0 : pre.counter - 1) : pre.counter + 1 }))}>
+                                            <Text style={{}}>{btn}</Text>
+                                        </TouchableOpacity>)
+                                    }
+                                </View>
                             </View>
                         </Swipeable>
                     }}
@@ -264,7 +272,7 @@ function OrderDetails(props) {
 
                 </View>
                 <View style={{ width: '100%', height: 60, flexDirection: 'row' }}>
-                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => {navigation?.navigate('ContactUsPage')}}>
+                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => { navigation?.navigate('ContactUsPage') }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Report</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default }} onPress={() => confirmOrder()}>
@@ -293,7 +301,7 @@ const stylesOrder = StyleSheet.create({
     },
     homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName: { marginTop: 0 },
-    homeTabDesc: (props) => { return { ...commonStyles.fontStyles(13, props.activeTheme.black, 1, '300'), padding: 2 } },
+    homeTabDesc: (props) => { return { ...commonStyles.fontStyles(12, props.activeTheme.black, 1, '300'), padding: 2 } },
     homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } },
     productListContainer: { paddingBottom: 20, justifyContent: 'space-between', flexDirection: 'row', flexWrap: 'wrap' },
     productTab: { height: 180, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },

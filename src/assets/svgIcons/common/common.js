@@ -397,6 +397,27 @@ let super_share = () => `<svg xmlns="http://www.w3.org/2000/svg" width="10.995" 
 </g>
 </svg>
 `
+let open_close = (title) => `<svg width="42" height="32.895" xmlns="http://www.w3.org/2000/svg">
+
+<g>
+ <title>background</title>
+ <rect fill="none" id="canvas_background" height="602" width="802" y="-1" x="-1"/>
+</g>
+<g>
+ <title>Layer 1</title>
+ <g id="Group_2656">
+  <g id="closed">
+   <g id="Group_2655">
+    <path fill="#fff" d="m3.076,19.50399a0.615,0.615 0 0 0 -0.615,0.615l0,9.37a0.944,0.944 0 0 0 0.943,0.943l25.486,0a0.615,0.615 0 0 0 0,-1.23l-25.199,0l0,-9.083a0.615,0.615 0 0 0 -0.615,-0.615z" id="Path_3341"/>
+    <path fill="#fff" d="m31.481,30.434l7.115,0a0.944,0.944 0 0 0 0.943,-0.943l0,-12.8a0.944,0.944 0 0 0 -0.943,-0.943l-35.192,0a0.944,0.944 0 0 0 -0.943,0.943l0,0.82a0.615,0.615 0 0 0 1.23,0l0,-0.533l34.618,0l0,12.223l-6.828,0a0.615,0.615 0 0 0 0,1.23l0,0.003z" id="Path_3342"/>
+    <path fill="#fff" d="m39.826,13.289l-0.748,0a0.615,0.615 0 0 0 0,1.23l0.748,0a0.944,0.944 0 0 1 0.943,0.943l0,15.259a0.944,0.944 0 0 1 -0.943,0.943l-37.652,0a0.944,0.944 0 0 1 -0.943,-0.943l0,-15.258a0.944,0.944 0 0 1 0.943,-0.943l34.208,0a0.615,0.615 0 0 0 0,-1.23l-1.791,0l-10.507,-8.182a3.486,3.486 0 1 0 -6.169,0l-10.506,8.181l-5.235,0a2.176,2.176 0 0 0 -2.174,2.174l0,15.258a2.176,2.176 0 0 0 2.174,2.174l37.652,0a2.176,2.176 0 0 0 2.174,-2.174l0,-15.258a2.176,2.176 0 0 0 -2.174,-2.174zm-18.826,-12.059a2.256,2.256 0 1 1 -2.256,2.256a2.258,2.258 0 0 1 2.256,-2.256zm-2.328,4.848a3.479,3.479 0 0 0 4.656,0l9.26,7.21l-23.176,0l9.26,-7.21z" id="Path_3343"/>
+   </g>
+  </g>
+ </g>
+ <text stroke="#000" transform="matrix(0.3744532103796491,0,0,0.5294130444526672,4.264058409364348,-0.6764687485992908) " xml:space="preserve" text-anchor="start" font-family="sans-serif" font-size="25" id="svg_1" y="52.72311" x="0.58066" stroke-width="0" fill="#ffffff">${title}</text>
+</g>
+</svg>
+`
 
 let super_cart = () => `<svg xmlns="http://www.w3.org/2000/svg" width="8.021" height="8.037" viewBox="0 0 8.021 8.037">
 <g id="Group_2217" data-name="Group 2217" transform="translate(-3327 -1084)">
@@ -486,6 +507,7 @@ export default {
   doneIcon,
   editIcon,
   deleteIcon,
+  open_close,
   tickIcon,
   arrowBack,
   easyPaisa,

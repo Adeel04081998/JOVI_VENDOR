@@ -1,9 +1,9 @@
-import { Picker, Text, View } from 'native-base';
+import { CheckBox, Picker, Text, View } from 'native-base';
 import colors from "../../styles/colors";
 import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Keyboard, Dimensions, ImageBackground } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import Animated from 'react-native-reanimated';
+import Animated, { set } from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
 import { renderPictureResizeable, sharedKeyboardDismissHandler } from '../../utils/sharedActions';
 import CustomAndroidPickerItem from '../dropdowns/picker.android';
@@ -15,15 +15,23 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
 import { postRequest } from '../../services/api';
 import dummy from '../../assets/bike.png';
+import common from '../../assets/svgIcons/common/common';
 const ProfileModal = (props) => {
     console.log('USer:', props.user)
     const [state, setState] = useState({
-        showDropdown: '',
-        vendorList:props?.user?.vendorPitstopDetailsList.map(item=>{return{...item,text:item.personName}}),
-        vendor:props?.user?.vendorPitstopDetailsList[0],
+        showDropdown: false,
+        pickTime: false,
+        selectedValue: null,
+        timePickMode: null,
+        openingTime: '10:32',
+        active: true,
+        closingTime: '14:23',
+        workingDays: [false, false, true, false, false, false, true],
+        vendorList: props?.user?.vendorPitstopDetailsList.map(item => { return { ...item, text: item.personName } }),
+        vendor: props?.user?.vendorPitstopDetailsList[0],
     })
     const onDropdownClick = () => {
-        setState(prevState => ({ ...prevState, showDropdown: prevState.showDropdown !== false ? false : true }));
+        setState(prevState => ({ ...prevState, showDropdown: !prevState.showDropdown  }));
     }
     const onSave = () => {
         postRequest('api/Vendor/Pitstop/PitstopItemList/AddOrUpdate', {
@@ -35,6 +43,29 @@ const ProfileModal = (props) => {
             }
             props.dispatch(closeModalAction());
         }, (err) => { }, '');
+    }
+    const onTimeChange = (val, index) => {
+        let selectedVal = state.selectedValue.split(':');
+        selectedVal[index] = val;
+        setState(pre => ({ ...pre, selectedValue: selectedVal.join(':') }));
+    }
+    const setWorkingDay = (i) => {
+        let wrkingD = state.workingDays;
+        wrkingD[i] = !wrkingD[i];
+        console.log(wrkingD)
+        setState(pre => ({
+            ...pre,
+            workingDays: wrkingD
+        }));
+    }
+    const saveTime = () => {
+        setState(pre => ({
+            ...pre,
+            [pre.timePickMode]: pre.selectedValue,
+            selectedValue: null,
+            pickTime: false,
+            timePickMode: null
+        }));
     }
     const renderSelectionList = (options, onChange, filter = false) => {
         let optionsFilter = filter !== false ? options.filter(item => { return item.text.toLowerCase().includes(filter.toLowerCase()) }) : options;
@@ -102,15 +133,16 @@ const ProfileModal = (props) => {
     }, []), []);
     return (
         <View style={{ ...StyleSheet.absoluteFill }}>
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }} keyboardVerticalOffset={-550}>
-                <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
-                    <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
-                        <Text style={styles.catpion(props.activeTheme)}>Profile</Text>
-                        <ScrollView style={{ flex: 1, marginBottom: 30 }} keyboardShouldPersistTaps="always">
-                            <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
+            {state.pickTime === false ?
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }} keyboardVerticalOffset={-550}>
+                    <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
+                        <View style={{ flex: 1, ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
+                            <Text style={styles.catpion(props.activeTheme)}>Profile</Text>
+                            {/* <ScrollView style={{ flex: 1, marginBottom: 30 }} keyboardShouldPersistTaps="always"> */}
+                            <View style={{ paddingHorizontal: 7, width: '100%', flex: 1 }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Name
-                                </Text>
+                                    </Text>
                                 <View style={{
                                     paddingHorizontal: 12,
                                     borderWidth: 1,
@@ -144,57 +176,189 @@ const ProfileModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10
                                     }} > */}
-                                    {renderSelectionList(state.vendorList, (e) => {Keyboard.dismiss(); setState(prevState => ({ ...prevState, vendor: e }));})}
+                                    {renderSelectionList(state.vendorList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, vendor: e })); })}
 
                                     {/* </View> */}
                                 </ScrollView>
                                     :
                                     null
                                 }
-                                <View style={{ height: 280, backgroundColor: '#F5F6FA', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, marginTop: 20, width: '100%' }}>
-                                    <View style={{ height: '45%',flexDirection:'row',flex:1, borderBottomWidth: 1, borderBottomColor: '#929293' }}>
-                                        
-                                        <View style={{flex:0.62,marginLeft:20,justifyContent:'center'}}>
-                                            <Text>{state.vendor.personName}</Text>
-                                            <Text>{state.vendor.email}</Text>
-                                            <Text>{state.vendor.contactNo}</Text>
-                                        </View>
-                                        <View style={{ ...stylesHome.homeTabView,margin:20 }}>
-                                            <ImageBackground
-                                                resizeMode='stretch'
-                                                source={props.user.picture?{uri:renderPictureResizeable(props.user.picture,190, props.user.tokenObj && props.user.tokenObj.token.authToken)}:dummy}
-                                                // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                                style={{ ...stylesHome.homeTabImage }}
-                                            />
-                                        </View>
+                            </View>
+                            <View style={{flex:5,margin:8}}>
+                            <View style={{ flex: 1, marginBottom: 20, backgroundColor: '#F5F6FA', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, marginTop: 20, width: '100%' }}>
+                                <View style={{ height: '45%', flexDirection: 'row',padding:20, flex: 1, borderBottomWidth: 1, borderBottomColor: '#929293' }}>
+                                    <View style={{ flex: 0.62, marginLeft: 20,marginVertical:5, justifyContent: 'center' }}>
+                                        <Text>{state.vendor.personName}</Text>
+                                        <Text>{state.vendor.email}</Text>
+                                        <Text>{state.vendor.contactNo}</Text>
                                     </View>
-                                        <View style={{height:'45%',backgroundColor:'red'}}>
-
+                                    <TouchableOpacity style={{ flex: 0.38 }} onPress={()=>setState(pre=>({...pre,active:!pre.active}))}>
+                                        <View style={{ flex: 1, ...stylesHome.homeTabView, backgroundColor:state.active?props.activeTheme.default:'red', marginVertical: 1, marginHorizontal: 15}}>
+                                            <SvgXml xml={common.open_close(state.active === true ? 'Opened' : 'Closed')} height={'100%'} width={'100%'} viewBox="0 0 41 41" />
+                                            {/* <ImageBackground
+                                            resizeMode='stretch'
+                                            source={ {uri:common.open_close()}}
+                                            // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                            style={{ ...stylesHome.homeTabImage }}
+                                        /> */}
                                         </View>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ height: '45%', justifyContent: 'center', alignItems: 'center', paddingLeft: 8, flex: 2, flexDirection: 'row' }}>
+                                    <View style={{ flex: 1 }}>
+                                        <TouchableOpacity style={{ flex: 1 }} onPress={() => setState(pre => ({ ...pre, selectedValue: pre.openingTime, timePickMode: 'openingTime', pickTime: true }))}>
+                                            <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Opening</Text>
+                                            <View style={{ height: '80%', justifyContent: 'center', alignItems: 'center', width: '90%', margin: 5, backgroundColor: props.activeTheme.default, borderColor: '#929293', borderWidth: 0.5, borderRadius: 15 }}><Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.white, 4) }}>{state.openingTime}</Text></View>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <TouchableOpacity style={{ flex: 1 }} onPress={() => setState(pre => ({ ...pre, selectedValue: pre.closingTime, timePickMode: 'closingTime', pickTime: true }))}>
+                                            <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Closing</Text>
+                                            <View style={{ height: '80%', justifyContent: 'center', alignItems: 'center', width: '90%', margin: 5, backgroundColor: props.activeTheme.default, borderColor: '#929293', borderWidth: 0.5, borderRadius: 15 }}><Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.white, 4) }}>{state.closingTime}</Text></View>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <Text style={{ marginVertical:8,marginLeft: 8, ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Working Days:</Text>
+                                <View style={{ flex: 2, flexDirection: 'row', flexWrap: 'wrap' }}>
+
+                                    {
+                                        ['Sunday', 'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((item, i) => {
+                                            return <View key={i} style={stylesHome.checkboxContainer}>
+                                                <CheckBox
+                                                    checked={state.workingDays[i]}
+                                                    onPress={() => setWorkingDay(i)}
+                                                    style={stylesHome.checkbox}
+                                                    color={props.activeTheme.default}
+                                                />
+                                                <Text style={stylesHome.label}>{item}</Text>
+                                            </View>
+                                        })
+                                    }
                                 </View>
                             </View>
-                        </ScrollView>
-                        <DefaultBtn
-                            title="Save"
-                            // disabled={checkValidation()?true:false}
-                            backgroundColor={props.activeTheme.default}
-                            onPress={() => onSave()}
-                        />
-                    </View>
-                </Animated.View>
-            </KeyboardAvoidingView>
+
+                            </View>
+                            {/* </ScrollView> */}
+                            <DefaultBtn
+                                title="Save"
+                                // disabled={checkValidation()?true:false}
+                                backgroundColor={props.activeTheme.default}
+                                onPress={() => onSave()}
+                            />
+                        </View>
+                    </Animated.View>
+                </KeyboardAvoidingView>
+                :
+                <>
+                    <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                        <Text style={{ ...stylesHome.caption, left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Time</Text>
+
+
+                        <View style={{ marginTop: 35, paddingLeft: 20, paddingRight: 20, marginBottom: 30, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                            <Picker
+                                accessibilityLabel={"hours"}
+                                style={{ zIndex: 500, width: 115 }}
+                                mode="dialog" // "dialog" || "dropdown"
+                                // prompt="Select Hours"
+                                selectedValue={(state.selectedValue || "HH:MM").split(":")[0]}
+                                onValueChange={(value, i) => onTimeChange(value, 0)}
+                            >
+                                {
+                                    Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                        .map((item, i) => (
+                                            <Picker.Item key={i} label={item} value={item} />
+                                        ))
+                                }
+                            </Picker>
+
+                            <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+
+                            <Picker
+                                accessibilityLabel={"minutes"}
+                                style={{ zIndex: 500, width: 115 }}
+                                mode="dialog" // "dialog" || "dropdown"
+                                // prompt="Select Minutes"
+                                selectedValue={(state.selectedValue || "HH:MM").split(":")[1]}
+                                onValueChange={(value, i) => onTimeChange(value, 1)}
+                            >
+                                {
+                                    Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                        .map((item, i) => (
+                                            <Picker.Item key={i} label={item} value={item} />
+                                        ))
+                                }
+                            </Picker>
+                        </View>
+                        <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#fc3f93', justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, pickTime: false }))}>
+                                <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                            </TouchableOpacity>
+
+
+                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
+                                <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </KeyboardAvoidingView>
+                </>
+            }
         </View>
     );
 }
 const stylesHome = StyleSheet.create({
     homeTab: { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 },
-    homeTabView: { flex: 0.38, paddingTop: 5, overflow: 'hidden', borderRadius: 10 },
+    homeTabView: { paddingTop: 5, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', borderRadius: 10 },
     homeTabImage: {
         flex: 1,
         top: 1,
         marginLeft: 10,
         width: '90%',
         "height": "90%",
+    },
+    checkboxContainer: {
+        width: 120, flexDirection: 'row'
+    },
+    checkbox: {
+        alignSelf: "center",
+        color: '#7359BE',
+        borderColor: '#7359BE',
+        borderRadius: 12, margin: 8
+    },
+    label: {
+        margin: 8,
+    },
+    wrapper: {
+        // alignItems: 'flex-start',
+        flexDirection: 'column',
+        backgroundColor: '#fff',
+        width: '100%', //'85%'
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        // position: 'absolute',
+        bottom: 0,
+        height: '100%',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        zIndex: 5,
+        shadowColor: '#000',
+        // paddingLeft: 15,
+        // paddingRight: 15,
+        paddingTop: 15,
+        paddingBottom: 0, //15
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
+    },
+    caption: {
+        position: "relative",
+        left: 10,
+        fontSize: 15,
+        color: '#7359BE',
+        marginVertical: 10,
     },
     homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName: { marginTop: 0 },

@@ -41,11 +41,11 @@ const VendorRoutes = (props) => {
         // console.log("[RootStack] Props :", props);
         // const backHandler = 
         // const backHandler = BackHandler.removeEventListener("hardwareBackPress", ()=>{});
-        return()=>{
+        return () => {
             // backHandler.addEventListener("hardwareBackPress",()=>{});
             // _unsubscribeSiFocus();
             // _unsubscribeSiBlur();
-    // BackHandler.removeEventListener('hardwareBackPress', handleBackButtonPressed);
+            // BackHandler.removeEventListener('hardwareBackPress', handleBackButtonPressed);
             // backHandler.remove();
         };
         // const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButtonPressed);
@@ -54,23 +54,32 @@ const VendorRoutes = (props) => {
         }
     }, []);
     return (
-        <Drawer.Navigator
-        initialRouteName={"home" }
-        
-        >
-
-            <Drawer.Screen name={'home'}  children={drawerProps =><Stack.Navigator initialRouteName={'homee'} mode="card" screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="homee" drawerProps={drawerProps} children={navigatorPros => <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
-                <Stack.Screen name="Products"   drawerProps={drawerProps} children={navigatorPros => <Products {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
-                <Stack.Screen name="Items"   drawerProps={drawerProps} children={navigatorPros => <Items {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
-                <Stack.Screen name="Orders"   drawerProps={drawerProps} children={navigatorPros => <Orders {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
-                <Stack.Screen name="OrderDetails"   drawerProps={drawerProps} children={navigatorPros => <OrderDetails {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
-                <Stack.Screen name="ContactUsPage"   drawerProps={drawerProps} children={navigatorPros => <ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ContactUsPage {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} /></ImageBackground>} />
-                <Stack.Screen name="Exceptions"  drawerProps={drawerProps} children={navigatorPros => <View><Text>error</Text></View>} />
-            </Stack.Navigator>} />
-        </Drawer.Navigator>
+        <Stack.Navigator initialRouteName={'home'} mode="card" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="home" children={navigatorPros => <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="Products" children={navigatorPros => <Products {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="Items" children={navigatorPros => <Items {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="Orders" children={navigatorPros => <Orders {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="OrderDetails" children={navigatorPros => <OrderDetails {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="ContactUsPage" children={navigatorPros => <ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ContactUsPage {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} /></ImageBackground>} />
+            <Stack.Screen name="Exceptions" children={navigatorPros => <View><Text>error</Text></View>} />
+        </Stack.Navigator>
     )
 };
+// <Drawer.Navigator
+// initialRouteName={"home" }
+
+// >
+
+//     <Drawer.Screen name={'home'}  children={drawerProps =><Stack.Navigator initialRouteName={'homee'} mode="card" screenOptions={{ headerShown: false }}>
+//         <Stack.Screen name="homee" drawerProps={drawerProps} children={navigatorPros => <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+//         <Stack.Screen name="Products"   drawerProps={drawerProps} children={navigatorPros => <Products {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+//         <Stack.Screen name="Items"   drawerProps={drawerProps} children={navigatorPros => <Items {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+//         <Stack.Screen name="Orders"   drawerProps={drawerProps} children={navigatorPros => <Orders {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+//         <Stack.Screen name="OrderDetails"   drawerProps={drawerProps} children={navigatorPros => <OrderDetails {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+//         <Stack.Screen name="ContactUsPage"   drawerProps={drawerProps} children={navigatorPros => <ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ContactUsPage {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} /></ImageBackground>} />
+//         <Stack.Screen name="Exceptions"  drawerProps={drawerProps} children={navigatorPros => <View><Text>error</Text></View>} />
+//     </Stack.Navigator>} />
+// </Drawer.Navigator>
 const mapStateToProps = (store) => {
     return {
         theme: store.themeReducer,
