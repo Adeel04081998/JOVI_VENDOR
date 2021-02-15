@@ -1,14 +1,17 @@
 import React from 'react';
-import { View, Text, StatusBar, Platform, ImageBackground } from 'react-native';
+import { View, Text, StatusBar, Platform, ImageBackground,Dimensions } from 'react-native';
 import { Header, Left, Body, Right } from 'native-base';
 import headerStyles from './headerStyles';
 import { SvgXml } from 'react-native-svg';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import dummy from '../../assets/bike.png';
+import dummy from '../../assets/card-image.png';
 import Spinner from 'react-native-spinkit';
 import dropIcon from '../../assets/svgIcons/common/drop-down-arrow.svg';
 import CustomInput from '../input/Input';
 import { renderPicture } from '../../utils/sharedActions';
+import ProfileModal from '../modals/ProfileModal';
+import plateformSpecific from '../../utils/plateformSpecific';
+import { openModalAction } from '../../redux/actions/modal';
 export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinationView, bodyContent, BodyComponent, rightIcon, imgObject, imgStyles, rightIconHandler, navigation, activeTheme, height, width, styles, left, screenName }) {
     // let tempVal = 50;
     // console.log(StatusBar.currentHeight)
@@ -111,7 +114,24 @@ export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinati
     )
 }
 export const HeaderApp = (props) => {
-    const { state, caption,noSearch, commonStyles, activeTheme,onChangeText,user } = props;
+    const { state, caption,noSearch,screenProps, commonStyles, activeTheme,onChangeText,user } = props;
+    const profileHeader = () => {
+        let ModalComponent = {
+            visible: true,
+            transparent: true,
+            okHandler: () => { },
+            onRequestCloseHandler: null,
+            ModalContent: (
+                <ProfileModal {...screenProps} />
+            ),
+            // modalFlex: 0,
+            modalHeight: Dimensions.get('window').height * 0.85,
+            modelViewPadding: 0,
+            fadeAreaViewFlex: plateformSpecific(1, 0.6),
+            screenProps: { ...screenProps }
+        };
+        screenProps.dispatch(openModalAction(ModalComponent));
+    }
     return <View
         style={{ height: 95,paddingTop:10, backgroundColor: activeTheme.background, justifyContent: 'space-between', alignItems: 'center' }}
         onTouchEnd={() => {
@@ -119,7 +139,7 @@ export const HeaderApp = (props) => {
         }}
     >
         <View style={{ position: 'absolute', right: 20,top:27, backgroundColor: activeTheme.default, width: 43, borderRadius: 85, height: 45, borderWidth: 3, borderStyle: "solid", borderColor: "#F0F0F0", flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <TouchableOpacity style={{ width: 90, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => { }}>
+            <TouchableOpacity style={{ width: 90, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => profileHeader()}>
                 <ImageBackground source={user&&user.picture?{uri:renderPicture(user.picture,user.tokenObj &&user.tokenObj.token.authToken)}:dummy} style={{ marginRight: 52, height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }} resizeMode='cover'  >
                 {/* <ImageBackground source={user&&user.picture?{uri:renderPicture(user.picture,user.tokenObj &&user.tokenObj.token.authToken)}:dummy} style={{flex:1,marginRight: 2, height: 32, width: 32, borderRadius: 16,backgroundColor:'red', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}} resizeMode='cover'  > */}
                     <Spinner isVisible={false} size={30} type="Circle" color={activeTheme.white} />

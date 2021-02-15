@@ -56,6 +56,7 @@ function Orders(props) {
                 state={state}
                 user={props.user}
                 onChangeText={(val) => searchOrder(val)}
+                screenProps={{...props}}
                 activeTheme={activeTheme}
             />
             <View style={{ flex: 1, marginTop: 30 }}>

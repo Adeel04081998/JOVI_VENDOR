@@ -137,6 +137,7 @@ function Items(props) {
                 state={state}
                 onChangeText={onItemSearch}
                 activeTheme={activeTheme}
+                screenProps={{...props}}
             />
 
             <View style={{ flex: 1, marginTop: 30 }}>

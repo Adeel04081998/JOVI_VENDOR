@@ -115,6 +115,7 @@ function Products(props) {
                 commonStyles={commonStyles}
                 state={state}
                 user={props.user}
+                screenProps={{...props}}
                 activeTheme={activeTheme}
                 onChangeText={onProductSearch}
             />

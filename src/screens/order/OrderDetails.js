@@ -127,6 +127,7 @@ function OrderDetails(props) {
                 // caption={props.user?.vendorPitstopDetailsList?.companyName}
                 commonStyles={commonStyles}
                 state={state}
+                screenProps={{...props}}
                 user={props.user}
                 noSearch={true}
                 activeTheme={activeTheme}

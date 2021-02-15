@@ -173,12 +173,13 @@ function Home(props) {
 
 
             <HeaderApp
-                caption={props.user?.vendorPitstopDetailsList?.companyName}
+                caption={props.user?.pitstopName}
                 commonStyles={commonStyles}
                 state={state}
                 user={props.user}
                 onChangeText={searchBrand}
                 activeTheme={activeTheme}
+                screenProps={{...props}}
             />
 
             <View style={{ flex: 1, marginTop: 30 }}>
