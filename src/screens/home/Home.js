@@ -193,7 +193,7 @@ function Home(props) {
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
                         {state.brandData.length>0?
                             state.brandData.map((item, i) => {
-                                return <View key={i} style={{...stylesHome.homeTab}}>
+                                return <View key={i} style={{...stylesHome.homeTab({activeTheme:props.activeTheme})}}>
                                     <View style={{...stylesHome.homeTabView}}>
                                         <ImageBackground
                                             resizeMode='stretch'
@@ -231,7 +231,7 @@ const mapStateToProps = (store) => {
     }
 };
 const stylesHome = StyleSheet.create({
-    homeTab:{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 },
+    homeTab:props=>{return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
     homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
     homeTabImage:{
         flex: 1,

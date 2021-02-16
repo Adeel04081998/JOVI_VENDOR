@@ -118,6 +118,7 @@ const AddBrandModal = (props) => {
         return check;
     }
     const getItemsAgainstProduct = (product) => {
+        console.log('Before Request: -----------  ',state.product.productID,product)
         postRequest('Api/Vendor/Pitstop/GetItemsByProducts/List', {
             "pageNumber": 1,
             "itemsPerPage": 2,
@@ -126,7 +127,7 @@ const AddBrandModal = (props) => {
             "productID": product ? product.productID : state.product.productID
         }, {}
             , props.dispatch, (res) => {
-                console.log('Item Request Against Product:', res)
+                console.log('Item Request Against Product:', res,state)
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
@@ -206,7 +207,7 @@ const AddBrandModal = (props) => {
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }} keyboardVerticalOffset={-550}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
-                        <Text style={styles.catpion(props.activeTheme)}>Add Brand</Text>
+                        <Text style={styles.catpion(props.activeTheme),{alignSelf:'center'}}>Add Brand</Text>
                         <ScrollView style={{ flex:1, marginBottom: 30 }} keyboardShouldPersistTaps="always">
                             <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>

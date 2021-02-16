@@ -14,19 +14,24 @@ import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handle
 import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
 import { postRequest } from '../../services/api';
+import CustomToast from '../../components/toast/CustomToast';
 import dummy from '../../assets/bike.png';
 import common from '../../assets/svgIcons/common/common';
 const ProfileModal = (props) => {
     console.log('USer:', props.user)
+    let weekArr = [false, false, false, false, false, false, false];
+    props.user.daysOfTheWeek.map(it=>{
+        weekArr[it] = true;
+    });
     const [state, setState] = useState({
         showDropdown: false,
         pickTime: false,
         selectedValue: null,
         timePickMode: null,
-        openingTime: '10:32',
-        active: true,
-        closingTime: '14:23',
-        workingDays: [false, true, true, false, false, false, true],
+        openingTime: props.user.openingTime.split(':')[0]+':'+props.user.openingTime.split(':')[1],
+        active:props.user.pitstopStatus===1?true:false,
+        closingTime: props.user.closingTime.split(':')[0]+':'+props.user.closingTime.split(':')[1],
+        workingDays: weekArr,
         vendorList: props?.user?.vendorPitstopDetailsList.map(item => { return { ...item, text: item.personName } }),
         vendor: props?.user?.vendorPitstopDetailsList[0],
     })
@@ -34,15 +39,25 @@ const ProfileModal = (props) => {
         setState(prevState => ({ ...prevState, showDropdown: !prevState.showDropdown }));
     }
     const onSave = () => {
-        postRequest('api/Vendor/Pitstop/PitstopItemList/AddOrUpdate', {
-            "productID": state.product.productID,
-            "itemIDs": state.item.map(item => { return item.itemID })
-        }, {}, props.dispatch, (res) => {
+        console.log({
+            "openingTime": state.openingTime,
+            "closingTime": state.closingTime,
+            "daysOfWeek": state.workingDays.map((it,i)=>{if(it===true){return i}}).filter(it=>it!==undefined),
+            "pitstopStatus": state.active===true?1:0,
+          })
+        postRequest('Api/Vendor/Pitstop/Timings/Update', {
+            "openingTime": state.openingTime,
+            "closingTime": state.closingTime,
+            "daysOfWeek": state.workingDays.map((it,i)=>{if(it===true){return i}}).filter(it=>it!==undefined),
+            "pitstopStatus": state.active===true?1:2,
+          }, {}, props.dispatch, (res) => {
             if (props.onSave) {
                 props.onSave();
             }
+            props.dispatch(userAction({ ...props.user,pitstopStatusDesc:state.active===true?"Activated":"Deactivated",pitstopStatus:state.active===true?1:2,closingTime:state.closingTime,openingTime:state.openingTime,daysOfTheWeek: state.workingDays.map((it,i)=>{if(it===true){return i}}).filter(it=>it!==undefined)}));
+            CustomToast.success('Profile updated successfully')
             props.dispatch(closeModalAction());
-        }, (err) => { }, '');
+        }, (err) => {CustomToast.error('Something went wrong!'); }, '');
     }
     const onTimeChange = (val, index) => {
         let selectedVal = state.selectedValue.split(':');

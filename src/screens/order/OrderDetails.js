@@ -22,9 +22,13 @@ function OrderDetails(props) {
     const [state, setState] = useState({
         "loader": false,
         orderList: [],
+        totalAmount:0,
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
     });
     const counterChange = (item,index) => {
+        if(index!==0&&(item.quantity + 1)>item.quantityBackup){
+            return;
+        }
         item = {...item,
             quantity: index === 0 ? (item.quantity < 1 ? 0 : item.quantity - 1) : item.quantity + 1
         }
@@ -49,17 +53,7 @@ function OrderDetails(props) {
         setState(pre => ({
             ...pre,
             orderList: arr
-        }))
-        // setState(pre => ({
-        //     ...pre,
-        //     orderList: pre.orderList.map(it => {
-        //         if (it.jobItemID === item.jobItemID) {
-        //             return { ...it, jobItemStatus: it.jobItemStatus === 1 ? 2 : 1, jobItemStatusStr: it.jobItemStatusStr === 'Available' ? 'Out Of Stock' : 'Available' };
-        //         } else {
-        //             return it;
-        //         }
-        //     })
-        // }));
+        }));
         confirmOrder(arr);
     }
     const confirmOrder = (latestArr = false) => {
@@ -77,7 +71,8 @@ function OrderDetails(props) {
         console.log(payloadArr)
         postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr }, {}, props.dispatch, (res) => {
             if (res.data.statusCode === 200) {
-                CustomToast.success('Order Updated')
+                CustomToast.success('Order Updated');
+                // getData();
             }
         }, (err) => { if (err) {console.log(err); CustomToast.error('Something went wrong!')} }, '');
     }
@@ -111,13 +106,15 @@ function OrderDetails(props) {
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        orderList: res.data.vendorOrderDetailsVM.itemsList,
+                        orderList: res.data.vendorOrderDetailsVM.itemsList.map(it=>{return{...it,quantityBackup:it.quantity}}),
+                        totalAmount:res.data.vendorOrderDetailsVM.totalAmount
                     }))
                 } else {
                     CustomToast.error("Not Found");
                     setState(prevState => ({
                         ...prevState,
-                        orderList: []
+                        orderList: [],
+                        totalAmount:0
                     }))
                 }
             }, (err) => {
@@ -171,7 +168,7 @@ function OrderDetails(props) {
                                 );
                             }}
                         >
-                            <View style={{ ...stylesOrder.homeTab, margin: 5 }}>
+                            <View style={{ ...stylesOrder.homeTab({activeTheme:props.activeTheme}), margin: 5 }}>
                                 {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
                                 </View>}
@@ -201,88 +198,9 @@ function OrderDetails(props) {
                         </Swipeable>
                     }}
                 />
-                {/* <ScrollView  contentContainerStyle={{ flex: 1, borderBottomColor: 'green' }}>
-                    {
-                        // [{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', }].map((item, i) => {
-                        state.orderList.length < 1 ?
-                            <View style={{ flex: 1, height: 100, justifyContent: 'center', alignItems: 'center' }}>
-                                <Text>No Items Found</Text>
-                            </View>
-                            :
-                            // state.orderList.map((item, i) => {
-                            //     return <View key={i} style={{ ...stylesOrder.homeTab }}>
-                            //         <View style={{ backgroundColor: 'green', width:90, ...stylesOrder.homeTabView }}>
-                            //             <ImageBackground
-                            //                 resizeMode='stretch'
-                            //                 source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImage, 190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
-                            //                 // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                            //                 style={{ ...stylesOrder.homeTabImage }}
-                            //             />
-                            //         </View>
-                            //         <View style={{ width: 250, backgroundColor: 'red' }}>
-                            //             <Swipeable
-                            //                 renderRightActions={() => {
-                            //                     return (
-                            //                         <View style={{ height: 110, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center' }}>
-                            //                             <TouchableOpacity onPress={() => { }} style={{ marginRight: 2, width: 40, elevation: 0 }}>
-                            //                                 <SvgXml xml={commonIcons.replaceIcon()} height={25} width={35} />
-                            //                             </TouchableOpacity>
-                            //                             <TouchableOpacity onPress={() => { }} style={{ marginRight: 10, elevation: 0 }}>
-                            //                                 <SvgXml xml={commonIcons.deleteIcon('#000')} height={25} width={25} />
-                            //                             </TouchableOpacity>
-                            //                         </View>
-                            //                     );
-                            //                 }}
-                            //             >
-                            //                 <View style={{}}>
-                            //                     <Text style={{ ...stylesOrder.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.brandName}</Text>
-                            //                     <Text style={{ ...stylesOrder.homeTabDesc(props) }}>{item.brandDescription?.toLocaleUpperCase()}</Text>
-                            //                 </View>
-                            //             </Swipeable>
-
-                            //         </View>
-
-                            //     </View>
-                            // })
-                        state.orderList.map((item, i) => {
-                            return <Swipeable
-                                key={i}
-                                renderRightActions={() => {
-                                    return (
-                                        <View style={{height: 110,justifyContent:'space-around',flexDirection:'row',alignItems:'center'}}>
-                                            <TouchableOpacity onPress={() => { }} style={{ marginRight:2,width:40, elevation: 0 }}>
-                                                <SvgXml xml={commonIcons.replaceIcon()} height={25} width={35}  />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => { }} style={{ marginRight:10, elevation: 0 }}>
-                                                <SvgXml xml={commonIcons.outOfStock()} height={25} width={25} />
-                                            </TouchableOpacity>
-                                        </View>
-                                    );
-                                }}
-                            >
-                                <View style={{ ...stylesOrder.homeTab,margin:5 }}>
-                                    <View style={{ ...stylesOrder.homeTabView }}>
-                                        <ImageBackground
-                                            resizeMode='stretch'
-                                            source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImage, 190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
-                                            // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{ ...stylesOrder.homeTabImage }}
-                                        />
-                                    </View>
-                                    <TouchableOpacity style={stylesOrder.homeTabText} onPress={() => { }}>
-                                        <View style={{ flex: 0.9 }}>
-                                            <Text style={{ ...stylesOrder.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.brandName}</Text>
-                                            <Text style={{ ...stylesOrder.homeTabDesc(props) }}>{item.brandDescription?.toLocaleUpperCase()}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            </Swipeable>
-                        })
-                    }
-                </ScrollView> */}
                 <View style={{ width: '100%', height: 40, justifyContent: 'space-between', padding: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white' }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Total</Text>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>PKR 3000</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>PKR {state.totalAmount}</Text>
 
                 </View>
                 <View style={{ width: '100%', height: 60, flexDirection: 'row' }}>
@@ -294,7 +212,6 @@ function OrderDetails(props) {
                     </TouchableOpacity>
                 </View>
             </View>
-            {/* <SharedFooter activeTheme={activeTheme} hideOptions={true} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={() => { }} /> */}
         </View>
     )
 }
@@ -304,7 +221,7 @@ const mapStateToProps = (store) => {
     }
 };
 const stylesOrder = StyleSheet.create({
-    homeTab: { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 },
+    homeTab:props=> {return{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
     homeTabView: { flex: 0.38, paddingTop: 5, overflow: 'hidden', borderRadius: 10 },
     homeTabImage: {
         flex: 1,
