@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, { set } from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
-import { renderPictureResizeable, sharedKeyboardDismissHandler } from '../../utils/sharedActions';
+import { renderPictureResizeable, sharedKeyboardDismissHandler, sharedlogoutUser } from '../../utils/sharedActions';
 import CustomAndroidPickerItem from '../dropdowns/picker.android';
 import { favHomeIcon } from '../../assets/svgIcons/customerorder/customerorder'
 import { SvgXml } from 'react-native-svg';
@@ -26,12 +26,12 @@ const ProfileModal = (props) => {
         openingTime: '10:32',
         active: true,
         closingTime: '14:23',
-        workingDays: [false, false, true, false, false, false, true],
+        workingDays: [false, true, true, false, false, false, true],
         vendorList: props?.user?.vendorPitstopDetailsList.map(item => { return { ...item, text: item.personName } }),
         vendor: props?.user?.vendorPitstopDetailsList[0],
     })
     const onDropdownClick = () => {
-        setState(prevState => ({ ...prevState, showDropdown: !prevState.showDropdown  }));
+        setState(prevState => ({ ...prevState, showDropdown: !prevState.showDropdown }));
     }
     const onSave = () => {
         postRequest('api/Vendor/Pitstop/PitstopItemList/AddOrUpdate', {
@@ -137,7 +137,13 @@ const ProfileModal = (props) => {
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }} keyboardVerticalOffset={-550}>
                     <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                         <View style={{ flex: 1, ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
-                            <Text style={styles.catpion(props.activeTheme)}>Profile</Text>
+                            <View style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }}>
+                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 3) }}>Profile</Text>
+                                <View style={{backgroundColor:props.activeTheme.warning,padding:5,borderRadius:5}}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => { props.dispatch(closeModalAction()); sharedlogoutUser(props.navigation, postRequest, props.dispatch, props.user, false) }}>Logout</Text></View>
+
+                            </View>
+                            {/* <Text style={styles.catpion(props.activeTheme),{width:50,alignSelf:'flex-start'}}>Profile</Text> */}
+                            {/* <Text style={{alignSelf:'flex-end'}}>Logout</Text> */}
                             {/* <ScrollView style={{ flex: 1, marginBottom: 30 }} keyboardShouldPersistTaps="always"> */}
                             <View style={{ paddingHorizontal: 7, width: '100%', flex: 1 }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -184,59 +190,66 @@ const ProfileModal = (props) => {
                                     null
                                 }
                             </View>
-                            <View style={{flex:5,margin:8}}>
-                            <View style={{ flex: 1, marginBottom: 20, backgroundColor: '#F5F6FA', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, marginTop: 20, width: '100%' }}>
-                                <View style={{ height: '45%', flexDirection: 'row',padding:20, flex: 1, borderBottomWidth: 1, borderBottomColor: '#929293' }}>
-                                    <View style={{ flex: 0.62, marginLeft: 20,marginVertical:5, justifyContent: 'center' }}>
-                                        <Text>{state.vendor.personName}</Text>
-                                        <Text>{state.vendor.email}</Text>
-                                        <Text>{state.vendor.contactNo}</Text>
-                                    </View>
-                                    <TouchableOpacity style={{ flex: 0.38 }} onPress={()=>setState(pre=>({...pre,active:!pre.active}))}>
-                                        <View style={{ flex: 1, ...stylesHome.homeTabView, backgroundColor:state.active?props.activeTheme.default:'red', marginVertical: 1, marginHorizontal: 15}}>
-                                            <SvgXml xml={common.open_close(state.active === true ? 'Opened' : 'Closed')} height={'100%'} width={'100%'} viewBox="0 0 41 41" />
-                                            {/* <ImageBackground
+                            <View style={{ flex: 5, margin: 8, width: '95%' }}>
+                                <View style={{ flex: 7, marginBottom: 20, backgroundColor: '#F5F6FA', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, marginTop: 20, width: '100%' }}>
+                                    <View style={{ height: '42%', flexDirection: 'row', padding: 20, flex: 1, borderBottomWidth: 1, borderBottomColor: '#929293' }}>
+                                        <View style={{ flex: 0.62, marginLeft: 20, marginVertical: 5, justifyContent: 'center' }}>
+                                            <Text>{state.vendor.personName}</Text>
+                                            <Text>{state.vendor.email}</Text>
+                                            <Text>{state.vendor.contactNo}</Text>
+                                        </View>
+                                        <TouchableOpacity style={{ flex: 0.38 }} onPress={() => setState(pre => ({ ...pre, active: !pre.active }))}>
+                                            <View style={{ flex: 1, ...stylesHome.homeTabView, backgroundColor: state.active ? props.activeTheme.default : props.activeTheme.warning, marginVertical: 1, marginHorizontal: 15 }}>
+                                                <SvgXml xml={common.open_close(state.active === true ? 'Opened' : 'Closed')} height={'100%'} width={'100%'} viewBox="0 0 41 41" />
+                                                {/* <ImageBackground
                                             resizeMode='stretch'
                                             source={ {uri:common.open_close()}}
                                             // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                             style={{ ...stylesHome.homeTabImage }}
                                         /> */}
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{ height: '42%', justifyContent: 'center', alignItems: 'center', paddingLeft: 8, flex: 3, flexDirection: 'row' }}>
+                                        <View style={{ flex: 1, height: '60%' }}>
+                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => setState(pre => ({ ...pre, selectedValue: pre.openingTime, timePickMode: 'openingTime', pickTime: true }))}>
+                                                <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Opening</Text>
+                                                <View style={{ height: '80%', justifyContent: 'center', alignItems: 'center', width: '90%', margin: 5, backgroundColor: props.activeTheme.default, borderColor: '#929293', borderWidth: 0.5, borderRadius: 15 }}><Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.white, 4) }}>{state.openingTime}</Text></View>
+                                            </TouchableOpacity>
                                         </View>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={{ height: '45%', justifyContent: 'center', alignItems: 'center', paddingLeft: 8, flex: 2, flexDirection: 'row' }}>
-                                    <View style={{ flex: 1 }}>
-                                        <TouchableOpacity style={{ flex: 1 }} onPress={() => setState(pre => ({ ...pre, selectedValue: pre.openingTime, timePickMode: 'openingTime', pickTime: true }))}>
-                                            <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Opening</Text>
-                                            <View style={{ height: '80%', justifyContent: 'center', alignItems: 'center', width: '90%', margin: 5, backgroundColor: props.activeTheme.default, borderColor: '#929293', borderWidth: 0.5, borderRadius: 15 }}><Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.white, 4) }}>{state.openingTime}</Text></View>
-                                        </TouchableOpacity>
+                                        <View style={{ flex: 1, height: '60%' }}>
+                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => setState(pre => ({ ...pre, selectedValue: pre.closingTime, timePickMode: 'closingTime', pickTime: true }))}>
+                                                <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Closing</Text>
+                                                <View style={{ height: '80%', justifyContent: 'center', alignItems: 'center', width: '90%', margin: 5, backgroundColor: props.activeTheme.default, borderColor: '#929293', borderWidth: 0.5, borderRadius: 15 }}><Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.white, 4) }}>{state.closingTime}</Text></View>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                    <View style={{ flex: 1 }}>
-                                        <TouchableOpacity style={{ flex: 1 }} onPress={() => setState(pre => ({ ...pre, selectedValue: pre.closingTime, timePickMode: 'closingTime', pickTime: true }))}>
-                                            <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Closing</Text>
-                                            <View style={{ height: '80%', justifyContent: 'center', alignItems: 'center', width: '90%', margin: 5, backgroundColor: props.activeTheme.default, borderColor: '#929293', borderWidth: 0.5, borderRadius: 15 }}><Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.white, 4) }}>{state.closingTime}</Text></View>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                                <Text style={{ marginVertical:8,marginLeft: 8, ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Working Days:</Text>
-                                <View style={{ flex: 2, flexDirection: 'row', flexWrap: 'wrap' }}>
 
+                                </View>
+                                <Text style={{ marginVertical: 8, marginLeft: 8, ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Working Days:</Text>
+                                <View style={{ flex: 2, width: '100%', flexDirection: 'row', flexWrap: 'wrap' }}>
+
+                                    {/* {
+                                            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((item, i) => {
+                                                return <View key={i} style={stylesHome.checkboxContainer}>
+                                                    <CheckBox
+                                                        checked={state.workingDays[i]}
+                                                        onPress={() => setWorkingDay(i)}
+                                                        style={stylesHome.checkbox}
+                                                        color={props.activeTheme.default}
+                                                    />
+                                                    <Text style={stylesHome.label}>{item}</Text>
+                                                </View>
+                                            })
+                                        } */}
                                     {
-                                        ['Sunday', 'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((item, i) => {
-                                            return <View key={i} style={stylesHome.checkboxContainer}>
-                                                <CheckBox
-                                                    checked={state.workingDays[i]}
-                                                    onPress={() => setWorkingDay(i)}
-                                                    style={stylesHome.checkbox}
-                                                    color={props.activeTheme.default}
-                                                />
-                                                <Text style={stylesHome.label}>{item}</Text>
+                                        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((item, i) => {
+                                            return <View key={i} style={{ backgroundColor: state.workingDays[i] ? props.activeTheme.default : 'white', borderRadius: 5, justifyContent: 'center', alignItems: 'center', height: 40, width: 45, margin: 4 }}>
+                                                <Text style={{ ...commonStyles.fontStyles(14, state.workingDays[i] ? 'white' : 'black', 3) }} onPress={() => setWorkingDay(i)}>{item}</Text>
                                             </View>
                                         })
                                     }
                                 </View>
-                            </View>
-
                             </View>
                             {/* </ScrollView> */}
                             <DefaultBtn
@@ -290,7 +303,7 @@ const ProfileModal = (props) => {
                             </Picker>
                         </View>
                         <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#fc3f93', justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, pickTime: false }))}>
+                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, pickTime: false }))}>
                                 <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
                             </TouchableOpacity>
 

@@ -166,7 +166,7 @@ function Products(props) {
                                             />
                                             {/* <CheckBox checked={item.active} color={activeTheme.background} onPress={() => disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} /> */}
                                             <View style={{...styleProduct.counter(props)}}>
-                                                <Text style={{ color: 'white' }}>{i + 1}</Text>
+                                                <Text style={{ color: 'white' }}>{item.noOfItems}</Text>
                                             </View>
                                         </View>
                                         <View style={{...styleProduct.productName}}><Text>{item.productName}</Text></View>
@@ -207,7 +207,7 @@ const styleProduct = StyleSheet.create({
         zIndex: 900,
         "height": "90%",
     },
-    productName:{ flex: 2,maxWidth:'100%', justifyContent: 'center', alignItems: 'center' },
+    productName:{ flex: 2,maxWidth:'100%',marginLeft:2, justifyContent: 'center', alignItems: 'center' },
     counter:(props) =>{return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
 
 })

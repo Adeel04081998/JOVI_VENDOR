@@ -23,8 +23,21 @@ function OrderDetails(props) {
         "loader": false,
         orderList: [],
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
-        counter: 20
     });
+    const counterChange = (item,index) => {
+        item = {...item,
+            quantity: index === 0 ? (item.quantity < 1 ? 0 : item.quantity - 1) : item.quantity + 1
+        }
+        let newArr = state.orderList.map(it=>{
+            if(it.jobItemID === item.jobItemID){
+                return item;
+            }else{
+                return it;
+            }
+        })
+        setState(pre => ({ ...pre, orderList:newArr}));
+        confirmOrder(newArr);
+    }
     const changeStatusItem = (item) => {
         let arr = state.orderList.map(it => {
             if (it.jobItemID === item.jobItemID) {
@@ -61,11 +74,12 @@ function OrderDetails(props) {
                 "pitstopItemID": item.pitstopItemID
             }
         });
+        console.log(payloadArr)
         postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr }, {}, props.dispatch, (res) => {
             if (res.data.statusCode === 200) {
                 CustomToast.success('Order Updated')
             }
-        }, (err) => { if (err) CustomToast.error('Something went wrong!') }, '');
+        }, (err) => { if (err) {console.log(err); CustomToast.error('Something went wrong!')} }, '');
     }
     const replaceItem = (item) => {
         let ModalComponent = {
@@ -97,7 +111,7 @@ function OrderDetails(props) {
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        orderList: res.data.vendorOrderDetailsVMList,
+                        orderList: res.data.vendorOrderDetailsVM.itemsList,
                     }))
                 } else {
                     CustomToast.error("Not Found");
@@ -169,16 +183,16 @@ function OrderDetails(props) {
                                         style={{ ...stylesOrder.homeTabImage }}
                                     />
                                 </View>
-                                <TouchableOpacity style={stylesOrder.homeTabText} onPress={() => { }}>
+                                <View style={stylesOrder.homeTabText}>
                                     <View style={{ flex: 0.9 }}>
                                         <Text style={{ ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(16, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
                                         <Text style={{ ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map(it => { return it.productAttrName + " " })}</Text>
                                         <Text style={{ ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
                                     </View>
-                                </TouchableOpacity>
+                                </View>
                                 <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
                                     {
-                                        ['-', state.counter, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: '#fff', height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => setState(pre => ({ ...pre, counter: idx === 0 ? (pre.counter < 1 ? 0 : pre.counter - 1) : pre.counter + 1 }))}>
+                                        ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: '#fff', height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item,idx)}>
                                             <Text style={{}}>{btn}</Text>
                                         </TouchableOpacity>)
                                     }

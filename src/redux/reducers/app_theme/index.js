@@ -13,6 +13,7 @@ let initialState = {
         svgIconColor: '#7359be',
         headerBodyText: '#7359BE',
         default: '#7359BE',
+        warning:'#fc3f93',
         white: '#fff',
         black: '#000',
         grey: '#707070',

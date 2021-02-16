@@ -38,11 +38,11 @@ const App = (props) => {
         // console.log("App.js useEffect :");
         statusBarHandler();
         SplashScreen.hide();
-        handleAppStateForCustomerOrder("mount");
-        AppState.addEventListener('change', async (nextAppState) => {
-            // console.log(nextAppState)
-            handleAppStateForCustomerOrder("change", nextAppState);
-        });
+        // handleAppStateForCustomerOrder("mount");
+        // AppState.addEventListener('change', async (nextAppState) => {
+        //     // console.log(nextAppState)
+        //     handleAppStateForCustomerOrder("change", nextAppState);
+        // });
         return () => {
             console.log('[App.js] cleared!!');
             

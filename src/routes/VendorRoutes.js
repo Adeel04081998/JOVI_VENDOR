@@ -12,7 +12,7 @@ import ContactUsPage from '../screens/contactUs/ContactUs';
 
 
 // import jwt_decode from 'jwt-decode';
-const Drawer = createDrawerNavigator();
+// const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 const VendorRoutes = (props) => {
     // console.log("[RootStack] Props :", props);

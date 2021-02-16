@@ -147,7 +147,7 @@ export const HeaderApp = (props) => {
             </TouchableOpacity>
         </View>
         <Text style={{ ...commonStyles.fontStyles(20, activeTheme.white, 4), flex: 1, alignSelf: 'flex-start', left: 20, top: 30 }}>{caption}</Text>
-        {noSearch&&noSearch===true?<></>:<View style={{ width: '100%', marginTop: 10,zIndex:1000, alignItems: 'center', flex: 1 }}>
+        {noSearch&&noSearch===true?<></>:<View style={{ width: '100%',position:'absolute',bottom:-20, marginTop: 10,zIndex:1000, alignItems: 'center', flex: 1 }}>
             <TextInput
                 style={{
                     paddingHorizontal: 12,

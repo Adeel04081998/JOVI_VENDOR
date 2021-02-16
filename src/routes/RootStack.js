@@ -71,7 +71,7 @@ const RootStack = (props) => {
                         console.log('Res Details:',res);
                         setState({ ...state, loggedInUser: { ...res.data.userDetails, userID: User.token.id, tokenObj: User }, initRoute: 'Dashboard' });
                         dispatch(userAction({ ...props.user, ...res.data.userDetails, userID: User.token.id, tokenObj: User, appTutorialsEnabled, appearOnTop }));
-                        sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
+                        // sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
                         sharedHubConnectionInitiator(postRequest);
                     },
                     err => {
@@ -96,7 +96,7 @@ const RootStack = (props) => {
             sharedHubConnectionStopper();
             setIsForcePermissionLocDialogVisible(false);
             setIsForceTurnOnLocDialogVisible(false);
-            backHandler.remove();
+            // backHandler.remove();
             Keyboard.removeListener('keyboardDidShow', _keyboardShowDetecter);
             Keyboard.removeListener('keyboardDidHide', _keyboardHideDetecter);
             console.log('RootStack State Cleared!');

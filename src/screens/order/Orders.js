@@ -12,6 +12,7 @@ function Orders(props) {
     const [state, setState] = useState({
         "loader": false,
         orderList: [],
+        orderListTemp: [],
         paginationInfo: {}
     });
     const getData = (keywords = false) => {
@@ -22,6 +23,7 @@ function Orders(props) {
                     setState(prevState => ({
                         ...prevState,
                         orderList: res.data.vendorOrdersViewModel.ordersDataList,
+                        orderListTemp: res.data.vendorOrdersViewModel.ordersDataList,
                         paginationInfo: res.data?.pitstopBrands?.paginations
                     }))
                 } else {
@@ -35,9 +37,11 @@ function Orders(props) {
                 if (err) CustomToast.error("Something went wrong");
             }, '');
     }
-    const searchOrder = debounce((val) => {
-        getData(val);
-    }, 900)
+    const searchOrder = (val) => {
+        setState(pre=>({...pre,
+            orderList:val===''?pre.orderListTemp:pre.orderListTemp.filter(it=>it.orderNo.toString().includes(val)),
+        }))
+    }
     useEffect(useCallback(() => {
         getData();
         return () => {
@@ -75,7 +79,7 @@ function Orders(props) {
                             </View>
                             :
                             state.orderList.map((item, i) => {
-                                return <View key={i} style={{ ...stylesOrder.productTab }}>
+                                return <View key={i} style={{ ...stylesOrder.productTab,borderWidth:item.orderStatus===1?2:0.5,borderColor:item.orderStatus===1?props.activeTheme.default:'#929293'}}>
                                     <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.navigate('OrderDetails',{key:'orderDetails',item:{item}})}>
                                         {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
                                         <View style={{ ...stylesOrder.productImageContainer, borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 150, margin: 10, width: '70%', height: '40%' }}>

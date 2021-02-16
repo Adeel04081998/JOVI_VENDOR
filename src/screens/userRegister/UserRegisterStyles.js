@@ -15,9 +15,16 @@ export default StyleSheet.create({
         width: Dimensions.get('window').width,
     },
     catpion: activeTheme => ({
-        ...commonStyles.fontStyles(16, activeTheme.default, 3),
+        ...commonStyles.fontStyles(16, activeTheme.black, 3),
         marginVertical: 5,
-        alignSelf: 'center'
+        marginHorizontal:5,
+        alignSelf: 'flex-start'
+    }),
+    catpionLogout: activeTheme => ({
+        ...commonStyles.fontStyles(16, activeTheme.default, 3),
+        // marginVertical: 5,
+        // marginHorizontal:5,
+        alignSelf: 'flex-end'
     }),
     tempContainer: activeTheme => ({
         flex: 1,

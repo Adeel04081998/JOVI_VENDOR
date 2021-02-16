@@ -72,7 +72,7 @@ export default function SignInScreen(props) {
                     dispatch,
                     async ress => {
                         dispatch(userAction({ ...props.user, ...ress.data.userDetails, userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }));
-                        sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
+                        // sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
                     },
                     err => {
                         console.log("Problem is here--- :", JSON.stringify(err))
@@ -215,7 +215,7 @@ export default function SignInScreen(props) {
                     keyboardType={"default"}
                 // keyboardType={Platform.constants.Model === "WAS-LX1A" ? "numeric" : "default"}
                 />
-                <View style={{ marginVertical: 15, justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+                {/* <View style={{ marginVertical: 15, justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
                     <TouchableOpacity onPress={navigateToSignup} >
                         <Text style={{ color: activeTheme.grey, fontSize: 14 }}>{`Don't have an account ? `}
                             <Text style={styles.touchableText(activeTheme)}>{'Sign Up'}</Text>
@@ -224,7 +224,7 @@ export default function SignInScreen(props) {
                     <TouchableOpacity onPress={() => handleScreen('forgot_password')} style={{ marginVertical: 5 }}>
                         <Text style={styles.touchableText(activeTheme)}>Forgot Password?</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
             </View>
             <View style={{ flex: 0 }}>
                 <SubmitBtn
