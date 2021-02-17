@@ -17,10 +17,11 @@ import { postRequest } from '../../services/api';
 import CustomToast from '../../components/toast/CustomToast';
 import dummy from '../../assets/bike.png';
 import common from '../../assets/svgIcons/common/common';
+import { userAction } from '../../redux/actions/user';
 const ProfileModal = (props) => {
     console.log('USer:', props.user)
     let weekArr = [false, false, false, false, false, false, false];
-    props.user.daysOfTheWeek.map(it=>{
+    props.user?.daysOfTheWeek.map(it=>{
         weekArr[it] = true;
     });
     const [state, setState] = useState({
@@ -242,7 +243,7 @@ const ProfileModal = (props) => {
 
                                 </View>
                                 <Text style={{ marginVertical: 8, marginLeft: 8, ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Working Days:</Text>
-                                <View style={{ flex: 2, width: '100%', flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <View style={{ flex: 2, width: '100%', flexDirection: 'row', flexWrap: 'nowrap' }}>
 
                                     {/* {
                                             ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((item, i) => {
@@ -259,7 +260,7 @@ const ProfileModal = (props) => {
                                         } */}
                                     {
                                         ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((item, i) => {
-                                            return <View key={i} style={{ backgroundColor: state.workingDays[i] ? props.activeTheme.default : 'white', borderRadius: 5, justifyContent: 'center', alignItems: 'center', height: 40, width: 45, margin: 4 }}>
+                                            return <View key={i} style={{ backgroundColor: state.workingDays[i] ? props.activeTheme.default : 'white', borderRadius: 5, justifyContent: 'center', alignItems: 'center',height:50, flex:1, margin: 4 }}>
                                                 <Text style={{ ...commonStyles.fontStyles(14, state.workingDays[i] ? 'white' : 'black', 3) }} onPress={() => setWorkingDay(i)}>{item}</Text>
                                             </View>
                                         })

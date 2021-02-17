@@ -56,7 +56,7 @@ function OrderDetails(props) {
         }));
         confirmOrder(arr);
     }
-    const confirmOrder = (latestArr = false) => {
+    const confirmOrder = (latestArr = false,isConfirmed=false) => {
         let payloadArr = (latestArr !== false ? latestArr : state.orderList).map(item => {
             return {
                 "jobItemID": item.jobItemID,
@@ -69,9 +69,12 @@ function OrderDetails(props) {
             }
         });
         console.log(payloadArr)
-        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr }, {}, props.dispatch, (res) => {
+        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr,isConfirmed }, {}, props.dispatch, (res) => {
             if (res.data.statusCode === 200) {
                 CustomToast.success('Order Updated');
+                if(isConfirmed === true){
+                    navigation.goBack();
+                }
                 // getData();
             }
         }, (err) => { if (err) {console.log(err); CustomToast.error('Something went wrong!')} }, '');
@@ -147,7 +150,7 @@ function OrderDetails(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Order List</Text>
-                    <Text style={{ marginRight: 14 }}>Total 12{state.paginationInfo?.totalItems}</Text>
+                    <Text style={{ marginRight: 14 }}>Total {state.orderList.length}</Text>
                 </View>
                 <FlatList
                     data={[...state.orderList]}
@@ -183,7 +186,7 @@ function OrderDetails(props) {
                                 <View style={stylesOrder.homeTabText}>
                                     <View style={{ flex: 0.9 }}>
                                         <Text style={{ ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(16, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
-                                        <Text style={{ ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map(it => { return it.productAttrName + " " })}</Text>
+                                        <View style={{flexDirection:'row', ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map(it => {if(it.attributeTypeName==='Color'){return <View key={i} style={{justifyContent:'center',marginHorizontal:5,paddingTop:3}}><View style={{backgroundColor:it.productAttrName.toLowerCase(),height:13,width:13,borderRadius:10}}></View><Text>{' '}</Text></View>} return <Text>{it.productAttrName + "  "}</Text> })}</View>
                                         <Text style={{ ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
                                     </View>
                                 </View>
@@ -207,7 +210,7 @@ function OrderDetails(props) {
                     <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => { navigation?.navigate('ContactUsPage') }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Report</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default }} onPress={() => confirmOrder()}>
+                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default }} onPress={() => confirmOrder(false,true)}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Confirm</Text>
                     </TouchableOpacity>
                 </View>

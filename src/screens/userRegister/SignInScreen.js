@@ -23,7 +23,7 @@ export default function SignInScreen(props) {
     
         // riders abcz@gamil.com / connor@gmail.com
         // 'email': "",
-        // 'password': "",
+        // 'passwordd': "",
         // 'email':'tabishAdmin@gmail.com',
         // 'password':'Kaplan224400',
         'email':'vendorj@jovi.com',

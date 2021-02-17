@@ -63,7 +63,7 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal type={3} productObj={{...state.selectedProduct,productID:state.selectedProduct.genericProductID}} brandObj={state.brandData} {...props} />
+                <AddBrandModal type={3} productObj={{...state.selectedProduct,productID:state.selectedProduct.genricProductID}} brandObj={state.brandData} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,

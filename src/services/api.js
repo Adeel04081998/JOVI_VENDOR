@@ -47,7 +47,6 @@ export const postRequest = async (url, data, headers, dispatch, onSuccess, onErr
     dispatch(showHideLoader(loaderBool !== undefined ? loaderBool : true, loaderMsg && loaderMsg.length ? loaderMsg : 'Please wait...'));
     try {
         let res = await Axios.post(url, data, headers);
-        // debugger;
         // console.log('postRequest Response===----> :', res);
         if (res.status === 200) {
             dispatch(showHideLoader(false, ''));

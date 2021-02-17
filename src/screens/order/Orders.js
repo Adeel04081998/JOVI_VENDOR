@@ -34,7 +34,8 @@ function Orders(props) {
                     }))
                 }
             }, (err) => {
-                if (err) CustomToast.error("Something went wrong");
+                if(err.response.data.statusCode===404) CustomToast.error("No Orders Found")
+                else if (err) CustomToast.error("Something went wrong");
             }, '');
     }
     const searchOrder = (val) => {
@@ -66,7 +67,7 @@ function Orders(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
-                    <Text style={{ marginRight: 14 }}>Total 12{state.paginationInfo?.totalItems}</Text>
+                    <Text style={{ marginRight: 14 }}>Total {state.orderList.length}</Text>
                 </View>
                 <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
