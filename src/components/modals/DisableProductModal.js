@@ -171,7 +171,7 @@ const DisableProductModal = (props) => {
                                     {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                     <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
                                 </TouchableOpacity> */}
-                                    <TextInput style={{ maxWidth: '95%', minWidth: '90%' }} defaultValue={state.item.price.toString()} onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val } }))} />
+                                    <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.item.price.toString()} onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val.includes(' ')||val.includes('-')?pre.item.price:val } }))} />
                                 </View>
                                 {state.item.attributes && state.item.attributes.length > 0 ?
                                     state.item.attributes.map((it, i) => {
