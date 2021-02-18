@@ -117,12 +117,12 @@ function Home(props) {
         // const permissions = async () => await askForWholeAppPermissions();
         
         getData();
-        const locationHandler = async () => {
-            sharedGetUserCartHandler(getRequest, false, 0);
-            // openSettings();
-            await hybridLocationPermission();
-        }
-        locationHandler();
+        // const locationHandler = async () => {
+        //     sharedGetUserCartHandler(getRequest, false, 0);
+        //     // openSettings();
+        //     await hybridLocationPermission();
+        // }
+        // locationHandler();
         // const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButtonPressed);
         return () => {
             setState({

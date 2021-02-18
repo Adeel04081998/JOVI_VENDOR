@@ -26,7 +26,7 @@ function OrderDetails(props) {
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
     });
     const counterChange = (item,index) => {
-        if(index!==0&&(item.quantity + 1)>item.quantityBackup){
+        if(index!==0&&(item.quantity + 1)>item.actualQuantity){
             return;
         }
         item = {...item,
@@ -75,7 +75,7 @@ function OrderDetails(props) {
                 if(isConfirmed === true){
                     navigation.goBack();
                 }
-                // getData();
+                getData();
             }
         }, (err) => { if (err) {console.log(err); CustomToast.error('Something went wrong!')} }, '');
     }
@@ -109,7 +109,7 @@ function OrderDetails(props) {
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        orderList: res.data.vendorOrderDetailsVM.itemsList.map(it=>{return{...it,quantityBackup:it.quantity}}),
+                        orderList: res.data.vendorOrderDetailsVM.itemsList,
                         totalAmount:res.data.vendorOrderDetailsVM.totalAmount
                     }))
                 } else {
@@ -186,7 +186,14 @@ function OrderDetails(props) {
                                 <View style={stylesOrder.homeTabText}>
                                     <View style={{ flex: 0.9 }}>
                                         <Text style={{ ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(16, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
-                                        <View style={{flexDirection:'row', ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map(it => {if(it.attributeTypeName==='Color'){return <View key={i} style={{justifyContent:'center',marginHorizontal:5,paddingTop:3}}><View style={{backgroundColor:it.productAttrName.toLowerCase(),height:13,width:13,borderRadius:10}}></View><Text>{' '}</Text></View>} return <Text>{it.productAttrName + "  "}</Text> })}</View>
+                                        <View style={{flexDirection:'row', ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it,j) => {
+                                            if(it.attributeTypeName==='Color'){
+                                                return <View key={j+state.orderList.length} style={{justifyContent:'center',marginHorizontal:5,paddingTop:3}}>
+                                                    <View style={{backgroundColor:it.productAttrName.toLowerCase(),height:13,width:13,borderRadius:10}}></View><Text>{' '}</Text>
+                                                    </View>
+                                                } 
+                                                return <Text key={j+state.orderList.length}>{it.productAttrName + "  "}</Text> 
+                                                })}</View>
                                         <Text style={{ ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
                                     </View>
                                 </View>

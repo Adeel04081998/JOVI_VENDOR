@@ -104,7 +104,7 @@ export const extractBaseURLFromExternalConfigFile = async () => {
             });
     }
 };
-extractBaseURLFromExternalConfigFile();
+// extractBaseURLFromExternalConfigFile();
 
 export const BOTTOM_TABS = [
     {

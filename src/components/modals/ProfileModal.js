@@ -21,7 +21,7 @@ import { userAction } from '../../redux/actions/user';
 const ProfileModal = (props) => {
     console.log('USer:', props.user)
     let weekArr = [false, false, false, false, false, false, false];
-    props.user?.daysOfTheWeek.map(it=>{
+    props.user?.daysOfTheWeek?.map(it=>{
         weekArr[it] = true;
     });
     const [state, setState] = useState({
@@ -33,19 +33,13 @@ const ProfileModal = (props) => {
         active:props.user.pitstopStatus===1?true:false,
         closingTime: props.user.closingTime.split(':')[0]+':'+props.user.closingTime.split(':')[1],
         workingDays: weekArr,
-        vendorList: props?.user?.vendorPitstopDetailsList.map(item => { return { ...item, text: item.personName } }),
+        vendorList: props?.user?.vendorPitstopDetailsList?.map(item => { return { ...item, text: item.personName } }),
         vendor: props?.user?.vendorPitstopDetailsList[0],
     })
     const onDropdownClick = () => {
         setState(prevState => ({ ...prevState, showDropdown: !prevState.showDropdown }));
     }
     const onSave = () => {
-        console.log({
-            "openingTime": state.openingTime,
-            "closingTime": state.closingTime,
-            "daysOfWeek": state.workingDays.map((it,i)=>{if(it===true){return i}}).filter(it=>it!==undefined),
-            "pitstopStatus": state.active===true?1:0,
-          })
         postRequest('Api/Vendor/Pitstop/Timings/Update', {
             "openingTime": state.openingTime,
             "closingTime": state.closingTime,
@@ -101,7 +95,7 @@ const ProfileModal = (props) => {
                 <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>No Data Found</Text>
             </TouchableOpacity>
         }
-        return optionsFilter.map((r, i) => (
+        return optionsFilter?.map((r, i) => (
             <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' })); onChange(r) }} key={i} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
                 height: 40,

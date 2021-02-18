@@ -1,11 +1,10 @@
 import Axios from 'axios';
 import { BASE_URL } from './config';
 import AsyncStorage from '@react-native-community/async-storage';
-
 Axios.interceptors.request.use(
     async config => {
         config.baseURL = BASE_URL;
-        // console.log("BASE_URL ", BASE_URL)
+        console.log("BASE_URL ", BASE_URL)
         let res = await AsyncStorage.getItem('User');
         // console.log("Axios.res :", res);
         if (!res) config.headers['content-type: application/json'];

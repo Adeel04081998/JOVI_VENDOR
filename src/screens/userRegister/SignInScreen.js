@@ -71,12 +71,14 @@ export default function SignInScreen(props) {
                     { "Authorization": "Bearer " + res.data.loginResult.token.authToken },
                     dispatch,
                     async ress => {
+                        console.log('USer---------',ress.data)
                         dispatch(userAction({ ...props.user, ...ress.data.userDetails, userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }));
                         // sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
                     },
                     err => {
                         console.log("Problem is here--- :", JSON.stringify(err))
                         if (err) CustomToast.error("Something went wrong!")
+                        dispatch(userAction({ ...props.user, daysOfTheWeek:[],openingTime:'',closingTime:'', userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }));
 
                         // Commented line were creating an ambigous behaviour when logged in user open app after a while 
                         // if (err) setState({ ...state, loggedInUser: null, initRoute: "Login" });
