@@ -207,7 +207,7 @@ const styleProduct = StyleSheet.create({
         zIndex: 900,
         "height": "90%",
     },
-    productName:{ flex: 2,maxWidth:'100%',marginLeft:2, justifyContent: 'center', alignItems: 'center' },
+    productName:{ flex: 2,maxWidth:'100%',paddingHorizontal:5, justifyContent: 'center', alignItems: 'center' },
     counter:(props) =>{return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
 
 })

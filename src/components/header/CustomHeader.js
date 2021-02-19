@@ -142,7 +142,7 @@ export const HeaderApp = (props) => {
             <TouchableOpacity style={{ width: 90, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => profileHeader()}>
                 <ImageBackground source={user&&user.picture?{uri:renderPicture(user.picture,user.tokenObj &&user.tokenObj.token.authToken)}:dummy} style={{ marginRight: 52, height: 32, width: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }} resizeMode='cover'  >
                 {/* <ImageBackground source={user&&user.picture?{uri:renderPicture(user.picture,user.tokenObj &&user.tokenObj.token.authToken)}:dummy} style={{flex:1,marginRight: 2, height: 32, width: 32, borderRadius: 16,backgroundColor:'red', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'}} resizeMode='cover'  > */}
-                    <Spinner isVisible={false} size={30} type="Circle" color={activeTheme.white} />
+                    <Spinner isVisible={true} size={30} type="Circle" color={activeTheme.white} />
                 </ImageBackground>
             </TouchableOpacity>
         </View>

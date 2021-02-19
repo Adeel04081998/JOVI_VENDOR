@@ -184,7 +184,7 @@ function Items(props) {
                             </View>
                             :
                             state.itemsData.map((item, i) => {
-                                return <View key={i} style={{ height: 150, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
+                                return <View key={i} style={{ height: 200, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
                                     <TouchableOpacity style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: "center" }} onPress={() => disableEnableProduct(item)}>
                                         {item.availabilityStatus === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
                                         {item.availabilityStatus === 'Discontinued' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901,justifyContent:'center',alignItems:'center' }}>
@@ -206,7 +206,7 @@ function Items(props) {
                                                 <Text style={{ color: 'white' }}>{i + 1}</Text>
                                             </View> */}
                                         </View>
-                                        <View style={{ flex: 1 }}><Text>{item.itemName}</Text></View>
+                                        <View style={{ flex: 1,paddingHorizontal:5 }}><Text>{item.itemName}</Text></View>
                                     </TouchableOpacity>
                                 </View>
                             })

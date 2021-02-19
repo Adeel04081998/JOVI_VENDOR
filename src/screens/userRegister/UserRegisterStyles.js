@@ -33,6 +33,32 @@ export default StyleSheet.create({
         alignSelf: 'stretch',
 
     }),
+    tempWrapperSignIn: (activeTheme, keyboradState, screen) => ({
+        flex: screen && screen === 1 ? 0 : keyboradState ? 5 : 3,
+        // flex: screen && screen === 1 ? 0 : keyboradState ? 5 : 10,
+        alignSelf: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'column',
+        backgroundColor: '#fff',
+        width: '100%',
+        // borderTopLeftRadius: 10,
+        // borderTopRightRadius: 10,
+        bottom: 0,
+        alignSelf: 'center',
+        shadowColor: '#000',
+        paddingBottom: 0,
+        paddingTop: 10,
+        // borderWidth:0,
+        // borderColor: 'white',
+        // paddingHorizontal: 20,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
+    }),
     tempWrapper: (activeTheme, keyboradState, screen) => ({
         flex: screen && screen === 1 ? 0 : keyboradState ? 5 : 3,
         // flex: screen && screen === 1 ? 0 : keyboradState ? 5 : 10,

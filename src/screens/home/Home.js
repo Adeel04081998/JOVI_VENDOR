@@ -184,7 +184,7 @@ function Home(props) {
 
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} >Brands</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={()=>navigation.navigate('Orders')}>Brands</Text>
                     <Text style={{ marginRight: 14 }}>Total {state.paginationInfo?.totalItems}</Text>
                 </View>
                 <ScrollView style={{ flex: 1,marginHorizontal:8 }} onTouchEnd={() => {

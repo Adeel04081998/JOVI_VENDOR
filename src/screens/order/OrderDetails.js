@@ -22,24 +22,25 @@ function OrderDetails(props) {
     const [state, setState] = useState({
         "loader": false,
         orderList: [],
-        totalAmount:0,
+        totalAmount: 0,
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
     });
-    const counterChange = (item,index) => {
-        if(index!==0&&(item.quantity + 1)>item.actualQuantity){
+    const counterChange = (item, index) => {
+        if (index !== 0 && (item.quantity + 1) > item.actualQuantity) {
             return;
         }
-        item = {...item,
+        item = {
+            ...item,
             quantity: index === 0 ? (item.quantity < 1 ? 0 : item.quantity - 1) : item.quantity + 1
         }
-        let newArr = state.orderList.map(it=>{
-            if(it.jobItemID === item.jobItemID){
+        let newArr = state.orderList.map(it => {
+            if (it.jobItemID === item.jobItemID) {
                 return item;
-            }else{
+            } else {
                 return it;
             }
         })
-        setState(pre => ({ ...pre, orderList:newArr}));
+        setState(pre => ({ ...pre, orderList: newArr }));
         confirmOrder(newArr);
     }
     const changeStatusItem = (item) => {
@@ -56,7 +57,7 @@ function OrderDetails(props) {
         }));
         confirmOrder(arr);
     }
-    const confirmOrder = (latestArr = false,isConfirmed=false) => {
+    const confirmOrder = (latestArr = false, isConfirmed = false) => {
         let payloadArr = (latestArr !== false ? latestArr : state.orderList).map(item => {
             return {
                 "jobItemID": item.jobItemID,
@@ -69,15 +70,15 @@ function OrderDetails(props) {
             }
         });
         console.log(payloadArr)
-        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr,isConfirmed }, {}, props.dispatch, (res) => {
+        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr, isConfirmed }, {}, props.dispatch, (res) => {
             if (res.data.statusCode === 200) {
                 CustomToast.success('Order Updated');
-                if(isConfirmed === true){
+                if (isConfirmed === true) {
                     navigation.goBack();
                 }
                 getData();
             }
-        }, (err) => { if (err) {console.log(err); CustomToast.error('Something went wrong!')} }, '');
+        }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
     }
     const replaceItem = (item) => {
         let ModalComponent = {
@@ -110,14 +111,14 @@ function OrderDetails(props) {
                     setState(prevState => ({
                         ...prevState,
                         orderList: res.data.vendorOrderDetailsVM.itemsList,
-                        totalAmount:res.data.vendorOrderDetailsVM.totalAmount
+                        totalAmount: res.data.vendorOrderDetailsVM.totalAmount
                     }))
                 } else {
                     CustomToast.error("Not Found");
                     setState(prevState => ({
                         ...prevState,
                         orderList: [],
-                        totalAmount:0
+                        totalAmount: 0
                     }))
                 }
             }, (err) => {
@@ -171,7 +172,7 @@ function OrderDetails(props) {
                                 );
                             }}
                         >
-                            <View style={{ ...stylesOrder.homeTab({activeTheme:props.activeTheme}), margin: 5 }}>
+                            <View style={{ ...stylesOrder.homeTab({ activeTheme: props.activeTheme }), margin: 5 }}>
                                 {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
                                 </View>}
@@ -185,21 +186,22 @@ function OrderDetails(props) {
                                 </View>
                                 <View style={stylesOrder.homeTabText}>
                                     <View style={{ flex: 0.9 }}>
-                                        <Text style={{ ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(16, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
-                                        <View style={{flexDirection:'row', ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it,j) => {
-                                            if(it.attributeTypeName==='Color'){
-                                                return <View key={j+state.orderList.length} style={{justifyContent:'center',marginHorizontal:5,paddingTop:3}}>
-                                                    <View style={{backgroundColor:it.productAttrName.toLowerCase(),height:13,width:13,borderRadius:10}}></View><Text>{' '}</Text>
-                                                    </View>
-                                                } 
-                                                return <Text key={j+state.orderList.length}>{it.productAttrName + "  "}</Text> 
-                                                })}</View>
-                                        <Text style={{ ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
+                                        <Text style={{flex:2, ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(16, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it, j) => {
+                                            if (it.attributeTypeName === 'Color') {
+                                                return  <View key={j + state.orderList.length} style={{ backgroundColor: it.productAttrName.toLowerCase(), height: 13, width: 13, borderRadius: 10,marginRight:5 }}></View>
+
+                                                // return <View key={j + state.orderList.length} style={{ justifyContent: 'center', marginHorizontal: 5 }}>
+                                                // </View>
+                                            }
+                                            return <Text key={j + state.orderList.length}>{it.productAttrName + "  "}</Text>
+                                        })}</View>
+                                        <Text style={{flex:1, ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
                                     {
-                                        ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: '#fff', height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item,idx)}>
+                                        ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: '#fff', height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item, idx)}>
                                             <Text style={{}}>{btn}</Text>
                                         </TouchableOpacity>)
                                     }
@@ -217,7 +219,7 @@ function OrderDetails(props) {
                     <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => { navigation?.navigate('ContactUsPage') }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Report</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default }} onPress={() => confirmOrder(false,true)}>
+                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor:state.orderObj.orderStatus===1?props.activeTheme.default:props.activeTheme.grey }} onPress={state.orderObj.orderStatus===1?() => confirmOrder(false, true):()=>{}}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Confirm</Text>
                     </TouchableOpacity>
                 </View>
@@ -231,7 +233,7 @@ const mapStateToProps = (store) => {
     }
 };
 const stylesOrder = StyleSheet.create({
-    homeTab:props=> {return{ height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
+    homeTab: props => { return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 } },
     homeTabView: { flex: 0.38, paddingTop: 5, overflow: 'hidden', borderRadius: 10 },
     homeTabImage: {
         flex: 1,

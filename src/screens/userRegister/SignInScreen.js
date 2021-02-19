@@ -163,7 +163,7 @@ export default function SignInScreen(props) {
     return (
         <>
             <View style={styles.regWrap}>
-                <Text style={styles.catpion(activeTheme)}>Sign In</Text>
+                {/* <Text style={styles.catpion(activeTheme)}>Sign In</Text> */}
                 <Text style={styles.Inputcatpion(activeTheme)}>
                     Email
             </Text>

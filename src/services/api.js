@@ -101,7 +101,7 @@ export const getRequest = async (url, customHeaders, dispatch, onSuccess, onErro
             else if (error.response.status === 500) CustomToast.error('Something Went Wrong!!');
         }
         hideLoaderAfterCall && dispatch(showHideLoader(false, ''));
-        // onError(error);
+        onError(error);
     }
 };
 export const deleteRequest = async (url, data, headers, dispatch, onSuccess, onError, loaderMsg) => {

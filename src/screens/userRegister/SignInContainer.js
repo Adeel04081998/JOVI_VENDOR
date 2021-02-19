@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, ImageBackground, Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Platform, Keyboard } from "react-native";
+import { View, ImageBackground,Image, Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Platform, Keyboard } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import styles from './UserRegisterStyles';
 import colors from "../../styles/colors";
@@ -91,13 +91,17 @@ export default SignIn = props => {
             setState(initState);
         }
     }, []));
-    // console.log('Signin container State :', state);
+    // console.log('Signin container State :', state);signinSC signInScreen signInScreencc
     return (
         <View style={{ ...StyleSheet.absoluteFill }}>
             <KeyboardAvoidingView behavior={behavior} style={styles.tempContainer(activeTheme)} >
-                <LinearGradient style={{ flex: 1, opacity: 0.6 }} colors={[...colors.gradientColors]} onTouchEnd={sharedKeyboardDismissHandler} />
-                <View style={{ backgroundColor: '#cf90ee' }}>
-                    <View style={styles.tempWrapper(activeTheme, false, 1)}>
+                {/* <LinearGradient style={{ flex: 1, opacity: 0.1 }} colors={[...colors.gradientColors]} onTouchEnd={sharedKeyboardDismissHandler} /> */}
+                <View style={{ backgroundColor: 'white',flex:1 }}>
+                <ImageBackground source={require('../../assets/signInScreencc.png')} style={{width: '100%', height: '100%',flex:1}} resizeMode={'stretch'} resizeMethod={'scale'}>
+                    
+                </ImageBackground>
+                {/* <Image source={require('../../assets/signinSC.png')} style={{ width: '100%',backgroundColor:'red', height: '90%', position: 'absolute', top: -200, left: 0,resizeMode: 'stretch', }}  /> */}
+                    <View style={styles.tempWrapperSignIn(activeTheme, false, 1)}>
                         {
                             currentScreen === 'forgot_password' ?
                                 <ForgotPassword

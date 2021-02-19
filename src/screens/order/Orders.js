@@ -5,6 +5,7 @@ import CustomToast from '../../components/toast/CustomToast';
 import { connect } from 'react-redux';
 import { HeaderApp } from '../../components/header/CustomHeader';
 import { debounce } from 'debounce';
+import { useFocusEffect } from '@react-navigation/native';
 import { getRequest, postRequest } from '../../services/api';
 import SharedFooter from '../../components/footer/SharedFooter';
 function Orders(props) {
@@ -16,7 +17,7 @@ function Orders(props) {
         paginationInfo: {}
     });
     const getData = (keywords = false) => {
-        getRequest('api/Vendor/OrdersSummary', {}
+        getRequest('/api/Vendor/OrdersSummary', {}
             , props.dispatch, (res) => {
                 console.log('Order Request:', res)
                 if (res.data.statusCode === 200) {
@@ -43,7 +44,7 @@ function Orders(props) {
             orderList:val===''?pre.orderListTemp:pre.orderListTemp.filter(it=>it.orderNo.toString().includes(val)),
         }))
     }
-    useEffect(useCallback(() => {
+    useFocusEffect(useCallback(() => {
         getData();
         return () => {
             setState({
