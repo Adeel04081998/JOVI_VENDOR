@@ -527,16 +527,38 @@ let footerHome = (color = "#fff") => `<svg xmlns="http://www.w3.org/2000/svg" wi
 <path id="home" d="M22.7,10.148l0,0L13.184.629a2.148,2.148,0,0,0-3.038,0L.633,10.141l-.01.01a2.147,2.147,0,0,0,1.429,3.66q.033,0,.066,0H2.5v7a2.517,2.517,0,0,0,2.514,2.514H8.736a.684.684,0,0,0,.684-.684V17.157a1.148,1.148,0,0,1,1.147-1.147h2.2a1.148,1.148,0,0,1,1.147,1.147v5.491a.684.684,0,0,0,.684.684h3.724a2.517,2.517,0,0,0,2.514-2.514v-7h.352a2.148,2.148,0,0,0,1.52-3.666Zm0,0" transform="translate(0 0.001)" fill=${color}/>
 </svg>
 `
+let discontinueIcon = (color = "#fff") => `<svg width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+<g>
+ <title>Layer 1</title>
+ <g id="cancel_2_">
+  <circle fill="#fc3f93" r="11" cy="11" cx="11" id="Ellipse_367"/>
+  <path fill="#fff" d="m15.828,15.828a1.038,1.038 0 0 1 -1.455,0l-3.373,-3.373l-3.373,3.373a1.029,1.029 0 0 1 -1.455,-1.455l3.368,-3.373l-3.373,-3.373a1.029,1.029 0 0 1 1.455,-1.455l3.378,3.368l3.373,-3.373a1.029,1.029 0 0 1 1.455,1.455l-3.373,3.373l3.373,3.373a1.038,1.038 0 0 1 0,1.46z" id="Path_3340"/>
+ </g>
+</g>
+</svg>
+`
+let backIconHeader = (color = "#fff") => `<svg width="11.661" height="21.178" xmlns="http://www.w3.org/2000/svg">
+
+<g>
+ <title>Layer 1</title>
+ <g id="back">
+  <path fill=${color} d="m0.31,11.345l9.524,9.521a1.069,1.069 0 0 0 1.514,-1.511l-8.768,-8.765l8.767,-8.765a1.07,1.07 0 0 0 -1.515,-1.512l-9.524,9.52a1.079,1.079 0 0 0 0.002,1.512z" id="Chevron_Right"/>
+ </g>
+</g>
+</svg>
+`
 
 
 export default {
   footerHome,
   threeDots,
+  discontinueIcon,
   callUsLogoIcon,
   cross_icon_new,
   super_cart,
   super_share,
   callUsLogo,
+  backIconHeader,
   super_order_question_mark,
   super_arrow_down,
   super_tag,

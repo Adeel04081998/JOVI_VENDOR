@@ -34,11 +34,13 @@ export default StyleSheet.create({
 
     }),
     tempWrapperSignIn: (activeTheme, keyboradState, screen) => ({
+        // flex:1,
         flex: screen && screen === 1 ? 0 : keyboradState ? 5 : 3,
         // flex: screen && screen === 1 ? 0 : keyboradState ? 5 : 10,
         alignSelf: 'flex-end',
         alignItems: 'center',
         flexDirection: 'column',
+        // backgroundColor: 'red',
         backgroundColor: '#fff',
         width: '100%',
         // borderTopLeftRadius: 10,

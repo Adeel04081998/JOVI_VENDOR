@@ -7,7 +7,7 @@ import { navigateWithResetScreen, sharedTotalCartItems } from '../../utils/share
 import { BOTTOM_TABS } from '../../config/config';
 import { setFooterTabsAction } from '../../redux/actions/sharedReduxActions';
 
-export default ({ activeTheme, activeTab,hideOptions, drawerProps, mainDrawerComponentProps, onPress }) => {
+export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDrawerComponentProps, onPress }) => {
     // console.log("mainDrawerComponentProps :", mainDrawerComponentProps);
     // const bottomNavigationHandler = pressedTab => navigateWithResetScreen(null, [{ name: pressedTab.route.container, params: { screen: pressedTab.route.screen } }]);
     const bottomNavigationHandler = (pressedTab, index) => {
@@ -39,7 +39,7 @@ export default ({ activeTheme, activeTab,hideOptions, drawerProps, mainDrawerCom
                         ))
                     }
                 </View>
-                <TouchableOpacity style={{width:30,height:30,...styles.absoluteTouchableOpacity(activeTheme)}} onPress={() => navigateWithResetScreen(null, [{ name: 'home', params: {} }])}>
+                <TouchableOpacity style={{width:30,height:30,...styles.absoluteTouchableOpacity(activeTheme)}} onPress={onHome&&onHome===true?()=>{}:() => navigateWithResetScreen(null, [{ name: 'home', params: {} }])}>
                     <SvgXml xml={commonIcons.footerHome()} height={30} width={40} />
                 </TouchableOpacity>
             </View>
@@ -50,6 +50,7 @@ export default ({ activeTheme, activeTab,hideOptions, drawerProps, mainDrawerCom
 const styles = StyleSheet.create({
     "mainView": activeTheme => ({
         height: 80,
+        zIndex:1500,
         justifyContent: 'center',
         shadowColor: "#000",
         shadowOffset: {

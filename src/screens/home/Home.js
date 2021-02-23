@@ -69,6 +69,7 @@ function Home(props) {
                 <AddBrandModal type={1} {...props} onSave={()=>{getData()}} brandList={state.brandData} />
             ),
             // modalFlex: 0,
+            // modalHeight: Dimensions.get('window').height * 0.85,
             modalHeight: Dimensions.get('window').height * 0.85,
             modelViewPadding: 0,
             fadeAreaViewFlex: plateformSpecific(1, 0.6),
@@ -113,7 +114,7 @@ function Home(props) {
     const searchBrand = debounce((val) => {
         getData(val);
     },900)
-    useEffect(useCallback(() => {
+    useFocusEffect(useCallback(() => {
         // const permissions = async () => await askForWholeAppPermissions();
         
         getData();
@@ -180,6 +181,7 @@ function Home(props) {
                 onChangeText={searchBrand}
                 activeTheme={activeTheme}
                 screenProps={{...props}}
+                noBackButton={true}
             />
 
             <View style={{ flex: 1, marginTop: 30 }}>
@@ -220,7 +222,7 @@ function Home(props) {
                         }
                 </ScrollView>
             </View>
-            <SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
+            <SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
         </View>
     )
 }

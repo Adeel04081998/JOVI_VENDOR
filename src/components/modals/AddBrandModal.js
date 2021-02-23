@@ -170,7 +170,8 @@ const AddBrandModal = (props) => {
             "itemsPerPage": state.itemsPerPage + 10,
             "isAscending": true,
             "brandType": 1,
-            "isPagination": true,
+            "isPagination": false,
+            // "isPagination": true,
             "genericSearch": ""
         }, {}
             , props.dispatch, (res) => {
@@ -203,7 +204,7 @@ const AddBrandModal = (props) => {
         };
     }, []), []);
     return (
-        <View style={{ ...StyleSheet.absoluteFill}}>
+        // <View style={{flex:1}}>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }} keyboardVerticalOffset={-550}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
@@ -225,22 +226,22 @@ const AddBrandModal = (props) => {
                                     flexDirection: 'row'
                                 }}>
                                     <TouchableOpacity onPress={type!==1?()=>{}: () => onDropdownClick('brand')} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                    {/* <TextInput value={state.brand.text !== '' ? state.brand.text : ''} placeholder={'Choose Brand'}  onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'brand', brand:{...pre.brand,text:val} }))} /> */}
+                                    <TextInput value={state.brand.text !== '' ? state.brand.text : ''} placeholder={'Choose Brand'}  onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'brand',product:val===''?'':pre.product,item:val===''?[]:pre.item, brand:{...pre.brand,text:val} }))} />
 
-                                        <Text>{state.brand.text ? state.brand.text : 'Choose Brand'}</Text>
+                                        {/* <Text>{state.brand.text ? state.brand.text : 'Choose Brand'}</Text> */}
                                     </TouchableOpacity>
                                 </View>
                                 {state.showDropdown === 'brand' ? <ScrollView nestedScrollEnabled onScrollEndDrag={(e) => {
                                     e.persist();
-                                    setHorizontalScrollState(pre => ({ ...pre, lastOffset: e.nativeEvent.contentOffset.y }));
+                                    // setHorizontalScrollState(pre => ({ ...pre, lastOffset: e.nativeEvent.contentOffset.y }));
                                     if (e.nativeEvent.contentOffset.y > horizontalScrollState.lastOffset) {
-                                        console.log(e.nativeEvent.contentOffset.y,horizontalScrollState.lastOffset,state.paginationInfo)
-                                        if (state.paginationInfo.itemsPerPage < state.paginationInfo.totalItems) {
-                                            getData();
-                                        }
+                                        // console.log(e.nativeEvent.contentOffset.y,horizontalScrollState.lastOffset,state.paginationInfo)
+                                        // if (state.paginationInfo.itemsPerPage < state.paginationInfo.totalItems) {
+                                            // getData();
+                                        // }
                                     }
                                 }} style={{
-                                    marginHorizontal: 15, width: '95%', height: 200, borderColor: props.activeTheme.lightGrey,
+                                    marginHorizontal: 15, width: '95%', height: 130, borderColor: props.activeTheme.lightGrey,
                                     borderWidth: 1,
                                     borderBottomLeftRadius: 10,
                                     borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
@@ -255,7 +256,7 @@ const AddBrandModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10
                                     }} > */}
-                                    {renderSelectionList(state.brandList, (e) => {Keyboard.dismiss(); setState(prevState => ({ ...prevState, brand: e,product:'',item:[],itemName:'' })); getProductAgainstBrand(e); })}
+                                    {renderSelectionList(state.brandList, (e) => {Keyboard.dismiss(); setState(prevState => ({ ...prevState, brand: e,product:'',item:[],itemName:'' })); getProductAgainstBrand(e); },state.brand.text)}
 
                                     {/* </View> */}
                                 </ScrollView>
@@ -438,7 +439,7 @@ const AddBrandModal = (props) => {
                     </View>
                 </Animated.View>
             </KeyboardAvoidingView>
-        </View>
+        // </View>
     );
 }
 

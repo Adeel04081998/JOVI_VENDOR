@@ -2,6 +2,7 @@ export const LIGHT_MODE = "LIGHT_MODE";
 export const DARK_MODE = "DARK_MODE";
 // Modal
 export const OPEN_MODAL = "OPEN_MODAL";
+export const UPDATE_MODAL_HEIGHT = "UPDATE_MODAL_HEIGHT";
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export const SHOW_HIDE_IMAGE_VIEW = "SHOW_HIDE_IMAGE_VIEW";
 // Loader

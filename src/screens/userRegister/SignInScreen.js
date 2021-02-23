@@ -230,7 +230,7 @@ export default function SignInScreen(props) {
             </View>
             <View style={{ flex: 0 }}>
                 <SubmitBtn
-                    title="Sign In"
+                    title="Login"
                     activeTheme={activeTheme}
                     onPress={signInHandler}
                     disabled={allFieldsValid ? false : true}

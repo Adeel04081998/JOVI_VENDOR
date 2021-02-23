@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, { set } from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
-import { renderPictureResizeable, sharedKeyboardDismissHandler, sharedlogoutUser } from '../../utils/sharedActions';
+import { renderPictureResizeable, sharedKeyboardDismissHandler,camelToTitleCase, sharedlogoutUser } from '../../utils/sharedActions';
 import CustomAndroidPickerItem from '../dropdowns/picker.android';
 import { favHomeIcon } from '../../assets/svgIcons/customerorder/customerorder'
 import { SvgXml } from 'react-native-svg';
@@ -18,8 +18,11 @@ import CustomToast from '../../components/toast/CustomToast';
 import dummy from '../../assets/bike.png';
 import common from '../../assets/svgIcons/common/common';
 import { userAction } from '../../redux/actions/user';
+import { connect } from 'react-redux';
+import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 const ProfileModal = (props) => {
     console.log('USer:', props.user)
+    const {dispatch} = props;
     let weekArr = [false, false, false, false, false, false, false];
     props.user?.daysOfTheWeek?.map(it=>{
         weekArr[it] = true;
@@ -69,6 +72,7 @@ const ProfileModal = (props) => {
         }));
     }
     const saveTime = () => {
+        dispatch({type:UPDATE_MODAL_HEIGHT,payload:false});
         setState(pre => ({
             ...pre,
             [pre.timePickMode]: pre.selectedValue,
@@ -111,6 +115,10 @@ const ProfileModal = (props) => {
                 <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>{r.text}</Text>
             </TouchableOpacity>
         ));
+    }
+    const setTimePickerState = (varName) => {
+        setState(pre => ({ ...pre, selectedValue: pre[varName], timePickMode: varName, pickTime: true }));
+        dispatch({type:UPDATE_MODAL_HEIGHT,payload:Dimensions.get('window').height * 0.3});
     }
     const getData = () => {
         postRequest('Api/Vendor/Pitstop/BrandGeneric/List', {
@@ -204,9 +212,9 @@ const ProfileModal = (props) => {
                                 <View style={{ flex: 7, marginBottom: 20, backgroundColor: '#F5F6FA', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, marginTop: 20, width: '100%' }}>
                                     <View style={{ height: '42%', flexDirection: 'row', padding: 20, flex: 1, borderBottomWidth: 1, borderBottomColor: '#929293' }}>
                                         <View style={{ flex: 0.62, marginLeft: 20, marginVertical: 5, justifyContent: 'center' }}>
-                                            <Text>{state.vendor.personName}</Text>
-                                            <Text>{state.vendor.email}</Text>
-                                            <Text>{state.vendor.contactNo}</Text>
+                                            <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>{state.vendor.personName}</Text>
+                                            <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>{state.vendor.email}</Text>
+                                            <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>{state.vendor.contactNo}</Text>
                                         </View>
                                         <TouchableOpacity style={{ flex: 0.38 }} onPress={() => setState(pre => ({ ...pre, active: !pre.active }))}>
                                             <View style={{ flex: 1, ...stylesHome.homeTabView, backgroundColor: state.active ? props.activeTheme.default : props.activeTheme.warning, marginVertical: 1, marginHorizontal: 15 }}>
@@ -222,13 +230,13 @@ const ProfileModal = (props) => {
                                     </View>
                                     <View style={{ height: '42%', justifyContent: 'center', alignItems: 'center', paddingLeft: 8, flex: 3, flexDirection: 'row' }}>
                                         <View style={{ flex: 1, height: '60%' }}>
-                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => setState(pre => ({ ...pre, selectedValue: pre.openingTime, timePickMode: 'openingTime', pickTime: true }))}>
+                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => setTimePickerState('openingTime')}>
                                                 <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Opening</Text>
                                                 <View style={{ height: '80%', justifyContent: 'center', alignItems: 'center', width: '90%', margin: 5, backgroundColor: props.activeTheme.default, borderColor: '#929293', borderWidth: 0.5, borderRadius: 15 }}><Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.white, 4) }}>{state.openingTime}</Text></View>
                                             </TouchableOpacity>
                                         </View>
                                         <View style={{ flex: 1, height: '60%' }}>
-                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => setState(pre => ({ ...pre, selectedValue: pre.closingTime, timePickMode: 'closingTime', pickTime: true }))}>
+                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => setTimePickerState('closingTime')}>
                                                 <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Closing</Text>
                                                 <View style={{ height: '80%', justifyContent: 'center', alignItems: 'center', width: '90%', margin: 5, backgroundColor: props.activeTheme.default, borderColor: '#929293', borderWidth: 0.5, borderRadius: 15 }}><Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.white, 4) }}>{state.closingTime}</Text></View>
                                             </TouchableOpacity>
@@ -254,7 +262,7 @@ const ProfileModal = (props) => {
                                         } */}
                                     {
                                         ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((item, i) => {
-                                            return <View key={i} style={{ backgroundColor: state.workingDays[i] ? props.activeTheme.default : 'white', borderRadius: 5, justifyContent: 'center', alignItems: 'center',height:50, flex:1, margin: 4 }}>
+                                            return <View key={i} style={{ backgroundColor: state.workingDays[i] ? props.activeTheme.default : 'white', borderRadius: 5, justifyContent: 'center', alignItems: 'center',height:44, flex:1, margin: 4 }}>
                                                 <Text style={{ ...commonStyles.fontStyles(14, state.workingDays[i] ? 'white' : 'black', 3) }} onPress={() => setWorkingDay(i)}>{item}</Text>
                                             </View>
                                         })
@@ -274,10 +282,13 @@ const ProfileModal = (props) => {
                 :
                 <>
                     <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
-                        <Text style={{ ...stylesHome.caption, left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Time</Text>
+                        <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.timePickMode)}</Text>
 
-
-                        <View style={{ marginTop: 35, paddingLeft: 20, paddingRight: 20, marginBottom: 30, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                        <View  style={{width:'100%',flexDirection:'row'}}>
+                            <Text style={{ ...stylesHome.caption,paddingLeft:20, width:'50%',left:0, color: '#000' }}>Hour</Text>
+                            <Text style={{ ...stylesHome.caption,paddingLeft:17, width:'50%',left:0, color: '#000' }}>Minutes</Text>
+                        </View>
+                        <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
                             <Picker
                                 accessibilityLabel={"hours"}
                                 style={{ zIndex: 500, width: 115 }}
@@ -313,7 +324,7 @@ const ProfileModal = (props) => {
                             </Picker>
                         </View>
                         <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, pickTime: false }))}>
+                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => {dispatch({type:UPDATE_MODAL_HEIGHT,payload:false});setState(pre => ({ ...pre, pickTime: false }))}}>
                                 <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
                             </TouchableOpacity>
 
@@ -389,4 +400,4 @@ const stylesHome = StyleSheet.create({
     homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
 
 });
-export default ProfileModal;
+export default connect()(ProfileModal);

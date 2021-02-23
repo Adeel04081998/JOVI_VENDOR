@@ -22,7 +22,11 @@ import DeviceInfo from 'react-native-device-info';
 const { timing } = Animated;
 
 // <Apis Handlers>
-
+export const camelToTitleCase = (text) => {
+    var result = text.replace(/([A-Z0-9])/g, " $1");
+    var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
+    return finalResult.replace(/I\sD/g, 'ID').replace(/Irr/g, 'IRR').replace('Cardlast', 'Card Last');
+};
 export const sharedSendFCMTokenToServer = (postRequest, FcmToken) => {
     postRequest(
         `/api/Common/FireBase/AddLog`,

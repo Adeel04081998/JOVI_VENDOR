@@ -71,7 +71,7 @@ const DisableProductModal = (props) => {
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                         <View style={{ height: 40, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
-                                ['Available', 'Out Of Stock', 'Discontinued'].map((it, i) => {
+                                ['Available', 'Out Of Stock', 'Unavailable'].map((it, i) => {
                                     return <View key={i} style={{ width: '33.33%', borderRadius: 5, height: '100%', backgroundColor: state.item.availabilityStatus === it ? '#7359BE' : 'white' }} >
                                         <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, item: { ...pre.item, availabilityStatus: it } }))}>
                                             <Text style={[commonStyles.fontStyles(16, state.item.availabilityStatus === it ? props.activeTheme.white : props.activeTheme.black, 1)]}>{it}</Text>
@@ -203,7 +203,7 @@ const DisableProductModal = (props) => {
                             </ScrollView>
                         </View>
                         <DefaultBtn
-                            title="Save and continue"
+                            title="Save & continue"
                             disabled={false}
                             backgroundColor={props.activeTheme.default}
                             onPress={() => onSave()}

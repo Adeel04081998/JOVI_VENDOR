@@ -160,15 +160,17 @@ function OrderDetails(props) {
                         return <Swipeable
                             key={i}
                             renderRightActions={() => {
-                                return (
+                                return (state.orderObj.orderStatus===1?
                                     <View style={{ height: 110, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center' }}>
+                                        <TouchableOpacity onPress={() => changeStatusItem(item)} style={{ marginRight: 10, elevation: 0 }}>
+                                            <SvgXml xml={commonIcons.discontinueIcon()} height={25} width={25} />
+                                        </TouchableOpacity>
                                         <TouchableOpacity onPress={() => replaceItem(item)} style={{ marginRight: 2, width: 40, elevation: 0 }}>
                                             <SvgXml xml={commonIcons.replaceIcon()} height={25} width={35} />
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => changeStatusItem(item)} style={{ marginRight: 10, elevation: 0 }}>
-                                            <SvgXml xml={commonIcons.outOfStock()} height={25} width={25} />
-                                        </TouchableOpacity>
                                     </View>
+                                    :
+                                    <View></View>
                                 );
                             }}
                         >
@@ -199,13 +201,13 @@ function OrderDetails(props) {
                                         <Text style={{flex:1, ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
                                     </View>
                                 </View>
-                                <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
+                                {state.orderObj.orderStatus===1&&<View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
                                     {
                                         ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: '#fff', height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item, idx)}>
                                             <Text style={{}}>{btn}</Text>
                                         </TouchableOpacity>)
                                     }
-                                </View>
+                                </View>}
                             </View>
                         </Swipeable>
                     }}

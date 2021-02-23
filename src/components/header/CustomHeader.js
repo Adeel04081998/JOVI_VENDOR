@@ -12,6 +12,7 @@ import { renderPicture } from '../../utils/sharedActions';
 import ProfileModal from '../modals/ProfileModal';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
+import common from '../../assets/svgIcons/common/common';
 export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinationView, bodyContent, BodyComponent, rightIcon, imgObject, imgStyles, rightIconHandler, navigation, activeTheme, height, width, styles, left, screenName }) {
     // let tempVal = 50;
     // console.log(StatusBar.currentHeight)
@@ -114,7 +115,7 @@ export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinati
     )
 }
 export const HeaderApp = (props) => {
-    const { state, caption,noSearch,screenProps, commonStyles, activeTheme,onChangeText,user } = props;
+    const { state,noBackButton, caption,noSearch,screenProps, commonStyles, activeTheme,onChangeText,user } = props;
     const profileHeader = () => {
         let ModalComponent = {
             visible: true,
@@ -133,7 +134,7 @@ export const HeaderApp = (props) => {
         screenProps.dispatch(openModalAction(ModalComponent));
     }
     return <View
-        style={{ height: 95,paddingTop:10, backgroundColor: activeTheme.background, justifyContent: 'space-between', alignItems: 'center' }}
+        style={{ height: 110,paddingTop:10, backgroundColor: activeTheme.background, justifyContent: 'space-between', alignItems: 'center' }}
         onTouchEnd={() => {
             if (state.isSmModalOpen) showHideModal(false, 1);
         }}
@@ -146,7 +147,8 @@ export const HeaderApp = (props) => {
                 </ImageBackground>
             </TouchableOpacity>
         </View>
-        <Text style={{ ...commonStyles.fontStyles(20, activeTheme.white, 4), flex: 1, alignSelf: 'flex-start', left: 20, top: 30 }}>{caption}</Text>
+        {noBackButton!==true&&<View style={{ width: '10%',position:'absolute',left:0,top:0,bottom:-10,zIndex:1000, }}><TouchableOpacity onPress={()=>screenProps.navigation.goBack()} style={{width:'100%',paddingLeft:15,justifyContent:'center',height:'100%'}}><SvgXml  xml={common.backIconHeader()} height={30} width={25} /></TouchableOpacity></View>}
+        <Text style={{ ...commonStyles.fontStyles(20, activeTheme.white, 4), flex: 1, alignSelf: 'center', top: 30,maxWidth:'70%',flexWrap:'wrap' }}>{caption}</Text>
         {noSearch&&noSearch===true?<></>:<View style={{ width: '100%',position:'absolute',bottom:-20, marginTop: 10,zIndex:1000, alignItems: 'center', flex: 1 }}>
             <TextInput
                 style={{

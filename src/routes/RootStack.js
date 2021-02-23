@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ImageBackground, View, Platform, Keyboard, BackHandler, StatusBar, Text } from 'react-native';
+import { ImageBackground, View, Platform, Keyboard, BackHandler, StatusBar, Text ,Dimensions} from 'react-native';
 import OtpScreen from '../screens/otpScreen/Otp';
 import OtpCode from '../screens/otpScreen/OtpCode';
 import UserRegister from '../screens/userRegister/UserRegister';
@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import EmailOtpVerify from '../screens/otpScreen/EmailOtpVerify';
 import ResetPassword from '../screens/userRegister/ResetPassword';
 import MainDrawer from './navigations';
-import { setIsForceTurnOnLocDialogVisible, setIsForcePermissionLocDialogVisible, sharedHubConnectionInitiator, sharedHubConnectionStopper, statusBarHandler, sharedGetNotificationsHandler } from '../utils/sharedActions';
+import { setIsForceTurnOnLocDialogVisible, setIsForcePermissionLocDialogVisible, sharedHubConnectionInitiator, sharedHubConnectionStopper, statusBarHandler, sharedGetNotificationsHandler, sharedSendFCMTokenToServer } from '../utils/sharedActions';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getRequest, postRequest } from '../services/api';
 import { userAction } from '../redux/actions/user';
@@ -22,7 +22,9 @@ import { closeModalAction } from '../redux/actions/modal';
 import Home from '../screens/home/Home';
 import Products from '../screens/Products/Products';
 import VendorRoutes from './VendorRoutes';
-
+import { UPDATE_MODAL_HEIGHT } from '../redux/actions/types';
+import { fcmService } from '../services/FCMServices';
+import { localNotificationService } from '../services/LocalNotificationServices';
 
 // import jwt_decode from 'jwt-decode';
 const Stack = createStackNavigator();
@@ -36,7 +38,7 @@ const RootStack = (props) => {
     const [state, setState] = useState(initialState);
     const _keyboardShowDetecter = (keyboardState) => setState(prevState => ({ ...prevState, keypaidOpen: true }));
     const _keyboardHideDetecter = (keyboardState) => setState(prevState => ({ ...prevState, keypaidOpen: false }));
-    const _keyboardShowHideDetecter = boolean => setState(prevState => ({ ...prevState, keypaidOpen: boolean }));
+    const _keyboardShowHideDetecter = boolean => {setState(prevState => ({ ...prevState, keypaidOpen: boolean }));if(boolean === true){dispatch({type:UPDATE_MODAL_HEIGHT,payload:Dimensions.get('window').height * 0.5});}else{dispatch({type:UPDATE_MODAL_HEIGHT,payload:false});}}
 
     const handleBackButtonPressed = bool => {
         sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
@@ -103,6 +105,49 @@ const RootStack = (props) => {
             console.log('RootStack State Cleared!');
         }
     }, []);
+    useEffect(() => {
+        // console.log("MainDrawer.useEffect -> push notification effect ran---");
+        // console.log("MainDrawer.Props :", props);
+        if (Platform.OS === 'android') {
+            fcmService.registerAppWithFCM();
+            fcmService.register(onRegister, onNotification, onOpenNotification)
+            localNotificationService.configure(onOpenNotification, onAction, onRegistrationError);
+            function onRegister(token) {
+                console.log('[navigations.js] onRegister token :', token);
+                sharedSendFCMTokenToServer(postRequest, token);
+            };
+            function onNotification(notify) {
+                console.log("onNotification.notify -> ", notify)
+                console.log("MainDrawer.Props :", props);
+                localNotificationService.showNotification(0, notify.title, notify.body, notify, {
+                    soundName: "my_sound.mp3",
+                    playSound: true,
+                    userInteraction: true,
+                },
+                    // actions array
+                    []
+                )
+            };
+            function onOpenNotification(notify) {
+                console.log("onOpenNotification.notify -> ", notify)
+                // console.log("MainDrawer.Props :", props);
+                // if (notify.body) Alert.alert("Open Notification: ", notify.body);
+            };
+            function onAction(notification) {
+                console.log("[navigations] ACTION:", notification.action);
+                console.log("[navigations] NOTIFICATION:", notification);
+            };
+            function onRegistrationError(err) {
+                console.error("[navigations] onRegistrationError :", err.message, err);
+            };
+            return () => {
+                console.log('[MainDrawer] cleared!!');
+                localNotificationService.unRegister();
+                fcmService.unRegister();
+            }
+        }
+
+    }, [])
     // console.log("myhubConnection :", myhubConnection);
     // console.log('RootStack.state :', state);
     return state.initRoute && (

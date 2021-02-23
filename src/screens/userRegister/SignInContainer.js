@@ -97,7 +97,7 @@ export default SignIn = props => {
             <KeyboardAvoidingView behavior={behavior} style={styles.tempContainer(activeTheme)} >
                 {/* <LinearGradient style={{ flex: 1, opacity: 0.1 }} colors={[...colors.gradientColors]} onTouchEnd={sharedKeyboardDismissHandler} /> */}
                 <View style={{ backgroundColor: 'white',flex:1 }}>
-                <ImageBackground source={require('../../assets/signInScreencc.png')} style={{width: '100%', height: '100%',flex:1}} resizeMode={'stretch'} resizeMethod={'scale'}>
+                <ImageBackground source={require('../../assets/signInNew.png')} style={{width: '100%', height: '100%',flex:1}} resizeMode={'stretch'} resizeMethod={'scale'}>
                     
                 </ImageBackground>
                 {/* <Image source={require('../../assets/signinSC.png')} style={{ width: '100%',backgroundColor:'red', height: '90%', position: 'absolute', top: -200, left: 0,resizeMode: 'stretch', }}  /> */}
