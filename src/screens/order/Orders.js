@@ -98,7 +98,7 @@ function Orders(props) {
 
                 </ScrollView>
             </View>
-            <SharedFooter activeTheme={activeTheme} hideOptions={true} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={() => { }} />
+            <SharedFooter activeTheme={activeTheme} activeTab={1} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={() => { }} />
         </View>
     )
 }

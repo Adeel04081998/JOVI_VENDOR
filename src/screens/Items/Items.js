@@ -63,7 +63,7 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal type={3} productObj={{...state.selectedProduct,productID:state.selectedProduct.genricProductID}} brandObj={state.brandData} {...props} />
+                <AddBrandModal type={3} onSave={()=>getData()} productObj={{...state.selectedProduct,productID:state.selectedProduct.genricProductID}} brandObj={state.brandData} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -117,7 +117,7 @@ function Items(props) {
         getData(item);
     }
     const onFooterItemPressed = async (pressedTab, index) => {
-        if (pressedTab.title === 'Add Brand') {
+        if (pressedTab.title === 'Add') {
             addBrandModal();
             // navigateWithResetScreen(null,[{name:'homee', params: {}}]);
         }else if(pressedTab.title === 'Orders'){
@@ -143,7 +143,7 @@ function Items(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Products') }}>Choose Product</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Items List</Text>
                     <Text style={{ marginRight: 14 }}>Total {state.productData.length}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
@@ -206,7 +206,7 @@ function Items(props) {
                                                 <Text style={{ color: 'white' }}>{i + 1}</Text>
                                             </View> */}
                                         </View>
-                                        <View style={{ flex: 1,paddingHorizontal:5 }}><Text>{item.itemName}</Text></View>
+                                        <View style={{ flex: 1,paddingHorizontal:5 }}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.itemName}</Text></View>
                                     </TouchableOpacity>
                                 </View>
                             })

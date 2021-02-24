@@ -28,9 +28,9 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
                                 <SvgXml xml={t.icon(activeTab === j ? "#7359BE" : "#c1c0c6")} height={25} width={25} />
                                 <Text style={{ ...commonStyles.fontStyles(14, activeTab === j ? activeTheme.default : "#c1c0c6", activeTab === j ? 4 : 1), paddingTop: 10 }}>{t.title}</Text>
                                 {
-                                    (j === 3 && sharedTotalCartItems().cartProducts.length) ?
+                                    (j === 1 ) ?
                                         <View style={{ position: 'absolute', right: 0, top: -7, zIndex: 999, left: 50, backgroundColor: "#FC3F93", alignItems: 'center', justifyContent: 'center', height: 15, width: 15, borderRadius: 10 }}>
-                                            <Text style={{ color: activeTheme.white, fontSize: 10 }}>{sharedTotalCartItems().cartProducts.length}</Text>
+                                            <Text style={{ color: activeTheme.white, fontSize: 10 }}>{mainDrawerComponentProps.user.noOfOpenOrders}</Text>
                                         </View>
                                         :
                                         null

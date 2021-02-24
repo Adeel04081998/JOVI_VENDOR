@@ -170,7 +170,7 @@ export default function SignInScreen(props) {
                 <CustomInput
                     onValidation={onValidation}
                     name="email"
-                    placeholder='Email'
+                    placeholder='Email ID'
                     style={email.length > 0 ? styles.regInputArea(activeTheme, isValid, focusedField, 'email') : { ...styles.defaultInputArea(activeTheme), borderColor: state.focusedField === 'email' ? activeTheme.default : activeTheme.borderColor }}
                     value={email}
                     onChangeHandler={value => onChangeHandler('email', value.trim())}

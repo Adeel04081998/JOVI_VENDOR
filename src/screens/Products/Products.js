@@ -98,7 +98,7 @@ function Products(props) {
         }));
     }
     const onFooterItemPressed = async (pressedTab, index) => {
-        if (pressedTab.title === 'Add Brand') {
+        if (pressedTab.title === 'Add') {
             addBrandModal();
             // navigateWithResetScreen(null,[{name:'homee', params: {}}]);
         }
@@ -122,7 +122,7 @@ function Products(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { navigation.goBack('Home') }}>Choose Brand</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Products List</Text>
                     <Text style={{ marginRight: 14 }}>Total {state.brandData.length}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
@@ -169,7 +169,7 @@ function Products(props) {
                                                 <Text style={{ color: 'white' }}>{item.noOfItems}</Text>
                                             </View>
                                         </View>
-                                        <View style={{...styleProduct.productName}}><Text>{item.productName}</Text></View>
+                                        <View style={{...styleProduct.productName}}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.productName}</Text></View>
                                     </TouchableOpacity>
                                 </View>
                             })

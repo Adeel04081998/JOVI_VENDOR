@@ -2,23 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground,StyleSheet, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
-import { hybridLocationPermission, navigateWithResetScreen, renderPicture, renderPictureResizeable, sharedCommasAmountConveter, sharedConfirmationAlert, sharedGetUserCartHandler, sharedlogoutUser } from "../../utils/sharedActions";
-import AsyncStorage from '@react-native-community/async-storage';
-import { calculateTimeDifference } from "../../utils/sharedActions";
-import { getRequest, postRequest } from '../../services/api';
-import { DEVICE_WIN_HEIGHT, DEVICE_WIN_WIDTH, EMPTY_PROFILE_URL } from '../../config/config';
-import commonIcons from '../../assets/svgIcons/common/common';
-import CustomHeader, { HeaderApp } from '../../components/header/CustomHeader';
+import { renderPictureResizeable, sharedConfirmationAlert} from "../../utils/sharedActions";
+import {  postRequest } from '../../services/api';
+import { HeaderApp } from '../../components/header/CustomHeader';
 import commonStyles from '../../styles/styles';
-import CircularProgress from '../../components/progress';
 import CustomToast from '../../components/toast/CustomToast';
 import { useFocusEffect } from '@react-navigation/native';
-import Notifications from '../../components/notifications/Notifications';
-import RatingsModal from '../../components/modals/RatingsModal';
-import { sharedOpenModal } from '../../utils/sharedActions';
-import { getHubConnectionInstance } from '../../utils/sharedActions';
-import { setFooterTabsAction } from '../../redux/actions/sharedReduxActions';
-import LinearGradient from 'react-native-linear-gradient';
 import SharedFooter from '../../components/footer/SharedFooter';
 // import dummy from '../../assets/card-image.png';
 import dummy from '../../assets/bike.png';
@@ -26,12 +15,15 @@ import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
 import { debounce } from 'debounce';
-function Home(props) {
+import AddProductModalR from '../../components/modals/AddProductModalR';
+import AddUpdateDealModal from '../../components/modals/AddUpdateDealModal';
+
+function RestaurantHome(props) {
     const { navigation, userObj, activeTheme } = props;
     console.log(navigation)
     const [state, setState] = useState({
         "isImgLoad": false,
-        brandData: [],
+        categoryData: [],
         "contentView": {
             "height": 0,
             "width": 0
@@ -59,14 +51,15 @@ function Home(props) {
         },
         "finalDestObj": null
     })
-    const addBrandModal = () => {
+    const addProductModalF = () => {
         let ModalComponent = {
             visible: true,
             transparent: true,
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal type={1} {...props} onSave={()=>{getData()}} brandList={state.brandData} />
+                <AddUpdateDealModal {...props} onSave={()=>{getData()}} />
+                // <AddProductModalR {...props} onSave={()=>{getData()}} />
             ),
             // modalFlex: 0,
             // modalHeight: Dimensions.get('window').height * 0.85,
@@ -77,12 +70,6 @@ function Home(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-
-
-    const handleBackButtonPressed = bool => {
-        sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
-        return true;
-    };
     const getData = (keywords=false) => {
 
         postRequest('Api/Vendor/Pitstop/BrandsList', {
@@ -97,14 +84,14 @@ function Home(props) {
             if(res.data.statusCode === 200){
                 setState(prevState => ({
                     ...prevState,
-                    brandData: res.data.pitstopBrands.pitstopBrandsList,
+                    categoryData: res.data.pitstopBrands.pitstopBrandsList,
                     paginationInfo:res.data.pitstopBrands.paginations
                 }))
             }else{
                 CustomToast.error("Not Found");
                 setState(prevState => ({
                     ...prevState,
-                    brandData: []
+                    categoryData: []
                 }))
             }
         }, (err) => {
@@ -117,7 +104,7 @@ function Home(props) {
     useFocusEffect(useCallback(() => {
         // const permissions = async () => await askForWholeAppPermissions();
         
-        getData();
+        // getData();
         // const locationHandler = async () => {
         //     sharedGetUserCartHandler(getRequest, false, 0);
         //     // openSettings();
@@ -128,7 +115,7 @@ function Home(props) {
         return () => {
             setState({
                 ...state,
-                brandData:[]
+                categoryData:[]
             })
             // backHandler.remove();
 
@@ -139,7 +126,7 @@ function Home(props) {
     const onBrandPress = (item) => {getData();navigation.navigate('Products',{key:'products',item:{item}})}
     const onFooterItemPressed = async (pressedTab, index) => {
         if(pressedTab.title==='Add'){
-            addBrandModal();
+            addProductModalF();
         }else if(pressedTab.title === 'Orders'){
             navigation.navigate("Orders",{});
 
@@ -186,15 +173,34 @@ function Home(props) {
 
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={()=>navigation.navigate('Orders')}>Brands List</Text>
-                    <Text style={{ marginRight: 14 }}>Total {state.paginationInfo?.totalItems}</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={()=>navigation.navigate('Orders')}>Menu</Text>
+                    <Text style={{ marginRight: 14 }}>Total 1{state.paginationInfo?.totalItems}</Text>
                 </View>
                 <ScrollView style={{ flex: 1,marginHorizontal:8 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
+                    <View  style={{...stylesHome.homeTab({activeTheme:props.activeTheme})}}>
+                                    <View style={{...stylesHome.homeTabView}}>
+                                        <ImageBackground
+                                            resizeMode='stretch'
+                                            source={dummy}
+                                            // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                            style={{...stylesHome.homeTabImage}}
+                                        />
+                                    </View>
+                                    <TouchableOpacity style={stylesHome.homeTabText} onPress={()=>{}}>
+                                        <View style={{ flex: 0.9 }}>
+                                            <Text style={{...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300')}}>Deals</Text>
+                                            <Text style={{...stylesHome.homeTabDesc(props)}}>{'Deal of the day'.toLocaleUpperCase()}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <View style={{...stylesHome.homeTabCounter(props)}}>
+                                        <Text style={{ color: 'white' }}>4</Text>
+                                    </View>
+                                </View>
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
-                        {state.brandData.length>0?
-                            state.brandData.map((item, i) => {
+                        {state.categoryData.length>0&&
+                            state.categoryData.map((item, i) => {
                                 return <View key={i} style={{...stylesHome.homeTab({activeTheme:props.activeTheme})}}>
                                     <View style={{...stylesHome.homeTabView}}>
                                         <ImageBackground
@@ -215,10 +221,6 @@ function Home(props) {
                                     </View>
                                 </View>
                             })
-                            :
-                            <View style={{flex:1,height:100,justifyContent:'center',alignItems:'center'}}>
-                                <Text>No Brands Found</Text>
-                            </View>
                         }
                 </ScrollView>
             </View>
@@ -234,17 +236,6 @@ const mapStateToProps = (store) => {
 };
 const stylesHome = StyleSheet.create({
     homeTab:props=>{return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
-    
-    // homeTabView:{ flex: 0.38,overflow: 'hidden', borderRadius: 15 },
-    // homeTabImage:{
-    //     flex: 1,
-    //     // top: 1,
-    //     // marginLeft: 10,
-    //     width: '100%',
-    //     borderRadius:15,
-    //     "height": "100%",
-    // },
-
     homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
     homeTabImage:{
         flex: 1,
@@ -259,5 +250,5 @@ const stylesHome = StyleSheet.create({
     homeTabCounter:(props)=>{return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
 
 });
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(RestaurantHome);
 

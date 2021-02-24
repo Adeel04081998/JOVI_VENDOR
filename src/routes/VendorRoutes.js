@@ -9,6 +9,7 @@ import Items from '../screens/Items/Items';
 import Orders from '../screens/order/Orders';
 import OrderDetails from '../screens/order/OrderDetails';
 import ContactUsPage from '../screens/contactUs/ContactUs';
+import RestaurantHome from '../screens/home/RestaurantHome';
 
 
 // import jwt_decode from 'jwt-decode';
@@ -55,7 +56,7 @@ const VendorRoutes = (props) => {
     }, []);
     return (
         <Stack.Navigator initialRouteName={'home'} mode="card" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="home" children={navigatorPros => <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="home" children={navigatorPros =>props.user.pitstopType !==4? <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />:<RestaurantHome {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="Products" children={navigatorPros => <Products {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="Items" children={navigatorPros => <Items {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="Orders" children={navigatorPros => <Orders {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />

@@ -26,7 +26,7 @@ function OrderDetails(props) {
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
     });
     const counterChange = (item, index) => {
-        if (index !== 0 && (item.quantity + 1) > item.actualQuantity) {
+        if (index !== 0&&(item.quantity - 1) === 0 && (item.quantity + 1) > item.actualQuantity) {
             return;
         }
         item = {
