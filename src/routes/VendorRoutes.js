@@ -10,13 +10,15 @@ import Orders from '../screens/order/Orders';
 import OrderDetails from '../screens/order/OrderDetails';
 import ContactUsPage from '../screens/contactUs/ContactUs';
 import RestaurantHome from '../screens/home/RestaurantHome';
+import RestaurantDeals from '../screens/Products/RestaurantDeals';
 
 
 // import jwt_decode from 'jwt-decode';
 // const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 const VendorRoutes = (props) => {
-    // console.log("[RootStack] Props :", props);
+    console.log("[RootStack] Props :", props.stackState.initRouteSub);
+    let routeBase = props.stackState.initRouteSub===null? props.user.pitstopType === 4?'homeRes':'home':props.stackState.initRouteSub;
     // const _navigationStateObj = NavigationService._navigatorRef;
 
     const { theme, dispatch } = props;
@@ -55,9 +57,11 @@ const VendorRoutes = (props) => {
         }
     }, []);
     return (
-        <Stack.Navigator initialRouteName={'home'} mode="card" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="home" children={navigatorPros =>props.user.pitstopType !==4? <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />:<RestaurantHome {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+        <Stack.Navigator initialRouteName={routeBase} mode="card" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="home" children={navigatorPros => <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="homeRes" children={navigatorPros => <RestaurantHome {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="Products" children={navigatorPros => <Products {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="RestaurantDeals" children={navigatorPros => <RestaurantDeals {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="Items" children={navigatorPros => <Items {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="Orders" children={navigatorPros => <Orders {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="OrderDetails" children={navigatorPros => <OrderDetails {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />

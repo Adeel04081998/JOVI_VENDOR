@@ -23,8 +23,8 @@ function Orders(props) {
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        orderList: res.data.vendorOrdersViewModel.ordersDataList.sort((a,b)=>{if(a['orderStatus']<b['orderStatus']){return -1;}else if(a['orderStatus']>b['orderStatus']){return 1;}else{return 0; }}),
-                        orderListTemp: res.data.vendorOrdersViewModel.ordersDataList.sort((a,b)=>{if(a['orderStatus']<b['orderStatus']){return -1;}else if(a['orderStatus']>b['orderStatus']){return 1;}else{return 0; }}),
+                        orderList: res.data.vendorOrdersViewModel.ordersDataList.sort((a,b)=>{if(a['orderNo']<b['orderNo']){return 1;}else if(a['orderNo']>b['orderNo']){return -1;}else{return 0; }}).sort((a,b)=>{if(a['orderStatus']<b['orderStatus']){return -1;}else if(a['orderStatus']>b['orderStatus']){return 1;}else{return 0; }}),
+                        orderListTemp: res.data.vendorOrdersViewModel.ordersDataList.sort((a,b)=>{if(a['orderNo']<b['orderNo']){return 1;}else if(a['orderNo']>b['orderNo']){return -1;}else{return 0; }}).sort((a,b)=>{if(a['orderStatus']<b['orderStatus']){return -1;}else if(a['orderStatus']>b['orderStatus']){return 1;}else{return 0; }}),
                         paginationInfo: res.data?.pitstopBrands?.paginations
                     }))
                 } else {
@@ -84,12 +84,12 @@ function Orders(props) {
                                 return <View key={i} style={{ ...stylesOrder.productTab,borderWidth:item.orderStatus===1?2:0.5,borderColor:item.orderStatus===1?props.activeTheme.default:'#929293'}}>
                                     <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.navigate('OrderDetails',{key:'orderDetails',item:{item}})}>
                                         {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
-                                        <View style={{ ...stylesOrder.productImageContainer, borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 200, margin: 10, width: '70%', height: '40%' }}>
-                                            <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.default, 10) }}>{item.noOfItems}</Text>
+                                        <View style={{ ...stylesOrder.productImageContainer,backgroundColor:item.orderStatus===1?props.activeTheme.defaultLight:'white', borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 200, margin: 10, width: '70%', height: '40%' }}>
+                                            <Text style={{ ...commonStyles.fontStyles(22,item.orderStatus===1?props.activeTheme.white: props.activeTheme.default, 10) }}>{item.noOfItems}</Text>
                                         </View>
                                         <View style={{ ...stylesOrder.productName }}>
-                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Order No: </Text><Text>{item.orderNo}</Text>
-                                            <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.totalPrice}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(14,props.activeTheme.black, 4) }}>Order No: </Text><Text>{item.orderNo}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(12,props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.totalPrice}</Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -123,7 +123,7 @@ const stylesOrder = StyleSheet.create({
     homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } },
     productListContainer: { paddingBottom: 20, justifyContent: 'space-between', flexDirection: 'row', flexWrap: 'wrap' },
     productTab: { height: 180, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
-    productImageContainer: { flex: 2, width: '100%', justifyContent: 'center', alignItems: 'center' },
+    productImageContainer: { flex: 2, width: '100%',height:10, justifyContent: 'center', alignItems: 'center' },
     productImage: {
         width: '90%',
         marginLeft: 17,

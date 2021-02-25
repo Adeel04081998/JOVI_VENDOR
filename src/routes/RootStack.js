@@ -34,7 +34,7 @@ const RootStack = (props) => {
 
     const { theme, dispatch } = props;
     let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
-    let initialState = { keypaidOpen: false, loggedInUser: null, initRoute: null, notchedScreen: StatusBar.currentHeight > 24 ? true : false }
+    let initialState = { keypaidOpen: false, loggedInUser: null,initRouteSub:null, initRoute: null, notchedScreen: StatusBar.currentHeight > 24 ? true : false }
     const [state, setState] = useState(initialState);
     const _keyboardShowDetecter = (keyboardState) => setState(prevState => ({ ...prevState, keypaidOpen: true }));
     const _keyboardHideDetecter = (keyboardState) => setState(prevState => ({ ...prevState, keypaidOpen: false }));
@@ -46,7 +46,7 @@ const RootStack = (props) => {
     };
     useEffect(() => {
         // console.log("[RootStack] Props :", props);
-        // console.log("[_navigationStateObj] :", _navigationStateObj);
+        // console.log("[_navigationStateObj] :", props);
         statusBarHandler();
         const getSetUserAsync = async () => {
             const User = JSON.parse(await AsyncStorage.getItem('User'));
@@ -72,7 +72,7 @@ const RootStack = (props) => {
                     dispatch,
                     async res => {
                         console.log('Res Details:',res);
-                        setState({ ...state, loggedInUser: { ...res.data.userDetails, userID: User.token.id, tokenObj: User }, initRoute: 'Dashboard' });
+                        setState({ ...state, loggedInUser: { ...res.data.userDetails, userID: User.token.id, tokenObj: User }, initRoute: 'Dashboard',initRouteSub:res.data.userDetails.pitstopType===4?'homeRes':'home' });
                         dispatch(userAction({ ...props.user, ...res.data.userDetails, userID: User.token.id, tokenObj: User, appTutorialsEnabled, appearOnTop }));
                         // sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
                         sharedHubConnectionInitiator(postRequest);
@@ -80,7 +80,7 @@ const RootStack = (props) => {
                     err => {
                         console.log("Problem is here--- :", JSON.stringify(err))
                         if (err) CustomToast.error("Something went wrong!")
-                        setState({...state,initRoute:"Dashboard"})
+                        setState({...state,initRoute:"Dashboard",initRouteSub:'home'})
                         // Commented line were creating an ambigous behaviour when logged in user open app after a while 
                         // if (err) setState({ ...state, loggedInUser: null, initRoute: "Login" });
                     },

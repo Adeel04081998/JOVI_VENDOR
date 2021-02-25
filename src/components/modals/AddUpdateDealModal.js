@@ -23,9 +23,9 @@ const AddUpdateDealModal = (props) => {
             availabilityStatus: 'Available',
             categories: []
         },
-        productList:[],
-        filter:'',
-        showDropdown:'',
+        productList: [],
+        filter: '',
+        showDropdown: '',
         mode: '',
         selectedDate: 'DD/MM/YYYY',
     })
@@ -68,8 +68,8 @@ const AddUpdateDealModal = (props) => {
     const renderSelectionList = (options, onChange, filter = false) => {
         // let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
         let optionsFilter = filter !== false ? options.filter(item => { return item.text.toLowerCase().includes(filter.toLowerCase()) }) : options;
-        if(optionsFilter.length<1){
-            return <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' }));}} style={{
+        if (optionsFilter.length < 1) {
+            return <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' })); }} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
                 height: 40,
                 justifyContent: "space-between",
@@ -194,23 +194,26 @@ const AddUpdateDealModal = (props) => {
                                     </TouchableOpacity>
                                     {
                                         state.deal.categories.map((item, i) => {
-                                            return <View key={i} style={{ marginVertical: 5,paddingBottom:state.showDropdown==='product-'+i?70:0, }}>
+                                            return <View key={i} style={{ marginVertical: 5, paddingBottom: state.showDropdown !== '' && i === state.deal.categories.length - 1 ? 70 : 0, }}>
                                                 <View style={{ height: 30, borderRadius: 7, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, backgroundColor: props.activeTheme.default }}>
-                                                    <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }}>{i}</Text>
+                                                    <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }}>Category {i+1}</Text>
                                                     <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, categories: pre.deal.categories.filter((it, j) => j !== i) } }))}>X</Text>
                                                 </View>
+                                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                                    Category Name
+                                </Text>
                                                 <View style={{
                                                     paddingHorizontal: 12,
                                                     borderWidth: 1,
                                                     borderRadius: 5,
                                                     borderColor: 'rgba(0,0,0,0.1)',
                                                     backgroundColor: 'transparent',
-                                                    height: 35, marginVertical: 5,
+                                                    height: 40, marginVertical: 5,
                                                     justifyContent: "space-between",
                                                     alignItems: 'center',
                                                     flexDirection: 'row'
                                                 }}>
-                                                    <TextInput placeholder={'test'} />
+                                                    <TextInput placeholder={'Enter Category Name'} />
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -228,18 +231,18 @@ const AddUpdateDealModal = (props) => {
                                                     flexDirection: 'row'
                                                 }}>
                                                     <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                                        <TextInput value={state.filter} placeholder={'Choose Product'} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'product-'+i, filter: val }))} />
+                                                        <TextInput value={state.filter} placeholder={'Choose Product'} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'product-' + i, filter: val }))} />
                                                         {/* <Text>{state.brand.text ? state.brand.text : 'Choose Brand'}</Text> */}
                                                     </TouchableOpacity>
                                                 </View>
-                                                {state.showDropdown === 'product-'+i ? <ScrollView nestedScrollEnabled onScrollEndDrag={(e) => {
+                                                {state.showDropdown === 'product-' + i ? <ScrollView nestedScrollEnabled onScrollEndDrag={(e) => {
                                                 }} style={{
                                                     marginHorizontal: 10, width: '95%', height: 80, borderColor: props.activeTheme.lightGrey,
                                                     borderWidth: 1,
                                                     borderBottomLeftRadius: 10,
                                                     borderBottomRightRadius: 10, position: 'absolute', marginTop: 155, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                                 }} keyboardShouldPersistTaps="always">
-                                                    {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState,  })); }, state.filter)}
+                                                    {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, })); }, state.filter)}
                                                 </ScrollView>
                                                     :
                                                     null

@@ -15,7 +15,7 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
 import { postRequest } from '../../services/api';
 const AddBrandModal = (props) => {
-    const { brandList,type,productObj,itemReplace,brandObj } = props;
+    const { brandList,relevantProductID,type,productObj,itemReplace,brandObj } = props;
     console.log('OBJ:',brandObj)
     const [state, setState] = useState({
         showDropdown: '',
@@ -147,6 +147,7 @@ const AddBrandModal = (props) => {
             "isAscending": true,
             "brandID": brand ? brand.brandID : state.brand.brandID,
             "isPagination": true,
+            'relevantProductID':0,
             "productType": 1,
             "genericSearch": ""
         }, {}
@@ -170,6 +171,7 @@ const AddBrandModal = (props) => {
             "itemsPerPage": state.itemsPerPage + 10,
             "isAscending": true,
             "brandType": 1,
+            'relevantProductID':0,
             "isPagination": false,
             // "isPagination": true,
             "genericSearch": ""

@@ -7,6 +7,7 @@ let initState = {
     "isLocalChange": false,
     "appTutorialsEnabled": true,
     pitstopType:0,
+    pitstopID:0,
     noOfOpenOrders:0,
     "isUserOnline": false,
     "appNotifications": {

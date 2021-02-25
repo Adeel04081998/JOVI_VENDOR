@@ -96,7 +96,8 @@ export default function SignInScreen(props) {
                 //     '');
                 await AsyncStorage.setItem('User', JSON.stringify(res.data.loginResult));
                 // navigateWithResetScreen(0, [{ name: "Dashboard" }]);
-                navigation.navigate('Dashboard');
+                // navigation.navigate('Dashboard');
+                navigateWithResetScreen(null, [{ name: 'Dashboard', params: {} }])
                 // sharedHubConnectionInitiator(postRequest);
                 // navigation.navigate('Dashboard');
                 // CustomToast.success('You are logged in!');
