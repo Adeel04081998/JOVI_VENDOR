@@ -38,8 +38,7 @@ const AddProductModalR = (props) => {
    
     const onSave = () => {
         postRequest('api/Vendor/Pitstop/PitstopItemList/AddOrUpdate',{
-            "productID": state.product.productID,
-            "itemIDs": state.item.map(item=>{return item.itemID})
+            "itemIDs": state.productList.map(item=>{return item.productID})
           },{},props.dispatch,(res)=>{
             //   console.log('On Assign Brand:',res,state.item.map(item=>{return item.itemID}),state.product);
               if(props.onSave)
@@ -93,7 +92,7 @@ const AddProductModalR = (props) => {
     }
     const checkValidation = () =>{
         let check = false;
-        if(Items){
+        if(state.addedItems.length<1){
             check = true;
         }
         return check;
@@ -101,11 +100,10 @@ const AddProductModalR = (props) => {
     const getData = () => {
         postRequest('Api/Vendor/Pitstop/ProductGeneric/List', {
             "pageNumber": 1,
-            "itemsPerPage": state.itemsPerPage + 10,
+            "itemsPerPage": 10,
             "isAscending": true,
-            "brandID": brand ? brand.brandID : state.brand.brandID,
             "isPagination": false,
-            "productType": 1,
+            "productType": 2,
             "genericSearch": ""
         }, {}
             , props.dispatch, (res) => {
@@ -115,7 +113,7 @@ const AddProductModalR = (props) => {
                         ...prevState,
                         itemsPerPage: prevState.itemsPerPage + 10,
                         productList: res.data.getProductListViewModel?.productData?.map(item => { return { ...item, value: item.productID, text: item.productName } }),
-                        paginationInfo: res.data.getProductListViewModel?.paginationInfo
+                        // paginationInfo: res.data.getProductListViewModel?.paginationInfo
                     }));
                 }
             }, (err) => {
@@ -123,7 +121,7 @@ const AddProductModalR = (props) => {
             }, '',false);
     }
     useEffect(useCallback(() => {
-            // getData();
+            getData();
         return () => {
             setState({
                 ...state,
@@ -165,7 +163,7 @@ const AddProductModalR = (props) => {
                                     borderBottomLeftRadius: 10,
                                     borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                 }} keyboardShouldPersistTaps="always">
-                                    {renderSelectionList(state.productList, (e) => {Keyboard.dismiss(); setState(prevState => ({ ...prevState, addedItems:[...prevState.addedItems,e]}));},state.filter)}
+                                    {renderSelectionList(state.productList, (e) => {Keyboard.dismiss(); setState(prevState => ({ ...prevState,filter:'', addedItems: prevState.addedItems.filter(item => item.productID === e.productID).length < 1 ?[...prevState.addedItems,e]:prevState.addedItems}));},state.filter)}
                                 </ScrollView>
                                     :
                                     null
@@ -175,13 +173,13 @@ const AddProductModalR = (props) => {
                                 </Text>
                                 <ScrollView nestedScrollEnabled style={{ width: '100%', flexDirection: 'row', flexWrap: 'wrap', height: 180, padding: 5, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
                                     {
-                                        // state.addedItems.map((item, i) => {
-                                        //     return <View key={i} style={{ height: 40, justifyContent: 'center', paddingTop: 4, width: 230, margin: 5, marginTop: 10, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
-                                        //         <Text style={[commonStyles.fontStyles(15, props.activeTheme.white, 1), { backgroundColor: 'black', marginLeft: 5, paddingTop: 2, width: '75%', position: 'absolute', top: -10, paddingLeft: 3, height: 25 }]}>{item.text}</Text>
-                                        //         <Text style={[commonStyles.fontStyles(13, props.activeTheme.black, 1), { marginLeft: 5 }]}>Rs: {item.price}</Text>
-                                        //         <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() => setState(pre => ({ ...pre, item: pre.item.filter(it => it.itemID !== item.itemID) }))}>X</Text>
-                                        //     </View>
-                                        // })
+                                        state.addedItems.map((item, i) => {
+                                            return <View key={i} style={{ height: 40, justifyContent: 'center', paddingTop: 4, width: 230, margin: 5, marginTop: 10, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
+                                                <Text style={[commonStyles.fontStyles(15, props.activeTheme.white, 1), { backgroundColor: 'black', marginLeft: 5, paddingTop: 2, width: '75%', position: 'absolute', top: -10, paddingLeft: 3, height: 25 }]}>{item.productName}</Text>
+                                                <Text style={[commonStyles.fontStyles(13, props.activeTheme.black, 1), { marginLeft: 5 }]}>{item.category}</Text>
+                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() => setState(pre => ({ ...pre, addedItems: pre.addedItems.filter(it => it.productID !== item.productID) }))}>X</Text>
+                                            </View>
+                                        })
                                     }
                                 </ScrollView>
                             </View>

@@ -184,7 +184,7 @@ function Home(props) {
                 noBackButton={true}
             />
 
-            <View style={{ flex: 1, marginTop: 30 }}>
+            <View style={{zIndex:1, flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Brands List</Text>
                     <Text style={{ marginRight: 14 }}>Total: {state.paginationInfo?.totalItems<1?'0':state.paginationInfo?.totalItems<10?'0'+state.paginationInfo?.totalItems:state.paginationInfo?.totalItems}</Text>

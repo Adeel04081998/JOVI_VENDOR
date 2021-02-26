@@ -65,7 +65,7 @@ function Orders(props) {
                 screenProps={{...props}}
                 activeTheme={activeTheme}
             />
-            <View style={{ flex: 1, marginTop: 30 }}>
+            <View style={{ zIndex:1, flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
                     <Text style={{ marginRight: 14 }}>Total: {state.orderList.length<1?'0':state.orderList.length<10?'0'+state.orderList.length:state.orderList.length}</Text>

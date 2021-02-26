@@ -25,33 +25,9 @@ function RestaurantHome(props) {
     const [state, setState] = useState({
         "isImgLoad": false,
         categoryData: [],
+        dealObj:{},
         focusedField: null,
-        "contentView": {
-            "height": 0,
-            "width": 0
-        },
         paginationInfo: {},
-        "activeSlide": 0,
-        "isSmModalOpen": false,
-        // modal types = {
-        //     type: 1,
-        //     name: 'tasks',
-        //     type: 2,
-        //     name: 'notifications'
-        // }
-        "modalType": 1,
-        "openOrderDetails": {
-            "noOfOrders": 0,
-            "openOrderList": [
-                {
-                    "orderID": null,
-                    "orderType": null,
-                    "joviType": null,
-                    "completedJobPercetage": null
-                }
-            ]
-        },
-        "finalDestObj": null
     })
     const addProductModalF = () => {
         let ModalComponent = {
@@ -85,6 +61,7 @@ function RestaurantHome(props) {
                     setState(prevState => ({
                         ...prevState,
                         categoryData: res.data.productAndDealsViewModel.productsDealsCategories,
+                        dealObj: res.data.productAndDealsViewModel.productsDealsCategories.filter(it=>it.categoryID===0)[0]
                         // paginationInfo:res.data.pitstopBrands.paginations
                     }))
                 } else {
@@ -169,8 +146,8 @@ function RestaurantHome(props) {
                             <SvgXml
                                 fill={props.activeTheme.default}
                                 xml={common.joviDeal()}
-                                width={200}
-                                height={200}
+                                width={'100%'}
+                                height={'100%'}
                             />
                         </View>
                         <TouchableOpacity style={stylesHome.homeTabText} onPress={() => navigation.navigate('RestaurantDeals')}>
@@ -180,7 +157,7 @@ function RestaurantHome(props) {
                             </View>
                         </TouchableOpacity>
                         <View style={{ ...stylesHome.homeTabCounter(props) }}>
-                            <Text style={{ color: 'white' }}>4</Text>
+                            <Text style={{ color: 'white' }}>{state.dealObj.noOfDeals}</Text>
                         </View>
                     </View>
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
@@ -228,7 +205,7 @@ function RestaurantHome(props) {
                     }
                 </ScrollView>
             </View>
-            <SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
+            {props.stackState.keypaidOpen===false&&<SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }

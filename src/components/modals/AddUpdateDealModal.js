@@ -18,6 +18,7 @@ const AddUpdateDealModal = (props) => {
         showDropdown: false,
         deal: dealObj ? dealObj : {
             name: '',
+            price: '0',
             dateFrom: '',
             dateTo: '',
             availabilityStatus: 'Available',
@@ -31,6 +32,9 @@ const AddUpdateDealModal = (props) => {
     })
     const onDropdownClick = (dropdownTitle) => {
         setState(pre => ({ ...pre, showDropdown: pre.showDropdown !== '' ? '' : dropdownTitle }));
+    }
+    const getGenericProduct = () => {
+        
     }
     const saveDate = () => {
         setState(pre => ({
@@ -146,6 +150,24 @@ const AddUpdateDealModal = (props) => {
                                         <TextInput value={state.deal.name} placeholder={'Create a Deal'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { name: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
+                                    <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                        Price
+                                </Text>
+                                    <View style={{
+                                        paddingHorizontal: 12,
+                                        borderWidth: 1,
+                                        borderRadius: 5,
+                                        borderColor: 'rgba(0,0,0,0.1)',
+                                        backgroundColor: 'transparent',
+                                        height: 40,
+                                        justifyContent: "space-between",
+                                        alignItems: 'center',
+                                        flexDirection: 'row'
+                                    }}>
+                                        {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
+                                        <TextInput value={state.deal.price} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { price: val } }))} />
+                                        {/* </TouchableOpacity> */}
+                                    </View>
                                     <View style={{ width: '100%', flexDirection: 'row' }}>
                                         <View style={{ width: '50%' }}>
                                             <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -196,12 +218,12 @@ const AddUpdateDealModal = (props) => {
                                         state.deal.categories.map((item, i) => {
                                             return <View key={i} style={{ marginVertical: 5, paddingBottom: state.showDropdown !== '' && i === state.deal.categories.length - 1 ? 70 : 0, }}>
                                                 <View style={{ height: 30, borderRadius: 7, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, backgroundColor: props.activeTheme.default }}>
-                                                    <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }}>Category {i+1}</Text>
+                                                    <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }}>Category {i + 1}</Text>
                                                     <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, categories: pre.deal.categories.filter((it, j) => j !== i) } }))}>X</Text>
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                                     Category Name
-                                </Text>
+                                                </Text>
                                                 <View style={{
                                                     paddingHorizontal: 12,
                                                     borderWidth: 1,
@@ -217,8 +239,25 @@ const AddUpdateDealModal = (props) => {
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                                    Quantity
+                                                </Text>
+                                                <View style={{
+                                                    paddingHorizontal: 12,
+                                                    borderWidth: 1,
+                                                    borderRadius: 5,
+                                                    borderColor: 'rgba(0,0,0,0.1)',
+                                                    backgroundColor: 'transparent',
+                                                    height: 40, marginVertical: 5,
+                                                    justifyContent: "space-between",
+                                                    alignItems: 'center',
+                                                    flexDirection: 'row'
+                                                }}>
+                                                    <TextInput placeholder={'Enter Quantity'} />
+                                                    {/* <Text>{i}</Text> */}
+                                                </View>
+                                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                                     Product Name
-                                </Text>
+                                                </Text>
                                                 <View style={{
                                                     paddingHorizontal: 12,
                                                     borderWidth: 1,
@@ -240,13 +279,27 @@ const AddUpdateDealModal = (props) => {
                                                     marginHorizontal: 10, width: '95%', height: 80, borderColor: props.activeTheme.lightGrey,
                                                     borderWidth: 1,
                                                     borderBottomLeftRadius: 10,
-                                                    borderBottomRightRadius: 10, position: 'absolute', marginTop: 155, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
+                                                    borderBottomRightRadius: 10, position: 'absolute', marginTop: 200, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                                 }} keyboardShouldPersistTaps="always">
                                                     {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, })); }, state.filter)}
                                                 </ScrollView>
                                                     :
                                                     null
                                                 }
+                                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                                    Add Products(s)
+                                                </Text>
+                                                <ScrollView nestedScrollEnabled style={{ width: '100%', flexDirection: 'row', flexWrap: 'wrap', height: 180, padding: 5, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
+                                                    {
+                                                        state.productList.map((item, i) => {
+                                                            return <View key={i} style={{ height: 40, justifyContent: 'center', paddingTop: 4, width: 230, margin: 5, marginTop: 10, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
+                                                                <Text style={[commonStyles.fontStyles(15, props.activeTheme.white, 1), { backgroundColor: 'black', marginLeft: 5, paddingTop: 2, width: '75%', position: 'absolute', top: -10, paddingLeft: 3, height: 25 }]}>Product Name</Text>
+                                                                <Text style={[commonStyles.fontStyles(13, props.activeTheme.black, 1), { marginLeft: 5 }]}>Rs: 10</Text>
+                                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() => setState(pre => ({ ...pre,}))}>X</Text>
+                                                            </View>
+                                                        })
+                                                    }
+                                                </ScrollView>
                                             </View>
                                         })
                                     }

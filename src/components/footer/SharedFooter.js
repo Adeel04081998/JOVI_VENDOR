@@ -19,8 +19,8 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
 
     }
     return (
-        <View style={styles.mainView(activeTheme)}>
-            <View>
+        <View style={{zIndex:999},styles.mainView(activeTheme)}>
+            <View style={{zIndex:999}}>
                 <View style={styles.footerContainer()}>
                     {
                         hideOptions&&hideOptions===true?<TouchableOpacity style={{ width: '25%',height:45, alignItems: 'center' }}></TouchableOpacity>:(BOTTOM_TABS || []).map((t, j) => (
