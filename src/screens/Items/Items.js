@@ -144,7 +144,7 @@ function Items(props) {
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Items List</Text>
-                    <Text style={{ marginRight: 14 }}>Total {state.productData.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.itemsData.length<1?'0':state.itemsData.length<10?'0'+state.itemsData.length :state.itemsData.length}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                     <ScrollView horizontal contentContainerStyle={{ height: 160, paddingLeft: 10, flexDirection: 'row' }}>
@@ -214,7 +214,7 @@ function Items(props) {
                     </ScrollView>
                 </View>
             </View>
-            <SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
+            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }

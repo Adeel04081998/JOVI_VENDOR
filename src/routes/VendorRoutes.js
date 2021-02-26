@@ -18,7 +18,10 @@ import RestaurantDeals from '../screens/Products/RestaurantDeals';
 const Stack = createStackNavigator();
 const VendorRoutes = (props) => {
     console.log("[RootStack] Props :", props.stackState.initRouteSub);
-    let routeBase = props.stackState.initRouteSub===null? props.user.pitstopType === 4?'homeRes':'home':props.stackState.initRouteSub;
+    console.log(props.navigatorPros.navigation.dangerouslyGetState());
+    let state = props.navigatorPros.navigation.dangerouslyGetState();
+
+    let routeBase = state.routes[0]?.params?.loginCheck===true?(state.routes[0]?.params?.pitstopType===4?'homeRes':'home'):props.stackState.initRouteSub===null? props.user.pitstopType === 4?'homeRes':'home':props.stackState.initRouteSub;
     // const _navigationStateObj = NavigationService._navigatorRef;
 
     const { theme, dispatch } = props;

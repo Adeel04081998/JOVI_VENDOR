@@ -20,14 +20,14 @@ export default function SignInScreen(props) {
     const { handleScreen, navigation, activeTheme, dispatch, user } = props;
 
     const initState = Config.BUILD_TYPE === "debug" ? {
-    
+
         // riders abcz@gamil.com / connor@gmail.com
         // 'email': "",
         // 'passwordd': "",
         // 'email':'tabishAdmin@gmail.com',
         // 'password':'Kaplan224400',
-        'email':'vendorj@jovi.com',
-        'password':'Vendor123',
+        'email': 'vendorj@jovi.com',
+        'password': 'Vendor123',
         // 'password': "",
         // 'email': isJoviCustomerApp ? "malikjrw147@gmail.com" : "connor@gmail.com",
         // 'password': isJoviCustomerApp ? 'Abc12345' : "Abc12345",
@@ -65,20 +65,22 @@ export default function SignInScreen(props) {
                 await AsyncStorage.removeItem("home_tasksData");
                 // debugger;
                 // Keyboard.dismiss();
-                dispatch(userAction({ ...props.user,userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }))
+                dispatch(userAction({ ...props.user, userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }))
                 getRequest(`/api/Vendor/Details`,
-                // getRequest(`/api/User/Details`,
+                    // getRequest(`/api/User/Details`,
                     { "Authorization": "Bearer " + res.data.loginResult.token.authToken },
                     dispatch,
                     async ress => {
-                        console.log('USer---------',ress.data)
+                        console.log('USer---------', ress.data)
+                        navigateWithResetScreen(null, [{ name: 'Dashboard', params: { loginCheck: true, pitstopType: ress.data.userDetails.pitstopType } }])
                         dispatch(userAction({ ...props.user, ...ress.data.userDetails, userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }));
                         // sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
                     },
                     err => {
                         console.log("Problem is here--- :", JSON.stringify(err))
                         if (err) CustomToast.error("Something went wrong!")
-                        dispatch(userAction({ ...props.user, daysOfTheWeek:[],openingTime:'',closingTime:'', userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }));
+                        dispatch(userAction({ ...props.user, daysOfTheWeek: [], openingTime: '', closingTime: '', userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }));
+                        navigateWithResetScreen(null, [{ name: 'Dashboard', params: { loginCheck: true, pitstopType: 1 } }])
 
                         // Commented line were creating an ambigous behaviour when logged in user open app after a while 
                         // if (err) setState({ ...state, loggedInUser: null, initRoute: "Login" });
@@ -97,7 +99,6 @@ export default function SignInScreen(props) {
                 await AsyncStorage.setItem('User', JSON.stringify(res.data.loginResult));
                 // navigateWithResetScreen(0, [{ name: "Dashboard" }]);
                 // navigation.navigate('Dashboard');
-                navigateWithResetScreen(null, [{ name: 'Dashboard', params: {} }])
                 // sharedHubConnectionInitiator(postRequest);
                 // navigation.navigate('Dashboard');
                 // CustomToast.success('You are logged in!');
@@ -184,7 +185,7 @@ export default function SignInScreen(props) {
                     autoFocus={true}
 
                 />
-                {errorsUI.errorMessageUi(email, focusedField, 'email', 'invalid email', isValid)}
+                {errorsUI.errorMessageUi(email, focusedField, 'email', 'Invalid email', isValid)}
                 <Text style={styles.Inputcatpion(activeTheme)}>
                     Password
             </Text>

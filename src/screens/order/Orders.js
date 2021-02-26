@@ -68,7 +68,7 @@ function Orders(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
-                    <Text style={{ marginRight: 14 }}>Total {state.orderList.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.orderList.length<1?'0':state.orderList.length<10?'0'+state.orderList.length:state.orderList.length}</Text>
                 </View>
                 <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
@@ -98,7 +98,7 @@ function Orders(props) {
 
                 </ScrollView>
             </View>
-            <SharedFooter activeTheme={activeTheme} activeTab={1} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={() => { }} />
+            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={1} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={() => { }} />}
         </View>
     )
 }

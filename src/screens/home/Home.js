@@ -36,7 +36,7 @@ function Home(props) {
             "height": 0,
             "width": 0
         },
-        paginationInfo:{},
+        paginationInfo:{totalItems:0},
         "activeSlide": 0,
         "isSmModalOpen": false,
         // modal types = {
@@ -187,7 +187,7 @@ function Home(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Brands List</Text>
-                    <Text style={{ marginRight: 14 }}>Total {state.paginationInfo?.totalItems}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.paginationInfo?.totalItems<1?'0':state.paginationInfo?.totalItems<10?'0'+state.paginationInfo?.totalItems:state.paginationInfo?.totalItems}</Text>
                 </View>
                 <ScrollView style={{ flex: 1,marginHorizontal:8 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
@@ -222,7 +222,7 @@ function Home(props) {
                         }
                 </ScrollView>
             </View>
-            <SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
+            {props.stackState.keypaidOpen===false&&<SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }

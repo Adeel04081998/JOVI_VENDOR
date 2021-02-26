@@ -13,6 +13,7 @@ import commonStyles from '../../styles/styles';
 import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
+import CustomToast from '../../components/toast/CustomToast';
 import { postRequest } from '../../services/api';
 const AddBrandModal = (props) => {
     const { brandList,relevantProductID,type,productObj,itemReplace,brandObj } = props;

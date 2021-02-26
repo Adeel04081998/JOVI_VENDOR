@@ -45,8 +45,8 @@ export default {
         // console.log("errorMessage :", errorMessage);
         // console.log("isValid :", isValid);
         if ((value.length > 0 && focusedField === fieldName && !isValid)) {
-            return <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 5 }}>
-                <Text style={{ alignSelf: 'center', color: '#EB297F' }}>{errorMessage}</Text>
+            return <View style={{ justifyContent:'flex-start',marginTop:-10,paddingHorizontal:3 }}>
+                <Text style={{ alignSelf: 'flex-start', color: '#EB297F' }}>{errorMessage}</Text>
             </View>
         }
         else {

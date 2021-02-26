@@ -48,7 +48,7 @@ export let BASE_URL = "https://jovi-api-staging.cibak.pk";
 // export let BASE_URL = "https://cibak.hopto.org:86";
 // export let BASE_URL = "115.186.129.133";
 
-export let isBaseURLReconfigured = false;
+// export let isBaseURLReconfigured = false;
 
 export const EMPTY_PROFILE_URL = "https://www.pngfind.com/pngs/m/110-1102775_download-empty-profile-hd-png-download.png";
 export const IMAGE_NOT_AVAILABLE_URL = "https://www.dia.org/sites/default/files/No_Img_Avail.jpg";

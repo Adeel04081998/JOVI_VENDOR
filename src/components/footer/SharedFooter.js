@@ -39,7 +39,7 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
                         ))
                     }
                 </View>
-                <TouchableOpacity style={{width:30,height:30,...styles.absoluteTouchableOpacity(activeTheme)}} onPress={onHome&&onHome===true?()=>{}:() => navigateWithResetScreen(null, [{ name: 'home', params: {} }])}>
+                <TouchableOpacity style={{width:30,zIndex:1500,height:30,...styles.absoluteTouchableOpacity(activeTheme)}} onPress={onHome&&onHome===true?()=>{}:() => navigateWithResetScreen(null, [{ name: 'home', params: {} }])}>
                     <SvgXml xml={commonIcons.footerHome()} height={30} width={40} />
                 </TouchableOpacity>
             </View>

@@ -13,7 +13,7 @@ import { renderPictureResizeable } from '../../utils/sharedActions';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { SvgXml } from 'react-native-svg';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import AddBrandModal from '../../components/modals/AddBrandModal';
+import ReplaceOrderItem from '../../components/modals/ReplaceOrderItem';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 function OrderDetails(props) {
@@ -26,7 +26,8 @@ function OrderDetails(props) {
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
     });
     const counterChange = (item, index) => {
-        if (index !== 0&&(item.quantity - 1) === 0 && (item.quantity + 1) > item.actualQuantity) {
+        if(index ===0 && item.quantity-1 ===0) return;
+        if (index !== 0&&(item.quantity + 1) > item.actualQuantity) {
             return;
         }
         item = {
@@ -80,6 +81,26 @@ function OrderDetails(props) {
             }
         }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
     }
+    const itemReplaceSuccess = (prevItem,replacedItem) => {
+        let newArr = state.orderList.map(it=>{
+            if(it.jobItemID === prevItem.jobItemID){
+                return {...it,jobItemStatus:4};
+            }else{
+                return {...it};
+            }
+        });
+        let newObj = {
+            jobItemID:0,
+            jobItemName:replacedItem.itemName,
+            jobItemStatus:1,
+            quantity:prevItem.quantity,
+            price:replacedItem.price,
+            joviJobID:prevItem.joviJobID,
+            "pitstopItemID": replacedItem.itemID
+        }
+        newArr = [...newArr,newObj];
+        confirmOrder(newArr);
+    }
     const replaceItem = (item) => {
         let ModalComponent = {
             visible: true,
@@ -87,10 +108,10 @@ function OrderDetails(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal itemReplace={item} type={1} {...props} onSave={() => { getData() }} />
+                <ReplaceOrderItem itemReplace={item} {...props} onSave={(replacedItem) => itemReplaceSuccess(item,replacedItem)} />
             ),
             // modalFlex: 0,
-            modalHeight: Dimensions.get('window').height * 0.85,
+            modalHeight: Dimensions.get('window').height * 0.65,
             modelViewPadding: 0,
             fadeAreaViewFlex: plateformSpecific(1, 0.6),
             screenProps: { ...props }
@@ -151,7 +172,7 @@ function OrderDetails(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Order List</Text>
-                    <Text style={{ marginRight: 14 }}>Total {state.orderList.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.orderList.length<1?'0':state.orderList.length<10?'0'+state.orderList.length:state.orderList.length}</Text>
                 </View>
                 <FlatList
                     data={[...state.orderList]}
@@ -160,7 +181,7 @@ function OrderDetails(props) {
                         return <Swipeable
                             key={i}
                             renderRightActions={() => {
-                                return (state.orderObj.orderStatus===1?
+                                return (props.user.pitstopType!==4&&state.orderObj.orderStatus===1&&item.jobItemStatus !== 4?
                                     <View style={{ height: 110, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center' }}>
                                         <TouchableOpacity onPress={() => changeStatusItem(item)} style={{ marginRight: 10, elevation: 0 }}>
                                             <SvgXml xml={commonIcons.discontinueIcon()} height={25} width={25} />
@@ -177,6 +198,9 @@ function OrderDetails(props) {
                             <View style={{ ...stylesOrder.homeTab({ activeTheme: props.activeTheme }), margin: 5 }}>
                                 {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
+                                </View>}
+                                {item.jobItemStatus === 4 && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Replaced</Text>
                                 </View>}
                                 <View style={{ ...stylesOrder.homeTabView }}>
                                     <ImageBackground

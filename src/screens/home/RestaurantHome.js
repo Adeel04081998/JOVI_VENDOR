@@ -17,6 +17,7 @@ import AddBrandModal from '../../components/modals/AddBrandModal';
 import { debounce } from 'debounce';
 import AddProductModalR from '../../components/modals/AddProductModalR';
 import AddUpdateDealModal from '../../components/modals/AddUpdateDealModal';
+import common from '../../assets/svgIcons/common/common';
 
 function RestaurantHome(props) {
     const { navigation, userObj, activeTheme } = props;
@@ -24,7 +25,7 @@ function RestaurantHome(props) {
     const [state, setState] = useState({
         "isImgLoad": false,
         categoryData: [],
-        focusedField:null,
+        focusedField: null,
         "contentView": {
             "height": 0,
             "width": 0
@@ -165,11 +166,11 @@ function RestaurantHome(props) {
                 }}>
                     <View style={{ ...stylesHome.homeTab({ activeTheme: props.activeTheme }) }}>
                         <View style={{ ...stylesHome.homeTabView }}>
-                            <ImageBackground
-                                resizeMode='stretch'
-                                source={dummy}
-                                // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                style={{ ...stylesHome.homeTabImage }}
+                            <SvgXml
+                                fill={props.activeTheme.default}
+                                xml={common.joviDeal()}
+                                width={200}
+                                height={200}
                             />
                         </View>
                         <TouchableOpacity style={stylesHome.homeTabText} onPress={() => navigation.navigate('RestaurantDeals')}>
@@ -184,44 +185,44 @@ function RestaurantHome(props) {
                     </View>
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
                     {state.categoryData.length > 0 &&
-                        state.categoryData.map((item, i) => {
-                            return <View key={i} style={{justifyContent:'center'}}>
+                        state.categoryData.filter(it => it.categoryName !== '').map((item, i) => {
+                            return <View key={i} style={{ justifyContent: 'center' }}>
                                 <View style={{ ...stylesHome.homeTab({ activeTheme: props.activeTheme }) }}>
-                                <View style={{ ...stylesHome.homeTabView }}>
-                                    <SvgXml
-                                        fill={props.activeTheme.default}
-                                        xml={item.categoryImage}
-                                        width={'100%'}
-                                        height={'100%'}
-                                    />
-                                    {/* <ImageBackground
+                                    <View style={{ ...stylesHome.homeTabView }}>
+                                        <SvgXml
+                                            fill={props.activeTheme.default}
+                                            xml={item.categoryImage}
+                                            width={'100%'}
+                                            height={'100%'}
+                                        />
+                                        {/* <ImageBackground
                                             resizeMode='stretch'
                                             source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                             // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                             style={{...stylesHome.homeTabImage}}
                                         /> */}
-                                </View>
-                                <TouchableOpacity style={stylesHome.homeTabText} onPress={() => setState(pre=>({...pre,focusedField:pre.focusedField!==null&&pre.focusedField===i?null:i}))}>
-                                    <View style={{ flex: 0.9 }}>
-                                        <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.categoryName}</Text>
-                                        {/* <Text style={{...stylesHome.homeTabDesc(props)}}>{item.brandDescription.toLocaleUpperCase()}</Text> */}
                                     </View>
-                                </TouchableOpacity>
-                                <View style={{ ...stylesHome.homeTabCounter(props) }}>
-                                    <Text style={{ color: 'white' }}>{item.noOfProducts}</Text>
+                                    <TouchableOpacity style={stylesHome.homeTabText} onPress={() => setState(pre => ({ ...pre, focusedField: pre.focusedField !== null && pre.focusedField === i ? null : i }))}>
+                                        <View style={{ flex: 0.9 }}>
+                                            <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.categoryName}</Text>
+                                            {/* <Text style={{...stylesHome.homeTabDesc(props)}}>{item.brandDescription.toLocaleUpperCase()}</Text> */}
+                                        </View>
+                                    </TouchableOpacity>
+                                    <View style={{ ...stylesHome.homeTabCounter(props) }}>
+                                        <Text style={{ color: 'white' }}>{item.noOfProducts}</Text>
+                                    </View>
                                 </View>
-                            </View>
-                            {
-                                state.focusedField === i&&
-                                item.restaurantProducts.map((it,j)=>{
-                                    return <View key={j+i+i} >
-                                            <TouchableOpacity style={{width:'100%',borderRadius: 15,margin:5,backgroundColor:'white',justifyContent:'center',alignItems:'flex-start',padding:10}}>
+                                {
+                                    state.focusedField === i &&
+                                    item.restaurantProducts.map((it, j) => {
+                                        return <View key={j + i + i} >
+                                            <TouchableOpacity style={{ width: '100%', borderRadius: 15, margin: 5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
 
-                                        <Text>{it.productName}</Text>
+                                                <Text>{it.productName}</Text>
                                             </TouchableOpacity>
                                         </View>
-                                })
-                            }
+                                    })
+                                }
                             </View>
                         })
                     }

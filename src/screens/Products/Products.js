@@ -122,8 +122,8 @@ function Products(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Products List</Text>
-                    <Text style={{ marginRight: 14 }}>Total {state.brandData.length}</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Product List</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.productData.length<1?'0':state.productData.length<10?'0'+state.productData.length:state.productData.length}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                     <ScrollView horizontal contentContainerStyle={{ height: 160, paddingLeft: 10, flexDirection: 'row' }}>
@@ -177,7 +177,7 @@ function Products(props) {
                     </ScrollView>
                 </View>
             </View>
-            <SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
+            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }
