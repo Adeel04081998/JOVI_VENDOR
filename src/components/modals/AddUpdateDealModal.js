@@ -1,4 +1,4 @@
-import { Picker, Text, View } from 'native-base';
+import { CheckBox, Picker, Text, View } from 'native-base';
 import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Animated, { set } from 'react-native-reanimated';
@@ -20,12 +20,15 @@ const AddUpdateDealModal = (props) => {
             name: '',
             price: '0',
             dateFrom: '',
+            type: '',
             dateTo: '',
             availabilityStatus: 'Available',
             categories: []
         },
         productList: [],
         filter: '',
+        dealTypes:[],
+        selectedProduct: {},
         showDropdown: '',
         mode: '',
         selectedDate: 'DD/MM/YYYY',
@@ -33,8 +36,8 @@ const AddUpdateDealModal = (props) => {
     const onDropdownClick = (dropdownTitle) => {
         setState(pre => ({ ...pre, showDropdown: pre.showDropdown !== '' ? '' : dropdownTitle }));
     }
-    const getGenericProduct = () => {
-        
+    const getPitstopProducts = () => {
+
     }
     const saveDate = () => {
         setState(pre => ({
@@ -133,8 +136,8 @@ const AddUpdateDealModal = (props) => {
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
                                     <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                        Deal Name
-                                </Text>
+                                        Deal Category
+                                    </Text>
                                     <View style={{
                                         paddingHorizontal: 12,
                                         borderWidth: 1,
@@ -147,7 +150,37 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.name} placeholder={'Create a Deal'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { name: val } }))} />
+                                        <TextInput value={state.deal.type} placeholder={'Choose Deal Type'} onChangeText={(val) => setState(pre => ({ ...pre,showDropdown:'deal_type', deal: {...pre.deal, type: val } }))} />
+                                        {/* </TouchableOpacity> */}
+                                    </View>
+                                    {state.showDropdown === 'deal_type' ? <ScrollView nestedScrollEnabled onScrollEndDrag={(e) => {
+                                    }} style={{
+                                        marginHorizontal: 10, width: '95%', height: 80, borderColor: props.activeTheme.lightGrey,
+                                        borderWidth: 1,
+                                        borderBottomLeftRadius: 10,
+                                        borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
+                                    }} keyboardShouldPersistTaps="always">
+                                        {renderSelectionList(state.dealTypes, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, })); }, state.deal.type)}
+                                    </ScrollView>
+                                        :
+                                        null
+                                    }
+                                    <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                        Deal Name
+                                    </Text>
+                                    <View style={{
+                                        paddingHorizontal: 12,
+                                        borderWidth: 1,
+                                        borderRadius: 5,
+                                        borderColor: 'rgba(0,0,0,0.1)',
+                                        backgroundColor: 'transparent',
+                                        height: 40,
+                                        justifyContent: "space-between",
+                                        alignItems: 'center',
+                                        flexDirection: 'row'
+                                    }}>
+                                        {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
+                                        <TextInput value={state.deal.name} placeholder={'Create a Deal'} onChangeText={(val) => setState(pre => ({ ...pre, deal: {...pre.deal, name: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -165,7 +198,7 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.price} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { price: val } }))} />
+                                        <TextInput value={state.deal.price} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: {...pre.deal, price: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     <View style={{ width: '100%', flexDirection: 'row' }}>
@@ -238,7 +271,7 @@ const AddUpdateDealModal = (props) => {
                                                     <TextInput placeholder={'Enter Category Name'} />
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
-                                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                                <Text onPress={() => setState(pre => ({ ...pre, mode: 'select_attributes' }))} style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                                     Quantity
                                                 </Text>
                                                 <View style={{
@@ -279,7 +312,7 @@ const AddUpdateDealModal = (props) => {
                                                     marginHorizontal: 10, width: '95%', height: 80, borderColor: props.activeTheme.lightGrey,
                                                     borderWidth: 1,
                                                     borderBottomLeftRadius: 10,
-                                                    borderBottomRightRadius: 10, position: 'absolute', marginTop: 200, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
+                                                    borderBottomRightRadius: 10, position: 'absolute', marginTop: 290, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                                 }} keyboardShouldPersistTaps="always">
                                                     {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, })); }, state.filter)}
                                                 </ScrollView>
@@ -295,7 +328,7 @@ const AddUpdateDealModal = (props) => {
                                                             return <View key={i} style={{ height: 40, justifyContent: 'center', paddingTop: 4, width: 230, margin: 5, marginTop: 10, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
                                                                 <Text style={[commonStyles.fontStyles(15, props.activeTheme.white, 1), { backgroundColor: 'black', marginLeft: 5, paddingTop: 2, width: '75%', position: 'absolute', top: -10, paddingLeft: 3, height: 25 }]}>Product Name</Text>
                                                                 <Text style={[commonStyles.fontStyles(13, props.activeTheme.black, 1), { marginLeft: 5 }]}>Rs: 10</Text>
-                                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() => setState(pre => ({ ...pre,}))}>X</Text>
+                                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() => setState(pre => ({ ...pre, }))}>X</Text>
                                                             </View>
                                                         })
                                                     }
@@ -316,80 +349,120 @@ const AddUpdateDealModal = (props) => {
                 </Animated.View>
             </KeyboardAvoidingView>
                 :
-                <>
-                    <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
-                        <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.mode)}</Text>
-
-                        <View style={{ width: '100%', flexDirection: 'row' }}>
-                            <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '33.3%', left: 0, color: '#000' }}>Day</Text>
-                            <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '33.3%', left: 0, color: '#000' }}>Month</Text>
-                            <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '33.3%', left: 0, color: '#000' }}>Year</Text>
-                        </View>
-                        <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                            <Picker
-                                accessibilityLabel={"day"}
-                                style={{ zIndex: 500, width: 70 }}
-                                mode="dialog" // "dialog" || "dropdown"
-                                // prompt="Select Hours"
-                                selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[0]}
-                                onValueChange={(value, i) => onDateChange(value, 0)}
-                            >
-                                {
-                                    Array.from(Array(32), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                        .filter(it => it !== '00').map((item, i) => (
-                                            <Picker.Item key={i} label={item} value={item} />
-                                        ))
-                                }
-                            </Picker>
-
-                            {/* <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>/</Text> */}
-
-                            <Picker
-                                accessibilityLabel={"month"}
-                                style={{ zIndex: 500, width: 70 }}
-                                mode="dialog" // "dialog" || "dropdown"
-                                // prompt="Select Minutes"
-                                selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[1]}
-                                onValueChange={(value, i) => onDateChange(value, 1)}
-                            >
-                                {
-                                    Array.from(Array(13), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                        .filter(it => it !== '00').map((item, i) => (
-                                            <Picker.Item key={i} label={item} value={item} />
-                                        ))
-                                }
-                            </Picker>
-
-                            {/* <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>/</Text> */}
-
-                            <Picker
-                                accessibilityLabel={"year"}
-                                style={{ zIndex: 500, width: 70 }}
-                                mode="dialog" // "dialog" || "dropdown"
-                                // prompt="Select Minutes"
-                                selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[2]}
-                                onValueChange={(value, i) => onDateChange(value, 2)}
-                            >
-                                {
-                                    Array.from(Array(15), (item, i) => ((i + (new Date().getFullYear())).toString()))
-                                        .map((item, i) => (
-                                            <Picker.Item key={i} label={item} value={item} />
-                                        ))
-                                }
-                            </Picker>
-                        </View>
-                        <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: '' })) }}>
-                                <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
-                            </TouchableOpacity>
+                state.mode === 'select_attributes' ?
+                    <>
+                        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }}>
+                            <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
+                                <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
+                                    <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
+                                        <Text style={{ margin: 15, ...commonStyles.fontStyles(18, props.activeTheme.black, 5), alignSelf: 'flex-start' }, styles.catpion(props.activeTheme)}>Select Attributes</Text>
+                                        <ScrollView style={{ marginBottom: 15 }}>
+                                            <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
+                                                {
+                                                    ['ab', 'asd'].map((it, i) => {
+                                                        return <View key={i} style={stylesHome.checkboxContainer}>
+                                                            <CheckBox
+                                                                // checked={state.workingDays[i]}
+                                                                onPress={() => { }}
+                                                                style={stylesHome.checkbox}
+                                                                color={props.activeTheme.default}
+                                                            />
+                                                            <Text style={stylesHome.label}>{it}</Text>
+                                                        </View>
+                                                    })
+                                                }
+                                            </View>
+                                        </ScrollView>
+                                    </View>
+                                    <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: '' })) }}>
+                                            <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                                        </TouchableOpacity>
 
 
-                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveDate()}>
-                                <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </KeyboardAvoidingView>
-                </>
+                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { }}>
+                                            <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </Animated.View>
+                        </KeyboardAvoidingView>
+                    </>
+                    :
+                    <>
+                        <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.mode)}</Text>
+
+                            <View style={{ width: '100%', flexDirection: 'row' }}>
+                                <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '33.3%', left: 0, color: '#000' }}>Day</Text>
+                                <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '33.3%', left: 0, color: '#000' }}>Month</Text>
+                                <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '33.3%', left: 0, color: '#000' }}>Year</Text>
+                            </View>
+                            <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                                <Picker
+                                    accessibilityLabel={"day"}
+                                    style={{ zIndex: 500, width: 70 }}
+                                    mode="dialog" // "dialog" || "dropdown"
+                                    // prompt="Select Hours"
+                                    selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[0]}
+                                    onValueChange={(value, i) => onDateChange(value, 0)}
+                                >
+                                    {
+                                        Array.from(Array(32), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                            .filter(it => it !== '00').map((item, i) => (
+                                                <Picker.Item key={i} label={item} value={item} />
+                                            ))
+                                    }
+                                </Picker>
+
+                                {/* <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>/</Text> */}
+
+                                <Picker
+                                    accessibilityLabel={"month"}
+                                    style={{ zIndex: 500, width: 70 }}
+                                    mode="dialog" // "dialog" || "dropdown"
+                                    // prompt="Select Minutes"
+                                    selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[1]}
+                                    onValueChange={(value, i) => onDateChange(value, 1)}
+                                >
+                                    {
+                                        Array.from(Array(13), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                            .filter(it => it !== '00').map((item, i) => (
+                                                <Picker.Item key={i} label={item} value={item} />
+                                            ))
+                                    }
+                                </Picker>
+
+                                {/* <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>/</Text> */}
+
+                                <Picker
+                                    accessibilityLabel={"year"}
+                                    style={{ zIndex: 500, width: 70 }}
+                                    mode="dialog" // "dialog" || "dropdown"
+                                    // prompt="Select Minutes"
+                                    selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[2]}
+                                    onValueChange={(value, i) => onDateChange(value, 2)}
+                                >
+                                    {
+                                        Array.from(Array(15), (item, i) => ((i + (new Date().getFullYear())).toString()))
+                                            .map((item, i) => (
+                                                <Picker.Item key={i} label={item} value={item} />
+                                            ))
+                                    }
+                                </Picker>
+                            </View>
+                            <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: '' })) }}>
+                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                                </TouchableOpacity>
+
+
+                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveDate()}>
+                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </>
             }
         </View>
     );
@@ -397,6 +470,15 @@ const AddUpdateDealModal = (props) => {
 const stylesHome = StyleSheet.create({
     label: {
         margin: 8,
+    },
+    checkboxContainer: {
+        width: 120, flexDirection: 'row'
+    },
+    checkbox: {
+        alignSelf: "center",
+        color: '#7359BE',
+        borderColor: '#7359BE',
+        borderRadius: 12, margin: 8
     },
     wrapper: {
         // alignItems: 'flex-start',

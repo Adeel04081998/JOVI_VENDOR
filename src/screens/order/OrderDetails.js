@@ -181,14 +181,14 @@ function OrderDetails(props) {
                         return <Swipeable
                             key={i}
                             renderRightActions={() => {
-                                return (props.user.pitstopType!==4&&state.orderObj.orderStatus===1&&item.jobItemStatus !== 4?
+                                return (state.orderObj.orderStatus===1&&item.jobItemStatus !== 4?
                                     <View style={{ height: 110, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center' }}>
                                         <TouchableOpacity onPress={() => changeStatusItem(item)} style={{ marginRight: 10, elevation: 0 }}>
                                             <SvgXml xml={commonIcons.discontinueIcon()} height={25} width={25} />
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => replaceItem(item)} style={{ marginRight: 2, width: 40, elevation: 0 }}>
+                                        {props.user.pitstopType!==4&&<TouchableOpacity onPress={() => replaceItem(item)} style={{ marginRight: 2, width: 40, elevation: 0 }}>
                                             <SvgXml xml={commonIcons.replaceIcon()} height={25} width={35} />
-                                        </TouchableOpacity>
+                                        </TouchableOpacity>}
                                     </View>
                                     :
                                     <View></View>

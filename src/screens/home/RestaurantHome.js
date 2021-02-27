@@ -36,8 +36,8 @@ function RestaurantHome(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddUpdateDealModal {...props} onSave={() => { getData() }} />
-                // <AddProductModalR {...props} onSave={()=>{getData()}} />
+                // <AddUpdateDealModal {...props} onSave={() => { getData() }} />
+                <AddProductModalR {...props} onSave={()=>{getData()}} />
             ),
             // modalFlex: 0,
             // modalHeight: Dimensions.get('window').height * 0.85,
@@ -49,19 +49,22 @@ function RestaurantHome(props) {
         props.dispatch(openModalAction(ModalComponent));
     }
     const getData = (keywords = false) => {
-        console.log('Restaurant Payload:', {
-            "pitstopID": props.user.pitstopID
-        }, props.user)
-        postRequest('Api/Vendor/Restaurant/PitstopProductsAndDeals/List', {
-            "pitstopID": props.user.pitstopID
-        }, {}
+        postRequest('Api/Vendor/Restaurant/GetRestaurantCategory', {
+            "isAscending": true,
+            "categoryType": 2,
+            "isPagination": false,
+            "pitstopID": props.user.pitstopID,
+            "pageNumber": 0,
+            "itemsPerPage": 0,
+            "genericSearch": ""
+          }, {}
             , props.dispatch, (res) => {
                 console.log('Restaurant Product Request:', res)
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        categoryData: res.data.productAndDealsViewModel.productsDealsCategories,
-                        dealObj: res.data.productAndDealsViewModel.productsDealsCategories.filter(it=>it.categoryID===0)[0]
+                        categoryData: res.data.restaurantCategoryVMList.categoryViewModelList,
+                        dealObj: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it=>it.categoryID===0)[0]
                         // paginationInfo:res.data.pitstopBrands.paginations
                     }))
                 } else {
@@ -120,8 +123,6 @@ function RestaurantHome(props) {
     };
     return (
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
-
-
             <HeaderApp
                 caption={props.user?.pitstopName}
                 commonStyles={commonStyles}
@@ -132,11 +133,10 @@ function RestaurantHome(props) {
                 screenProps={{ ...props }}
                 noBackButton={true}
             />
-
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Menu</Text>
-                    <Text style={{ marginRight: 14 }}>Total {state.categoryData.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.categoryData.length<1?'0':state.categoryData.length<10?'0'+state.categoryData.length:state.categoryData.length}</Text>
                 </View>
                 <ScrollView style={{ flex: 1, marginHorizontal: 8 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
@@ -153,11 +153,10 @@ function RestaurantHome(props) {
                         <TouchableOpacity style={stylesHome.homeTabText} onPress={() => navigation.navigate('RestaurantDeals')}>
                             <View style={{ flex: 0.9 }}>
                                 <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>Deals</Text>
-                                <Text style={{ ...stylesHome.homeTabDesc(props) }}>{'Deal of the day'.toLocaleUpperCase()}</Text>
                             </View>
                         </TouchableOpacity>
                         <View style={{ ...stylesHome.homeTabCounter(props) }}>
-                            <Text style={{ color: 'white' }}>{state.dealObj.noOfDeals}</Text>
+                            <Text style={{ color: 'white' }}>3</Text>
                         </View>
                     </View>
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
@@ -181,21 +180,19 @@ function RestaurantHome(props) {
                                     </View>
                                     <TouchableOpacity style={stylesHome.homeTabText} onPress={() => setState(pre => ({ ...pre, focusedField: pre.focusedField !== null && pre.focusedField === i ? null : i }))}>
                                         <View style={{ flex: 0.9 }}>
-                                            <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.categoryName}</Text>
-                                            {/* <Text style={{...stylesHome.homeTabDesc(props)}}>{item.brandDescription.toLocaleUpperCase()}</Text> */}
+                                            <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.name}</Text>
                                         </View>
                                     </TouchableOpacity>
                                     <View style={{ ...stylesHome.homeTabCounter(props) }}>
-                                        <Text style={{ color: 'white' }}>{item.noOfProducts}</Text>
+                                        <Text style={{ color: 'white' }}>{item.subCategoryCount}</Text>
                                     </View>
                                 </View>
                                 {
                                     state.focusedField === i &&
-                                    item.restaurantProducts.map((it, j) => {
+                                    item.subCategories?.map((it, j) => {
                                         return <View key={j + i + i} >
-                                            <TouchableOpacity style={{ width: '100%', borderRadius: 15, margin: 5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
-
-                                                <Text>{it.productName}</Text>
+                                            <TouchableOpacity onPress={()=>navigation.navigate('ProductsRes',{key:'ProductsRes',item:it})} style={{ width: '100%', borderRadius: 15, margin: 5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
+                                                <Text>{it.name}</Text>
                                             </TouchableOpacity>
                                         </View>
                                     })
@@ -228,7 +225,7 @@ const stylesHome = StyleSheet.create({
     homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName: { marginTop: 0 },
     homeTabDesc: (props) => { return { maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 } },
-    homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
+    homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 33, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
 
 });
 export default connect(mapStateToProps)(RestaurantHome);

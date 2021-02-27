@@ -28,7 +28,7 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
                                 <SvgXml xml={t.icon(activeTab === j ? "#7359BE" : "#c1c0c6")} height={25} width={25} />
                                 <Text style={{ ...commonStyles.fontStyles(14, activeTab === j ? activeTheme.default : "#c1c0c6", activeTab === j ? 4 : 1), paddingTop: 10 }}>{t.title}</Text>
                                 {
-                                    (j === 1 ) ?
+                                    (j === 1 &&mainDrawerComponentProps.user.noOfOpenOrders>0) ?
                                         <View style={{ position: 'absolute', right: 0, top: -7, zIndex: 999, left: 50, backgroundColor: "#FC3F93", alignItems: 'center', justifyContent: 'center', height: 15, width: 15, borderRadius: 10 }}>
                                             <Text style={{ color: activeTheme.white, fontSize: 10 }}>{mainDrawerComponentProps.user.noOfOpenOrders}</Text>
                                         </View>
@@ -39,7 +39,7 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
                         ))
                     }
                 </View>
-                <TouchableOpacity style={{width:30,zIndex:1500,height:30,...styles.absoluteTouchableOpacity(activeTheme)}} onPress={onHome&&onHome===true?()=>{}:() => navigateWithResetScreen(null, [{ name: 'home', params: {} }])}>
+                <TouchableOpacity style={{width:30,zIndex:1500,height:30,...styles.absoluteTouchableOpacity(activeTheme)}} onPress={onHome&&onHome===true?()=>{}:() => navigateWithResetScreen(null, [{ name: mainDrawerComponentProps.user.pitstopType===4?'homeRes':'home', params: {} }])}>
                     <SvgXml xml={commonIcons.footerHome()} height={30} width={40} />
                 </TouchableOpacity>
             </View>
