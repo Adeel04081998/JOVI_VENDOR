@@ -18,6 +18,7 @@ import { debounce } from 'debounce';
 import AddProductModalR from '../../components/modals/AddProductModalR';
 import AddUpdateDealModal from '../../components/modals/AddUpdateDealModal';
 import common from '../../assets/svgIcons/common/common';
+import UpdateR_Product from '../../components/modals/UpdateR_ProductModal';
 
 function RestaurantHome(props) {
     const { navigation, userObj, activeTheme } = props;
@@ -36,6 +37,7 @@ function RestaurantHome(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
+                // <UpdateR_Product {...props} onSave={() => { getData() }} />
                 // <AddUpdateDealModal {...props} onSave={() => { getData() }} />
                 <AddProductModalR {...props} onSave={()=>{getData()}} />
             ),
@@ -64,6 +66,7 @@ function RestaurantHome(props) {
                     setState(prevState => ({
                         ...prevState,
                         categoryData: res.data.restaurantCategoryVMList.categoryViewModelList,
+                        categoryDataTemp: res.data.restaurantCategoryVMList.categoryViewModelList,
                         dealObj: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it=>it.categoryID===0)[0]
                         // paginationInfo:res.data.pitstopBrands.paginations
                     }))
@@ -80,7 +83,11 @@ function RestaurantHome(props) {
     }
     const searchBrand = debounce((val) => {
         // getData(val);
-    }, 900)
+        setState(pre => ({
+            ...pre,
+            categoryData: val === '' ? pre.categoryDataTemp : pre.categoryDataTemp.filter(item => { return item.name.toLowerCase().includes(val.toLowerCase()) })
+        }))
+    }, 100)
     useFocusEffect(useCallback(() => {
         if (props.user.pitstopID !== 0) {
             getData();
@@ -156,7 +163,7 @@ function RestaurantHome(props) {
                             </View>
                         </TouchableOpacity>
                         <View style={{ ...stylesHome.homeTabCounter(props) }}>
-                            <Text style={{ color: 'white' }}>3</Text>
+                            <Text style={{ color: 'white' }}>0</Text>
                         </View>
                     </View>
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
@@ -190,8 +197,8 @@ function RestaurantHome(props) {
                                 {
                                     state.focusedField === i &&
                                     item.subCategories?.map((it, j) => {
-                                        return <View key={j + i + i} >
-                                            <TouchableOpacity onPress={()=>navigation.navigate('ProductsRes',{key:'ProductsRes',item:it})} style={{ width: '100%', borderRadius: 15, margin: 5, backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
+                                        return <View key={j + i + i} style={{marginHorizontal:5}}>
+                                            <TouchableOpacity onPress={()=>navigation.navigate('ProductsRes',{key:'ProductsRes',item:it})} style={{ width: '100%', borderRadius: 15,  backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
                                                 <Text>{it.name}</Text>
                                             </TouchableOpacity>
                                         </View>

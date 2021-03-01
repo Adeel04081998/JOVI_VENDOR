@@ -23,6 +23,7 @@ function OrderDetails(props) {
         "loader": false,
         orderList: [],
         totalAmount: 0,
+        joviJobID:0,
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
     });
     const counterChange = (item, index) => {
@@ -66,16 +67,18 @@ function OrderDetails(props) {
                 "jobItemStatus": item.jobItemStatus,
                 "quantity": item.quantity,
                 "price": item.price,
-                "joviJobID": item.joviJobID,
+                // "joviJobID": item.joviJobID,
                 "pitstopItemID": item.pitstopItemID
             }
         });
-        console.log(payloadArr)
-        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr, isConfirmed }, {}, props.dispatch, (res) => {
+        console.log('Order Request: ',{ jobItemListViewModel: payloadArr,joviJobID:state.joviJobID, isConfirmed })
+        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr,joviJobID:state.joviJobID, isConfirmed }, {}, props.dispatch, (res) => {
             if (res.data.statusCode === 200) {
-                CustomToast.success('Order Updated');
                 if (isConfirmed === true) {
                     navigation.goBack();
+                    CustomToast.success('Order Confirmed');
+                }else{
+                    CustomToast.success('Order Updated');
                 }
                 getData();
             }
@@ -119,7 +122,8 @@ function OrderDetails(props) {
         props.dispatch(openModalAction(ModalComponent));
     }
     const getData = (keywords = false) => {
-        getRequest(`Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}`, {
+        console.log('URL',`Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`)
+        getRequest(`Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`, {
             // "pageNumber": 1,
             // "itemsPerPage": 2,
             // "isPagination": false,
@@ -132,6 +136,7 @@ function OrderDetails(props) {
                     setState(prevState => ({
                         ...prevState,
                         orderList: res.data.vendorOrderDetailsVM.itemsList,
+                        joviJobID:res.data.vendorOrderDetailsVM.joviJobID,
                         totalAmount: res.data.vendorOrderDetailsVM.totalAmount
                     }))
                 } else {

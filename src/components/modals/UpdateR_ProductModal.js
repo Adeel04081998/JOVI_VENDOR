@@ -1,6 +1,6 @@
 import { Text, View } from 'native-base';
 import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import Animated from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
 import commonStyles from '../../styles/styles';
@@ -8,14 +8,12 @@ import { TextInput } from 'react-native-gesture-handler';
 import DefaultBtn from '../buttons/DefaultBtn';
 import { postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
-const DisableProductModal = (props) => {
-    const { brandObj, productObj, item } = props;
-    console.log(item)
+const UpdateR_Product = (props) => {
+    const {product} = props;
+    console.log(props)
     const [state, setState] = useState({
         showDropdown: false,
-        brand: brandObj ? brandObj : '',
-        product: productObj ? productObj : '',
-        item: item ? item : '',
+        product: product?{...product,basePrice:0,availabilityStatus:'Out Of Stock'}:{},
     })
     // const onDropdownClick = (dropdownTitle) => {
     //     setState(pre => ({ ...pre, showDropdown: pre.showDropdown !== '' ? '' : dropdownTitle }));
@@ -37,8 +35,8 @@ const DisableProductModal = (props) => {
             props.onSave();
         }, (err) => {
             debugger;
-            if(err) CustomToast.error('Something went wrong!');
-         }, '');
+            if (err) CustomToast.error('Something went wrong!');
+        }, '');
     }
     // const renderSelectionList = () => {
     //     let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
@@ -58,42 +56,25 @@ const DisableProductModal = (props) => {
     // }
     return (
         <View style={{ ...StyleSheet.absoluteFill }}>
-
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                         <View style={{ height: 40, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
                                 ['Available', 'Out Of Stock', 'Discontinued'].map((it, i) => {
-                                    return <View key={i} style={{ width: '33.33%', borderRadius: 5, height: '100%', backgroundColor: state.item.availabilityStatus === it ? '#7359BE' : 'white' }} >
-                                        <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, item: { ...pre.item, availabilityStatus: it } }))}>
-                                            <Text style={[commonStyles.fontStyles(16, state.item.availabilityStatus === it ? props.activeTheme.white : props.activeTheme.black, 1)]}>{it}</Text>
+                                    return <View key={i} style={{ width: '33.33%', borderRadius: 5, height: '100%', backgroundColor: state.product.availabilityStatus === it ? '#7359BE' : 'white' }} >
+                                        <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, product: { ...pre.product, availabilityStatus: it } }))}>
+                                            <Text style={[commonStyles.fontStyles(16, state.product.availabilityStatus === it ? props.activeTheme.white : props.activeTheme.black, 1)]}>{it}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 })
                             }
-                            {/* <View
-                                style={{ width: '33.33%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#7359BE' }}
-                            >
-                                <Text style={[commonStyles.fontStyles(16, props.activeTheme.white, 1)]}>Available</Text>
-                            </View>
-                            <View
-                                style={{ width: '33.33%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <Text style={[commonStyles.fontStyles(16, props.activeTheme.black, 1)]}>Out of stock</Text>
-                            </View>
-                            <View
-                                style={{ width: '33.33%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <Text style={[commonStyles.fontStyles(16, props.activeTheme.black, 1)]}>Discontinue</Text>
-                            </View> */}
-                            {/* <Text style={styles.catpion(props.activeTheme)}>Change Item Status</Text> */}
                         </View>
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Brand Name
-                            </Text>
+                                    Product Name
+                                </Text>
                                 <View style={{
                                     paddingHorizontal: 12,
                                     borderWidth: 1,
@@ -106,11 +87,11 @@ const DisableProductModal = (props) => {
                                     flexDirection: 'row'
                                 }}>
                                     {/* <TouchableOpacity > */}
-                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.brand.brandName}</Text>
+                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.product.productName}</Text>
                                     {/* </TouchableOpacity> */}
                                 </View>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Product Name
+                                    Category
                             </Text>
                                 <View style={{
                                     paddingHorizontal: 12,
@@ -126,10 +107,10 @@ const DisableProductModal = (props) => {
                                     {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                     <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
                                 </TouchableOpacity> */}
-                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.product.productName}</Text>
+                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.product.categoryName}</Text>
                                 </View>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Item
+                                    Base Price
                             </Text>
                                 <View style={{
                                     paddingHorizontal: 12,
@@ -145,48 +126,45 @@ const DisableProductModal = (props) => {
                                     {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                     <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
                                 </TouchableOpacity> */}
-                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.item.itemName}</Text>
+                                    <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.product.basePrice.toString()} onChangeText={(val) => setState(pre => ({ ...pre, product: { ...pre.product, basePrice: val.includes(' ')||val.includes('-')?pre.product.basePrice:val } }))} />
                                 </View>
-                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Price
-                            </Text>
-                                <View style={{
-                                    paddingHorizontal: 12,
-                                    borderWidth: 1,
-                                    borderRadius: 5,
-                                    borderColor: 'rgba(0,0,0,0.1)',
-                                    backgroundColor: 'transparent',
-                                    height: 40,
-                                    justifyContent: "space-between",
-                                    alignItems: 'center',
-                                    flexDirection: 'row'
-                                }}>
-                                    {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                    <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
-                                </TouchableOpacity> */}
-                                    <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.item.price.toString()} onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val.includes(' ')||val.includes('-')?pre.item.price:val } }))} />
-                                </View>
-                                {state.item.attributes && state.item.attributes.length > 0 ?
-                                    state.item.attributes.map((it, i) => {
-                                        return <View key={i}>
-                                            <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                                {it.type}
-                                            </Text>
-                                            <View style={{
-                                                paddingHorizontal: 12,
-                                                borderWidth: 1,
-                                                borderRadius: 5,
-                                                borderColor: 'rgba(0,0,0,0.1)',
-                                                backgroundColor: 'transparent',
-                                                height: 40,
-                                                justifyContent: "space-between",
-                                                alignItems: 'center',
-                                                flexDirection: 'row'
-                                            }}>
-                                                {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                                <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
-                                            </TouchableOpacity> */}
-                                                <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{it.attributeName}</Text>
+                                {state.product.attributes && state.product.attributes.length > 0 ?
+                                    state.product.attributes.map((it, i) => {
+                                        return <View key={i} style={{ marginVertical: 5, paddingBottom: 0, }}>
+                                            <View style={{ width: '100%', marginVertical: 10, borderRadius: 7, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, backgroundColor: props.activeTheme.default, height: 40 }} >
+                                                <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.white, 4) }}>{it.categoryName}</Text>
+                                                <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }} onPress={() => setState(pre => ({ ...pre, }))}>X</Text>
+                                            </View>
+                                            <View key={j + i + state.selectedProduct.attributeTypeGroupedList.length} style={{ flex: 1, marginVertical: 5, justifyContent: 'space-between', flexDirection: 'row' }}>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <CheckBox
+                                                        checked={it.isActive ? it.isActive : false}
+                                                        onPress={(e) => changeAttribute(e, i, j, 'isActive')}
+                                                        style={{
+                                                            alignSelf: "center",
+                                                            color: '#7359BE',
+                                                            borderColor: '#7359BE',
+                                                            borderRadius: 12, margin: 8
+                                                        }}
+                                                        color={props.activeTheme.default}
+                                                    />
+                                                    <Text style={{ margin: 8 }}>{it.attributeName}</Text>
+                                                </View>
+                                                <View style={{
+                                                    paddingHorizontal: 8,
+                                                    paddingHorizontal: 8,
+                                                    borderWidth: 1,
+                                                    borderRadius: 5,
+                                                    borderColor: 'rgba(0,0,0,0.1)',
+                                                    backgroundColor: 'transparent',
+                                                    height: 40,
+                                                    width: 190,
+                                                    justifyContent: "space-between",
+                                                    alignItems: 'center',
+                                                    flexDirection: 'row'
+                                                }}>
+                                                    <TextInput style={{}} onChangeText={val => changeAttribute(val, i, j, 'price')} value={it.price.toString()} />
+                                                </View>
                                             </View>
                                         </View>
                                     })
@@ -208,4 +186,4 @@ const DisableProductModal = (props) => {
     );
 }
 
-export default DisableProductModal;
+export default UpdateR_Product;

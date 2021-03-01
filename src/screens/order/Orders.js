@@ -8,6 +8,10 @@ import { debounce } from 'debounce';
 import { useFocusEffect } from '@react-navigation/native';
 import { getRequest, postRequest } from '../../services/api';
 import SharedFooter from '../../components/footer/SharedFooter';
+import { openModalAction } from '../../redux/actions/modal';
+import AddBrandModal from '../../components/modals/AddBrandModal';
+import AddProductModalR from '../../components/modals/AddProductModalR';
+import plateformSpecific from '../../utils/plateformSpecific';
 function Orders(props) {
     const { navigation, userObj, activeTheme } = props;
     const [state, setState] = useState({
@@ -16,6 +20,27 @@ function Orders(props) {
         orderListTemp: [],
         paginationInfo: {}
     });
+    const addBrandProductModal = () =>{
+        let ModalComponent = {
+            visible: true,
+            transparent: true,
+            okHandler: () => { },
+            onRequestCloseHandler: null,
+            ModalContent: (
+                props.user.pitstopType === 4?
+                <AddProductModalR {...props} onSave={()=>{}} />
+                :
+                <AddBrandModal type={1} {...props} onSave={()=>{}} />
+            ),
+            // modalFlex: 0,
+            // modalHeight: Dimensions.get('window').height * 0.85,
+            modalHeight: Dimensions.get('window').height * 0.85,
+            modelViewPadding: 0,
+            fadeAreaViewFlex: plateformSpecific(1, 0.6),
+            screenProps: { ...props }
+        };
+        props.dispatch(openModalAction(ModalComponent));
+    }
     const getData = (keywords = false) => {
         getRequest('/api/Vendor/OrdersSummary', {}
             , props.dispatch, (res) => {
@@ -44,6 +69,11 @@ function Orders(props) {
             orderList:val===''?pre.orderListTemp:pre.orderListTemp.filter(it=>it.orderNo.toString().includes(val)),
         }))
     }
+    const onFooterItemPressed = async (pressedTab, index) => {
+        if(pressedTab.title==='Add'){
+            addBrandProductModal();
+        }
+    }; 
     useFocusEffect(useCallback(() => {
         getData();
         return () => {
@@ -98,7 +128,7 @@ function Orders(props) {
 
                 </ScrollView>
             </View>
-            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={1} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={() => { }} />}
+            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={1} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }

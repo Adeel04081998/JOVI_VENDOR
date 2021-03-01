@@ -151,21 +151,17 @@ function Items(props) {
                         {
                             state.productData.map((item, i) => {
                                 return <View key={i} style={{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' }} >
-                                    <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={() => onSelectProduct(item)}>
-                                        <View style={{ backgroundColor: 'white', width: '85%', borderColor: '#929293', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, height: '80%' }}>
+                                    <TouchableOpacity style={{ width: '100%', height: '70%',paddingHorizontal:10, }} onPress={() => onSelectProduct(item)}>
+                                        <View style={{ backgroundColor: 'white', borderColor: '#929293', overflow: 'hidden',justifyContent: 'center', alignItems: "center", borderRadius: 15,height:'100%' }}>
                                             <ImageBackground
                                                 resizeMode="center"
                                                 source={item.productImages && item.productImages.length > 0 ? { uri: renderPictureResizeable(item.productImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{
-                                                    flex: 1,
-                                                    top: 1,
-                                                    marginLeft: 10,
-                                                    width: '90%',
-                                                    marginTop: 5,
-                                                    // "backgroundColor": 'transparent',
-                                                    // "opacity": 0.6,
-                                                    "height": "90%",
-                                                    // "width": '100%',
+                                                    // flex: 1,
+                                                    // top: 1,
+                                                    // borderRadius:15,
+                                                    width: '100%',
+                                                    "height": "100%",
                                                 }}
                                             />
                                         </View>
@@ -185,28 +181,27 @@ function Items(props) {
                             :
                             state.itemsData.map((item, i) => {
                                 return <View key={i} style={{ height: 200, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
-                                    <TouchableOpacity style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: "center" }} onPress={() => disableEnableProduct(item)}>
+                                    <TouchableOpacity style={{ height: '100%', width: '100%', }} onPress={() => disableEnableProduct(item)}>
                                         {item.availabilityStatus === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
                                         {item.availabilityStatus === 'Discontinued' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901,justifyContent:'center',alignItems:'center' }}>
                                             <SvgXml xml={blockSvg} height={'60%'} width={'60%'} />
                                         </View>}
-                                        <View style={{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                                        <View style={{ height:'75%' ,width: '100%',borderRadius:15,overflow:'hidden' }}>
                                             <ImageBackground
                                                 resizeMode="center"
                                                 source={item.itemImages && item.itemImages.length > 0 ? { uri: renderPictureResizeable(item.itemImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                                style={{
-                                                    width: '90%',
-                                                    marginLeft: 17,
-                                                    zIndex: 900,
-                                                    "height": "90%",
-                                                }}
+                                                style={{ width: '100%',
+                                                // marginLeft: 17,
+                                                // zIndex: 900,
+                                                borderRadius:15,
+                                                "height": "100%",}}
                                             />
                                             {/* <CheckBox checked={item.active} color={activeTheme.background} onPress={()=>disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} /> */}
                                             {/* <View style={{ position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
                                                 <Text style={{ color: 'white' }}>{i + 1}</Text>
                                             </View> */}
                                         </View>
-                                        <View style={{ flex: 1,paddingHorizontal:5 }}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.itemName}</Text></View>
+                                        <View style={{ paddingHorizontal:5 }}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.itemName}</Text></View>
                                     </TouchableOpacity>
                                 </View>
                             })

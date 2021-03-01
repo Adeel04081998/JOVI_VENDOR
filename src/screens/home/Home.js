@@ -235,24 +235,24 @@ const mapStateToProps = (store) => {
 const stylesHome = StyleSheet.create({
     homeTab:props=>{return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
     
-    // homeTabView:{ flex: 0.38,overflow: 'hidden', borderRadius: 15 },
-    // homeTabImage:{
-    //     flex: 1,
-    //     // top: 1,
-    //     // marginLeft: 10,
-    //     width: '100%',
-    //     borderRadius:15,
-    //     "height": "100%",
-    // },
-
-    homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
+    homeTabView:{ flex: 0.38,margin:7, overflow: 'hidden', borderRadius: 15 },
     homeTabImage:{
         flex: 1,
-        top: 1,
-        marginLeft: 10,
-        width: '90%',
-        "height": "90%",
+        // top: 1,
+        // marginLeft: 10,
+        width: '100%',
+        borderRadius:15,
+        "height": "100%",
     },
+
+    // homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
+    // homeTabImage:{
+    //     flex: 1,
+    //     top: 1,
+    //     marginLeft: 10,
+    //     width: '90%',
+    //     "height": "90%",
+    // },
     homeTabText:{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName:{ marginTop: 0},
     homeTabDesc:(props)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2} },

@@ -31,28 +31,50 @@ const AddProductModalR = (props) => {
         //     lastOffset: 0
         // });
     }
-    const changeAttribute = (e,i,j) => {
+    const changeAttribute = (e, i, j, varName) => {
         let selectedP = state.selectedProduct;
-        selectedP.attributeTypeGroupedList[i].productAttributeList[j].isActive =true;
-        setState(pre=>({...pre,selectedProduct:selectedP})); 
-        
+        if (varName === 'isActive') {
+            selectedP.attributeTypeGroupedList[i].productAttributeList[j].isActive = !selectedP.attributeTypeGroupedList[i].productAttributeList[j].isActive;
+        } else {
+            selectedP.attributeTypeGroupedList[i].productAttributeList[j][varName] = e;
+
+        }
+        setState(pre => ({ ...pre, selectedProduct: selectedP }));
+
     }
     const onSave = () => {
-        console.log({
-            "genericProductIDList": state.addedItems.map(it => { return it.genericProductID }),
+        console.log(state.addedItems)
+        let payload = {
+            "genericProductList": state.addedItems.map(it => {
+                let attrList = [];
+                it.attributeTypeGroupedList?.map(itt=>{
+                    itt.productAttributeList.map(attr=>{
+                        attrList.push({
+                            addOnPrice:attr.price,
+                            isActive:attr.isActive,
+                            productAttributeID:attr.attributeID
+                        })
+                    })
+                });
+                return {
+                    "genericProductID": it.genericProductID,
+                    "baseprice": it.basePrice,
+                    "productAttributes":attrList
+                }
+            }),
             "pitstopID": props.user.pitstopID
-        })
-        postRequest('Api/Vendor/Restaurant/AssignPitstopProduct', {
-            "genericProductIDList": state.addedItems.map(it => { return it.genericProductID }),
-            "pitstopID": props.user.pitstopID
-        }, {}, props.dispatch, (res) => {
+        }
+        console.log('Assign Product: ',payload);
+        postRequest('Api/Vendor/Restaurant/AssignPitstopProduct',payload, {}, props.dispatch, (res) => {
             //   console.log('On Assign Brand:',res,state.item.map(item=>{return item.itemID}),state.product);
+            CustomToast.success("Product Successfully Assigned");
             if (props.onSave) {
                 props.onSave();
             }
             props.dispatch(closeModalAction());
         }, (err) => {
-            if (err) CustomToast.error("Something went wrong!");
+            if(err.statusCode ===404) CustomToast.error(err.message);
+            else if (err) CustomToast.error("Something went wrong!");
         }, '');
     }
     const renderSelectionList = (options, onChange, filter = false) => {
@@ -210,8 +232,8 @@ const AddProductModalR = (props) => {
                         <Text style={styles.catpion(props.activeTheme), { alignSelf: 'center' }}>Select Attributes</Text>
                         <ScrollView style={{ flex: 1, marginBottom: 60, width: '100%' }} keyboardShouldPersistTaps="always">
                             <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
-                            <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                Base Price
+                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                    Base Price
                                 </Text>
                                 <View style={{
                                     paddingHorizontal: 8,
@@ -226,7 +248,7 @@ const AddProductModalR = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TextInput style={{}} onChangeText={(val)=>{setState(pre=>({...pre,selectedProduct:{...pre.selectedProduct,basePrice:val}}))}} value={state.selectedProduct.basePrice.toString()} />
+                                    <TextInput keyboardType='numeric' style={{}} onChangeText={(val) => { setState(pre => ({ ...pre, selectedProduct: { ...pre.selectedProduct, basePrice: val } })) }} value={state.selectedProduct.basePrice.toString()} />
                                 </View>
                                 {
                                     state.selectedProduct.attributeTypeGroupedList.map((item, i) => {
@@ -238,8 +260,8 @@ const AddProductModalR = (props) => {
                                                 return <View key={j + i + state.selectedProduct.attributeTypeGroupedList.length} style={{ flex: 1, marginVertical: 5, justifyContent: 'space-between', flexDirection: 'row' }}>
                                                     <View style={{ flexDirection: 'row' }}>
                                                         <CheckBox
-                                                            checked={it.isActive?it.isActive:false}
-                                                            onPress={(e) => changeAttribute(e,i,j)}
+                                                            checked={it.isActive ? it.isActive : false}
+                                                            onPress={(e) => changeAttribute(e, i, j, 'isActive')}
                                                             style={{
                                                                 alignSelf: "center",
                                                                 color: '#7359BE',
@@ -263,7 +285,7 @@ const AddProductModalR = (props) => {
                                                         alignItems: 'center',
                                                         flexDirection: 'row'
                                                     }}>
-                                                        <TextInput style={{}} value={it.price.toString()} />
+                                                        <TextInput keyboardType='numeric' style={{}} onChangeText={val => changeAttribute(val, i, j, 'price')} value={it.price.toString()} />
                                                     </View>
                                                 </View>
                                             })}
@@ -278,7 +300,7 @@ const AddProductModalR = (props) => {
                             </TouchableOpacity>
 
 
-                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: '',filter: '', selectedProduct:{},addedItems: pre.addedItems.filter(item => item.genericProductID === pre.selectedProduct.genericProductID).length < 1 ? [...pre.addedItems, pre.selectedProduct] : pre.addedItems  })) }}>
+                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: '', filter: '', selectedProduct: {}, addedItems: pre.addedItems.filter(item => item.genericProductID === pre.selectedProduct.genericProductID).length < 1 ? [...pre.addedItems, pre.selectedProduct] : pre.addedItems })) }}>
                                 <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
                             </TouchableOpacity>
                         </View>

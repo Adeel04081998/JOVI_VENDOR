@@ -126,7 +126,7 @@ function Products(props) {
                     <Text style={{ marginRight: 14 }}>Total: {state.productData.length<1?'0':state.productData.length<10?'0'+state.productData.length:state.productData.length}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
-                    <ScrollView horizontal contentContainerStyle={{ height: 160, paddingLeft: 10, flexDirection: 'row' }}>
+                    <ScrollView horizontal contentContainerStyle={{paddingHorizontal: 5, flexDirection: 'row' }}>
                         {
                             state.brandData.map((item, i) => {
                                 return <View key={i} style={{...styleProduct.brandContainer}} >
@@ -155,7 +155,7 @@ function Products(props) {
                             :
                             state.productData.map((item, i) => {
                                 return <View key={i} style={{...styleProduct.productTab}}>
-                                    <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={() => navigation.navigate('Items', { key: 'items', item: { item, data: state.productData, brandObj: state.selectedBrand } })}>
+                                    <TouchableOpacity style={{ width: '100%',padding:10, height: '100%' }} onPress={() => navigation.navigate('Items', { key: 'items', item: { item, data: state.productData, brandObj: state.selectedBrand } })}>
                                         {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
                                         <View style={{...styleProduct.productImageContainer}}>
                                             <ImageBackground
@@ -165,10 +165,10 @@ function Products(props) {
                                                 style={{...styleProduct.productImage}}
                                             />
                                             {/* <CheckBox checked={item.active} color={activeTheme.background} onPress={() => disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} /> */}
+                                        </View>
                                             <View style={{...styleProduct.counter(props)}}>
                                                 <Text style={{ color: 'white' }}>{item.noOfItems}</Text>
                                             </View>
-                                        </View>
                                         <View style={{...styleProduct.productName}}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.productName}</Text></View>
                                     </TouchableOpacity>
                                 </View>
@@ -188,24 +188,24 @@ const mapStateToProps = (store) => {
 };
 const styleProduct = StyleSheet.create({
     brandContainer:{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' },
-    brandImageContainer:{ width: '100%', height: '100%' },
-    brandImageContainerView:{ backgroundColor: 'white', width: '85%', borderColor: '#929293', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, height: '80%' },
+    brandImageContainer:{ width: '100%', height: '70%',paddingHorizontal:10, },
+    brandImageContainerView:{ backgroundColor: 'white', borderColor: '#929293', overflow: 'hidden',justifyContent: 'center', alignItems: "center", borderRadius: 15,height:'100%' },
     brandImage:{
-        flex: 1,
-        top: 1,
-        marginLeft: 10,
-        width: '90%',
-        marginTop: 5,
-        "height": "90%",
+        // flex: 1,
+        // top: 1,
+        // borderRadius:15,
+        width: '100%',
+        "height": "100%",
     },
     productListContainer:{ paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' },
-    productTab:{ height: 200, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
-    productImageContainer:{ flex: 3, width: '100%', justifyContent: 'center', alignItems: 'center' },
+    productTab:{ height: 200, borderColor: '#929293', backgroundColor: 'white', borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
+    productImageContainer:{ height:'60%' ,width: '100%',borderRadius:15,overflow:'hidden'},
     productImage:{
-        width: '90%',
-        marginLeft: 17,
-        zIndex: 900,
-        "height": "90%",
+        width: '100%',
+        // marginLeft: 17,
+        // zIndex: 900,
+        borderRadius:15,
+        "height": "100%",
     },
     productName:{ flex: 2,maxWidth:'100%',paddingHorizontal:5, justifyContent: 'center', alignItems: 'center' },
     counter:(props) =>{return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
