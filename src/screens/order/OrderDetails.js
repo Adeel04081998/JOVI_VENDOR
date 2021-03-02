@@ -23,86 +23,90 @@ function OrderDetails(props) {
         "loader": false,
         orderList: [],
         totalAmount: 0,
-        joviJobID:0,
+        joviJobID: 0,
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
     });
     const counterChange = (item, index) => {
-        if(index ===0 && item.quantity-1 ===0) return;
-        if (index !== 0&&(item.quantity + 1) > item.actualQuantity) {
+        if (index === 0 && item.quantity - 1 === 0) return;
+        if (index !== 0 && (item.quantity + 1) > item.actualQuantity) {
             return;
         }
         item = {
             ...item,
             quantity: index === 0 ? (item.quantity < 1 ? 0 : item.quantity - 1) : item.quantity + 1
         }
-        let newArr = state.orderList.map(it => {
-            if (it.jobItemID === item.jobItemID) {
-                return item;
-            } else {
-                return it;
-            }
-        })
-        setState(pre => ({ ...pre, orderList: newArr }));
-        confirmOrder(newArr);
+        // let newArr = state.orderList.map(it => {
+        //     if (it.jobItemID === item.jobItemID) {
+        //         return item;
+        //     } else {
+        //         return it;
+        //     }
+        // })
+        // setState(pre => ({ ...pre, orderList: newArr }));
+        confirmOrder(item);
     }
     const changeStatusItem = (item) => {
-        let arr = state.orderList.map(it => {
-            if (it.jobItemID === item.jobItemID) {
-                return { ...it, jobItemStatus: it.jobItemStatus === 1 ? 2 : 1, jobItemStatusStr: it.jobItemStatusStr === 'Available' ? 'Out Of Stock' : 'Available' };
-            } else {
-                return it;
-            }
-        });
-        setState(pre => ({
-            ...pre,
-            orderList: arr
-        }));
-        confirmOrder(arr);
+        item = {
+            ...item,
+            jobItemStatus: item.jobItemStatus === 1 ? 2 : 1, jobItemStatusStr: item.jobItemStatusStr === 'Available' ? 'Out Of Stock' : 'Available'
+        }
+        // let arr = state.orderList.map(it => {
+        //     if (it.jobItemID === item.jobItemID) {
+        //         return { ...item,};
+        //     } else {
+        //         return it;
+        //     }
+        // });
+        // setState(pre => ({
+        //     ...pre,
+        //     orderList: arr
+        // }));
+        confirmOrder(item);
     }
-    const confirmOrder = (latestArr = false, isConfirmed = false) => {
-        let payloadArr = (latestArr !== false ? latestArr : state.orderList).map(item => {
-            return {
-                "jobItemID": item.jobItemID,
-                "name": item.jobItemName,
-                "jobItemStatus": item.jobItemStatus,
-                "quantity": item.quantity,
-                "price": item.price,
-                // "joviJobID": item.joviJobID,
-                "pitstopItemID": item.pitstopItemID
-            }
-        });
-        console.log('Order Request: ',{ jobItemListViewModel: payloadArr,joviJobID:state.joviJobID, isConfirmed })
-        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr,joviJobID:state.joviJobID, isConfirmed }, {}, props.dispatch, (res) => {
+    const confirmOrder = (latestArr = false, isConfirmed = false,replacedItem=false) => {
+        let payloadArr = latestArr !== false&&isConfirmed===false ? {
+            "jobItemID": latestArr.jobItemID,
+            "name": latestArr.jobItemName,
+            "jobItemStatus": latestArr.jobItemStatus,
+            "quantity": latestArr.quantity,
+            "price": latestArr.price,
+            // "joviJobID": item.joviJobID,
+            "pitstopItemID": latestArr.pitstopItemID
+        }
+            :
+            null;
+        console.log('Order Request: ', { jobItemListViewModel: payloadArr,replaceJobItemID:replacedItem!==false?replacedItem.id:null,replaceJobItemName:replacedItem!==false?replacedItem.name:null, joviJobID: state.joviJobID, isConfirmed })
+        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr,replaceJobItemID:isConfirmed===false&&replacedItem!==false?replacedItem.id:null,replaceJobItemName:isConfirmed===false&&replacedItem!==false?replacedItem.name:null,  joviJobID: state.joviJobID, isConfirmed }, {}, props.dispatch, (res) => {
             if (res.data.statusCode === 200) {
                 if (isConfirmed === true) {
                     navigation.goBack();
                     CustomToast.success('Order Confirmed');
-                }else{
+                } else {
                     CustomToast.success('Order Updated');
                 }
                 getData();
             }
         }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
     }
-    const itemReplaceSuccess = (prevItem,replacedItem) => {
-        let newArr = state.orderList.map(it=>{
-            if(it.jobItemID === prevItem.jobItemID){
-                return {...it,jobItemStatus:4};
-            }else{
-                return {...it};
-            }
-        });
+    const itemReplaceSuccess = (prevItem, replacedItem) => {
+        // let newArr = state.orderList.map(it => {
+        //     if (it.jobItemID === prevItem.jobItemID) {
+        //         return { ...it, jobItemStatus: 4 };
+        //     } else {
+        //         return { ...it };
+        //     }
+        // });
         let newObj = {
-            jobItemID:0,
-            jobItemName:replacedItem.itemName,
-            jobItemStatus:1,
-            quantity:prevItem.quantity,
-            price:replacedItem.price,
-            joviJobID:prevItem.joviJobID,
+            jobItemID: 0,
+            jobItemName: replacedItem.itemName,
+            jobItemStatus: 1,
+            quantity: prevItem.quantity,
+            price: replacedItem.price,
+            joviJobID: prevItem.joviJobID,
             "pitstopItemID": replacedItem.itemID
         }
-        newArr = [...newArr,newObj];
-        confirmOrder(newArr);
+        // newArr = [...newArr, newObj];
+        confirmOrder(newObj,false,{id:prevItem.jobItemID,name:prevItem.itemName});
     }
     const replaceItem = (item) => {
         let ModalComponent = {
@@ -111,7 +115,7 @@ function OrderDetails(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <ReplaceOrderItem itemReplace={item} {...props} onSave={(replacedItem) => itemReplaceSuccess(item,replacedItem)} />
+                <ReplaceOrderItem itemReplace={item} {...props} onSave={(replacedItem) => itemReplaceSuccess(item, replacedItem)} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.65,
@@ -122,7 +126,7 @@ function OrderDetails(props) {
         props.dispatch(openModalAction(ModalComponent));
     }
     const getData = (keywords = false) => {
-        console.log('URL',`Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`)
+        console.log('URL', `Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`)
         getRequest(`Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`, {
             // "pageNumber": 1,
             // "itemsPerPage": 2,
@@ -136,7 +140,7 @@ function OrderDetails(props) {
                     setState(prevState => ({
                         ...prevState,
                         orderList: res.data.vendorOrderDetailsVM.itemsList,
-                        joviJobID:res.data.vendorOrderDetailsVM.joviJobID,
+                        joviJobID: res.data.vendorOrderDetailsVM.joviJobID,
                         totalAmount: res.data.vendorOrderDetailsVM.totalAmount
                     }))
                 } else {
@@ -177,7 +181,7 @@ function OrderDetails(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Order List</Text>
-                    <Text style={{ marginRight: 14 }}>Total: {state.orderList.length<1?'0':state.orderList.length<10?'0'+state.orderList.length:state.orderList.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.orderList.length < 1 ? '0' : state.orderList.length < 10 ? '0' + state.orderList.length : state.orderList.length}</Text>
                 </View>
                 <FlatList
                     data={[...state.orderList]}
@@ -186,12 +190,12 @@ function OrderDetails(props) {
                         return <Swipeable
                             key={i}
                             renderRightActions={() => {
-                                return (state.orderObj.orderStatus===1&&item.jobItemStatus !== 4?
+                                return (state.orderObj.orderStatus === 1 && item.jobItemStatus !== 4 ?
                                     <View style={{ height: 110, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center' }}>
                                         <TouchableOpacity onPress={() => changeStatusItem(item)} style={{ marginRight: 10, elevation: 0 }}>
                                             <SvgXml xml={commonIcons.discontinueIcon()} height={25} width={25} />
                                         </TouchableOpacity>
-                                        {props.user.pitstopType!==4&&<TouchableOpacity onPress={() => replaceItem(item)} style={{ marginRight: 2, width: 40, elevation: 0 }}>
+                                        {props.user.pitstopType !== 4 && <TouchableOpacity onPress={() => replaceItem(item)} style={{ marginRight: 2, width: 40, elevation: 0 }}>
                                             <SvgXml xml={commonIcons.replaceIcon()} height={25} width={35} />
                                         </TouchableOpacity>}
                                     </View>
@@ -217,20 +221,20 @@ function OrderDetails(props) {
                                 </View>
                                 <View style={stylesOrder.homeTabText}>
                                     <View style={{ flex: 0.9 }}>
-                                        <Text style={{flex:2, ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(16, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
+                                        <Text style={{ flex: 2, ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(16, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it, j) => {
                                             if (it.attributeTypeName === 'Color') {
-                                                return  <View key={j + state.orderList.length} style={{ backgroundColor: it.productAttrName.toLowerCase(), height: 13, width: 13, borderRadius: 10,marginRight:5 }}></View>
+                                                return <View key={j + state.orderList.length} style={{ backgroundColor: it.productAttrName.toLowerCase(), height: 13, width: 13, borderRadius: 10, marginRight: 5 }}></View>
 
                                                 // return <View key={j + state.orderList.length} style={{ justifyContent: 'center', marginHorizontal: 5 }}>
                                                 // </View>
                                             }
                                             return <Text key={j + state.orderList.length}>{it.productAttrName + "  "}</Text>
                                         })}</View>
-                                        <Text style={{flex:1, ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
+                                        <Text style={{ flex: 1, ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
                                     </View>
                                 </View>
-                                {state.orderObj.orderStatus===1&&<View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
+                                {state.orderObj.orderStatus === 1 && <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
                                     {
                                         ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: '#fff', height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item, idx)}>
                                             <Text style={{}}>{btn}</Text>
@@ -250,7 +254,7 @@ function OrderDetails(props) {
                     <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => { navigation?.navigate('ContactUsPage') }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Report</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor:state.orderObj.orderStatus===1?props.activeTheme.default:props.activeTheme.grey }} onPress={state.orderObj.orderStatus===1?() => confirmOrder(false, true):()=>{}}>
+                    <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: state.orderObj.orderStatus === 1 ? props.activeTheme.default : props.activeTheme.grey }} onPress={state.orderObj.orderStatus === 1 ? () => confirmOrder(false, true) : () => { }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Confirm</Text>
                     </TouchableOpacity>
                 </View>

@@ -26,7 +26,7 @@ function RestaurantHome(props) {
     const [state, setState] = useState({
         "isImgLoad": false,
         categoryData: [],
-        dealObj:{},
+        dealObj: {},
         focusedField: null,
         paginationInfo: {},
     })
@@ -39,7 +39,7 @@ function RestaurantHome(props) {
             ModalContent: (
                 // <UpdateR_Product {...props} onSave={() => { getData() }} />
                 // <AddUpdateDealModal {...props} onSave={() => { getData() }} />
-                <AddProductModalR {...props} onSave={()=>{getData()}} />
+                <AddProductModalR {...props} onSave={() => { getData() }} />
             ),
             // modalFlex: 0,
             // modalHeight: Dimensions.get('window').height * 0.85,
@@ -59,15 +59,15 @@ function RestaurantHome(props) {
             "pageNumber": 0,
             "itemsPerPage": 0,
             "genericSearch": ""
-          }, {}
+        }, {}
             , props.dispatch, (res) => {
                 console.log('Restaurant Product Request:', res)
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        categoryData: res.data.restaurantCategoryVMList.categoryViewModelList,
-                        categoryDataTemp: res.data.restaurantCategoryVMList.categoryViewModelList,
-                        dealObj: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it=>it.categoryID===0)[0]
+                        categoryData: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name!=='Deals'),
+                        categoryDataTemp: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name!=='Deals'),
+                        dealObj: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name==='Deals')[0]
                         // paginationInfo:res.data.pitstopBrands.paginations
                     }))
                 } else {
@@ -143,7 +143,7 @@ function RestaurantHome(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Menu</Text>
-                    <Text style={{ marginRight: 14 }}>Total: {state.categoryData.length<1?'0':state.categoryData.length<10?'0'+state.categoryData.length:state.categoryData.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.categoryData.length < 1 ? '0' : state.categoryData.length < 10 ? '0' + state.categoryData.length : state.categoryData.length}</Text>
                 </View>
                 <ScrollView style={{ flex: 1, marginHorizontal: 8 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
@@ -157,18 +157,28 @@ function RestaurantHome(props) {
                                 height={'100%'}
                             />
                         </View>
-                        <TouchableOpacity style={stylesHome.homeTabText} onPress={() => navigation.navigate('RestaurantDeals')}>
+                        <TouchableOpacity style={stylesHome.homeTabText} onPress={()=>setState(pre=>({...pre,focusedField:'deals'}))} >
                             <View style={{ flex: 0.9 }}>
-                                <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>Deals</Text>
+                                <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{state.dealObj?.name}</Text>
                             </View>
                         </TouchableOpacity>
                         <View style={{ ...stylesHome.homeTabCounter(props) }}>
-                            <Text style={{ color: 'white' }}>0</Text>
+                            <Text style={{ color: 'white' }}>{state.dealObj?.subCategoryCount}</Text>
                         </View>
                     </View>
+                    {
+                        state.focusedField==='deals'&&state.dealObj.subCategories&&
+                        state.dealObj.subCategories?.map((it, j) => {
+                            return <View key={j} style={{ marginHorizontal: 5 }}>
+                                <TouchableOpacity onPress={() => navigation.navigate('RestaurantDeals', { key: 'RestaurantDeals', item: it })} style={{ width: '100%', borderRadius: 15, backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
+                                    <Text>{it.name}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        })
+                    }
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
                     {state.categoryData.length > 0 &&
-                        state.categoryData.filter(it => it.categoryName !== '').map((item, i) => {
+                        state.categoryData.filter(it => it.name !== "Deals").map((item, i) => {
                             return <View key={i} style={{ justifyContent: 'center' }}>
                                 <View style={{ ...stylesHome.homeTab({ activeTheme: props.activeTheme }) }}>
                                     <View style={{ ...stylesHome.homeTabView }}>
@@ -197,8 +207,8 @@ function RestaurantHome(props) {
                                 {
                                     state.focusedField === i &&
                                     item.subCategories?.map((it, j) => {
-                                        return <View key={j + i + i} style={{marginHorizontal:5}}>
-                                            <TouchableOpacity onPress={()=>navigation.navigate('ProductsRes',{key:'ProductsRes',item:it})} style={{ width: '100%', borderRadius: 15,  backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
+                                        return <View key={j + i + i} style={{ marginHorizontal: 5 }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate('ProductsRes', { key: 'ProductsRes', item: it })} style={{ width: '100%', borderRadius: 15, backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
                                                 <Text>{it.name}</Text>
                                             </TouchableOpacity>
                                         </View>
@@ -209,7 +219,7 @@ function RestaurantHome(props) {
                     }
                 </ScrollView>
             </View>
-            {props.stackState.keypaidOpen===false&&<SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
+            {props.stackState.keypaidOpen === false && <SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }
