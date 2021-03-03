@@ -98,7 +98,7 @@ function Home(props) {
                 setState(prevState => ({
                     ...prevState,
                     brandData: res.data.pitstopBrands.pitstopBrandsList,
-                    paginationInfo:res.data.pitstopBrands.paginations
+                    paginationInfo:res.data.pitstopBrands.paginations,
                 }))
             }else{
                 CustomToast.error("Not Found");

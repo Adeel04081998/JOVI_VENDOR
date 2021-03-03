@@ -26,7 +26,8 @@ function RestaurantHome(props) {
     const [state, setState] = useState({
         "isImgLoad": false,
         categoryData: [],
-        dealObj: {},
+        dealObj: {
+        },
         focusedField: null,
         paginationInfo: {},
     })
@@ -152,7 +153,8 @@ function RestaurantHome(props) {
                         <View style={{ ...stylesHome.homeTabView }}>
                             <SvgXml
                                 fill={props.activeTheme.default}
-                                xml={common.joviDeal()}
+                                xml={state.dealObj.categoryImage??common.joviDeal()}
+                                // xml={common.joviDeal()}
                                 width={'100%'}
                                 height={'100%'}
                             />

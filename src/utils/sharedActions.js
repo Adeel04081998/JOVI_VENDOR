@@ -11,7 +11,7 @@ import CustomToast from '../components/toast/CustomToast';
 import { BASE_URL, BOTTOM_TABS, CONSTANTLATDELTA, CONSTANTLONGDELTA, IMAGE_NOT_AVAILABLE_URL, isJoviCustomerApp } from '../config/config';
 import ImageEditor from "@react-native-community/image-editor";
 import { CommonActions } from '@react-navigation/native';
-import { GET_SET_ENUMS_ACTION, LOGOUT_ACTION } from '../redux/actions/types';
+import { GET_SET_ENUMS_ACTION, LOGOUT_ACTION, OPEN_MODAL } from '../redux/actions/types';
 import { HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import RNLocation from 'react-native-location';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
@@ -578,23 +578,44 @@ export const sharedIsRiderApproved = (userObj = {}) => {
 };
 
 export const attachSignalRRatingPopupHandler = () => {
-    getHubConnectionInstance("ComplaintRatingReminder")?.on("ComplaintRatingReminder", (userID, complaintID, randomNumber) => {
-        console.log(`[SignalR].on(ComplaintRatingReminder).data -> `, "userID", userID, "complaintID", complaintID, "randomNumber", randomNumber);
-        store.dispatch(openModalAction(
-            {
-                dispatch: store.dispatch, visible: true, transparent: true, modalHeight: 250, modelViewPadding: 0,
-                ModalContent: {
-                    name: "ratings_pop_up",
-                    data: {
-                        userID,
-                        complaintID,
-                        fromSignalR: true
-                    }
-                },
-                okHandler: () => { }, onRequestCloseHandler: () => { }, androidKeyboardExtraOffset: 0
+    getHubConnectionInstance('VendorOrderRecieved')?.on('VendorOrderRecieved', (order) => {
+        store.dispatch({
+            type: OPEN_MODAL,
+            payload: {
+                visible: false,
+                transparent: true,
+                okHandler: null,
+                onRequestCloseHandler: null,
+                ModalContent: null,
+                notificationModalVisible: true,
+                notificationModalContent: order,
+                modalContentNotification: null,
+                modalFlex: null,
+                modalHeightDefault: null,
+                modelViewPadding: 35,
+                fadeAreaViewFlex: 1,
+                fadeAreaViewStyle: {},
+                imageViewState: {},
             }
-        ));
+        })
     });
+    // getHubConnectionInstance("ComplaintRatingReminder")?.on("ComplaintRatingReminder", (userID, complaintID, randomNumber) => {
+    //     console.log(`[SignalR].on(ComplaintRatingReminder).data -> `, "userID", userID, "complaintID", complaintID, "randomNumber", randomNumber);
+    //     store.dispatch(openModalAction(
+    //         {
+    //             dispatch: store.dispatch, visible: true, transparent: true, modalHeight: 250, modelViewPadding: 0,
+    //             ModalContent: {
+    //                 name: "ratings_pop_up",
+    //                 data: {
+    //                     userID,
+    //                     complaintID,
+    //                     fromSignalR: true
+    //                 }
+    //             },
+    //             okHandler: () => { }, onRequestCloseHandler: () => { }, androidKeyboardExtraOffset: 0
+    //         }
+    //     ));
+    // });
 };
 
 export const sharedImagePickerHandler = async (cb, next) => {
@@ -817,7 +838,7 @@ export const renderPicture = (picturePath, token) => {
     return `${BASE_URL}/api/Common/S3File/${encodeURIComponent(picturePath)}?access_token=${token}`;
 
 };
-export const renderPictureResizeable = (picturePath,size, token) => {
+export const renderPictureResizeable = (picturePath, size, token) => {
 
     // console.log("picturePath :", picturePath);
     // 'Temp live/2/2020/8/21/jovipng_113.png
@@ -839,7 +860,7 @@ export const sharedlogoutUser = async (navigation, postRequest, dispatch, userOb
                 // setFloatingAmountOnServer(0, postRequest, dispatch, async () => {
                 //     // navigation.reset({ routes: [{ name: 'OTP', params: 'logout' }] });
                 // });
-                const removeUser = async () =>{
+                const removeUser = async () => {
                     await AsyncStorage.removeItem("User");
                 }
                 removeUser();

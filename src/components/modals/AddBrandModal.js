@@ -63,6 +63,7 @@ const AddBrandModal = (props) => {
               {
                 props.onSave();
               }
+              CustomToast.success('Product Assigned Successfully')
               props.dispatch(closeModalAction());
         },(err)=>{},'');
     }
@@ -194,9 +195,12 @@ const AddBrandModal = (props) => {
             getData();
         }
         if(type === 2){
+            getData();
             getProductAgainstBrand();
         }
         if(type === 3){
+            getData();
+            getProductAgainstBrand();
             getItemsAgainstProduct();
         }
         return () => {
@@ -280,7 +284,7 @@ const AddBrandModal = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TouchableOpacity onPress={ type===3 ? () => { } : () => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                    <TouchableOpacity onPress={  () => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                         <Text>{state.product.text ? state.product.text : 'Choose Product'}</Text>
                                     </TouchableOpacity>
                                 </View>

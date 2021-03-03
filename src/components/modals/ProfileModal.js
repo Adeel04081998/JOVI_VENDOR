@@ -29,7 +29,7 @@ const ProfileModal = (props) => {
     });
     const [state, setState] = useState({
         showDropdown: false,
-        pickTime: false,
+        mode: false,
         selectedValue: null,
         timePickMode: null,
         openingTime: props.user.openingTime.split(':')[0]+':'+props.user.openingTime.split(':')[1],
@@ -77,7 +77,7 @@ const ProfileModal = (props) => {
             ...pre,
             [pre.timePickMode]: pre.selectedValue,
             selectedValue: null,
-            pickTime: false,
+            mode: false,
             timePickMode: null
         }));
     }
@@ -117,7 +117,7 @@ const ProfileModal = (props) => {
         ));
     }
     const setTimePickerState = (varName) => {
-        setState(pre => ({ ...pre, selectedValue: pre[varName], timePickMode: varName, pickTime: true }));
+        setState(pre => ({ ...pre, selectedValue: pre[varName], timePickMode: varName, mode: true }));
         dispatch({type:UPDATE_MODAL_HEIGHT,payload:Dimensions.get('window').height * 0.3});
     }
     const getData = () => {
@@ -151,7 +151,7 @@ const ProfileModal = (props) => {
     }, []), []);
     return (
         <View style={{ ...StyleSheet.absoluteFill }}>
-            {state.pickTime === false ?
+            {state.mode === false ?
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }} keyboardVerticalOffset={-550}>
                     <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                         <View style={{ flex: 1, ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
@@ -159,6 +159,9 @@ const ProfileModal = (props) => {
                                 <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 3) }}>Profile</Text>
                                 <View style={{backgroundColor:props.activeTheme.warning,padding:5,borderRadius:5}}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => { props.dispatch(closeModalAction()); sharedlogoutUser(props.navigation, postRequest, props.dispatch, props.user, false) }}>Logout</Text></View>
 
+                            </View>
+                            <View style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }}>
+                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 4) }}>Balance: 4234</Text>
                             </View>
                             {/* <Text style={styles.catpion(props.activeTheme),{width:50,alignSelf:'flex-start'}}>Profile</Text> */}
                             {/* <Text style={{alignSelf:'flex-end'}}>Logout</Text> */}
@@ -324,7 +327,7 @@ const ProfileModal = (props) => {
                             </Picker>
                         </View>
                         <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => {dispatch({type:UPDATE_MODAL_HEIGHT,payload:false});setState(pre => ({ ...pre, pickTime: false }))}}>
+                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => {dispatch({type:UPDATE_MODAL_HEIGHT,payload:false});setState(pre => ({ ...pre, mode: false }))}}>
                                 <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
                             </TouchableOpacity>
 

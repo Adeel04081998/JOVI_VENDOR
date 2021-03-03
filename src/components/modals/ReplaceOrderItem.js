@@ -89,7 +89,7 @@ const ReplaceOrderItem = (props) => {
     }
     const checkValidation = () =>{
         let check = false;
-        if(state.brand === ''||state.product === '' ||state.item === ''){
+        if(state.brand === ''||state.product === '' ||state.item === '' || !state.item.itemID){
             check = true;
         }
         return check;
@@ -130,7 +130,7 @@ const ReplaceOrderItem = (props) => {
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Brand Name
                                 </Text>
-                                <View style={{
+                                <TouchableOpacity onPress={ () => onDropdownClick('brand')} style={{
                                     paddingHorizontal: 12,
                                     borderWidth: 1,
                                     borderRadius: 5,
@@ -141,12 +141,12 @@ const ReplaceOrderItem = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TouchableOpacity onPress={ () => onDropdownClick('brand')} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                    <TextInput value={state.brand.text !== '' ? state.brand.text : ''} placeholder={'Choose Brand'}  onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'brand',product:val===''?'':pre.product,item:val===''?'':pre.item, brand:{...pre.brand,text:val} }))} />
+                                    {/* <TouchableOpacity  style={{ maxWidth: '95%', minWidth: '90%' }}> */}
+                                    <TextInput onFocus={ () => setState(pre=>({...pre,showDropdown:'brand'}))} value={state.brand.text !== '' ? state.brand.text : ''} placeholder={'Choose Brand'}  onChangeText={(val) => setState(pre => ({ ...pre,product:val===''?'':pre.product,item:val===''?'':pre.item, brand:{...pre.brand,text:val} }))} />
 
                                         {/* <Text>{state.brand.text ? state.brand.text : 'Choose Brand'}</Text> */}
-                                    </TouchableOpacity>
-                                </View>
+                                    {/* </TouchableOpacity> */}
+                                </TouchableOpacity>
                                 {state.showDropdown === 'brand' ? <ScrollView nestedScrollEnabled style={{
                                     marginHorizontal: 15, width: '95%', height: 130, borderColor: props.activeTheme.lightGrey,
                                     borderWidth: 1,
@@ -211,7 +211,7 @@ const ReplaceOrderItem = (props) => {
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Item
                                 </Text>
-                                <View style={{
+                                <TouchableOpacity onPress={() => onDropdownClick('items')} style={{
                                     paddingHorizontal: 12,
                                     borderWidth: 1,
                                     borderRadius: 5,
@@ -222,11 +222,11 @@ const ReplaceOrderItem = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                    {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
                                         {/* <Text>{state.itemName !=='' ? state.itemName : 'Choose Items'}</Text> */}
-                                        <TextInput value={state.item.itemName !== '' ? state.item.itemName : ''} placeholder={'Choose Item'} editable={state.product!==''}  onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'items', item:{...pre.item,itemName:val} }))} />
-                                    </TouchableOpacity>
-                                </View>
+                                        <TextInput onFocus={ () => setState(pre=>({...pre,showDropdown:'items'}))} value={state.item.itemName !== '' ? state.item.itemName : ''} placeholder={'Choose Item'} editable={state.product!==''}  onChangeText={(val) => setState(pre => ({ ...pre, item:val===''?'':{...pre.item,itemName:val} }))} />
+                                    {/* </TouchableOpacity> */}
+                                </TouchableOpacity>
                                 {state.showDropdown === 'items' ? <ScrollView nestedScrollEnabled style={{
                                     marginHorizontal: 15, width: '95%', position: 'absolute', marginTop: 240, backgroundColor: 'white', zIndex: 999, paddingHorizontal: 3
                                 }} keyboardShouldPersistTaps="always">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StatusBar, Platform, ImageBackground,Dimensions } from 'react-native';
 import { Header, Left, Body, Right } from 'native-base';
 import headerStyles from './headerStyles';
@@ -13,6 +13,7 @@ import ProfileModal from '../modals/ProfileModal';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import common from '../../assets/svgIcons/common/common';
+import { useFocusEffect } from '@react-navigation/native';
 export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinationView, bodyContent, BodyComponent, rightIcon, imgObject, imgStyles, rightIconHandler, navigation, activeTheme, height, width, styles, left, screenName }) {
     // let tempVal = 50;
     // console.log(StatusBar.currentHeight)
@@ -115,6 +116,14 @@ export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinati
     )
 }
 export const HeaderApp = (props) => {
+    const [headerState,setHeaderState] = useState({
+        searchVal:'',
+    });
+    useFocusEffect(()=>{
+        if(headerState.searchVal !==''){setHeaderState({
+            searchVal:'',
+        })}
+    },[])
     const { state,noBackButton, caption,noSearch,screenProps, commonStyles, activeTheme,onChangeText,user } = props;
     const profileHeader = () => {
         let ModalComponent = {

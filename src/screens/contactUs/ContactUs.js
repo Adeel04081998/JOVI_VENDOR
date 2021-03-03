@@ -32,7 +32,7 @@ function ContactUs(props) {
                     <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, props.activeTheme.black, 3), marginLeft: 20 }}>We are here to help. Please get in touch with us.</Text>
                 </View>
                 <View style={{ height: 180, borderWidth: 0.5, borderRadius: 15, borderColor: '#929293', backgroundColor: 'white', width: '40%' }}>
-                    <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', }} onPress={() => Linking.openURL(`tel:${CONTACT_NUMBER}`)}>
+                    <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', }} onPress={() => Linking.openURL(`tel:${props.user.helpNumber}`)}>
                         <SvgXml xml={common.callUsLogoIcon()} height={50} width={38} />
                         <Text>Call Us</Text>
                     </TouchableOpacity>

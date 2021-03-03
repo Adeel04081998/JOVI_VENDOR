@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import ErrorBoundary from './src/exceptions';
 import CustomImageView from './src/components/imageView';
 import Home from './src/screens/home/Home';
+import NotificationModal from './src/components/modals/NotificationModal';
 
 // import Temp from './Temp';
 // import HomeDrawer from './src/routes/navigations';
@@ -103,6 +104,7 @@ const App = (props) => {
             }} ref={NavigationService._navigatorRef} onStateChange={navState => statusBarHandler()}>
                 <RootStack />
                 {loaderState?.isVisible ? <Loader {...props} /> : null}
+                <View>{modalState?.notificationModalVisible ? <NotificationModal {...modalState} /> : null}</View>
                 <View>{modalState?.visible ? <BottomAlignedModal {...modalState} /> : null}</View>
                 {modalState.imageViewState?.visible ? <CustomImageView {...modalState.imageViewState} /> : null}
             </NavigationContainer>

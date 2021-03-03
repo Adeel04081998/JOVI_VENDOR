@@ -6,6 +6,9 @@ let initState = {
     okHandler: null,
     onRequestCloseHandler: null,
     ModalContent: null,
+    notificationModalVisible:false,
+    notificationModalContent:null,
+    modalContentNotification:null,
     modalFlex: null,
     modalHeightDefault:null,
     modelViewPadding: 35,
@@ -22,7 +25,7 @@ export default (state = initState, action) => {
             // console.log('Payload :', action.payload);
             return { ...state,modalHeight:action.payload===false?state.modalHeightDefault:action.payload };
         case CLOSE_MODAL:
-            return { ...initState };
+            return { ...initState,notificationModalVisible:false };
         case SHOW_HIDE_IMAGE_VIEW:
             return {
                 ...state,

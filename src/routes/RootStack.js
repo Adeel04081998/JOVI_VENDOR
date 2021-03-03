@@ -80,7 +80,7 @@ const RootStack = (props) => {
                     err => {
                         console.log("Problem is here--- :", JSON.stringify(err))
                         if (err) CustomToast.error("Something went wrong!")
-                        setState({...state,initRoute:"Dashboard",initRouteSub:'home'})
+                        setState({...state,initRoute:"Exceptions",initRouteSub:'home'})
                         // Commented line were creating an ambigous behaviour when logged in user open app after a while 
                         // if (err) setState({ ...state, loggedInUser: null, initRoute: "Login" });
                     },
