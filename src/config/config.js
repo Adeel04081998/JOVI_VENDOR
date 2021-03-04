@@ -39,6 +39,7 @@ export const CONSTANTLONGDELTA = (Dimensions.get("window").width / Dimensions.ge
 export const GOOGLE_API_KEY = "AIzaSyBKJWO9UCRwJUDjUhRl9pEZgYnzayeARAg";
 
 // export let BASE_URL = "https://jovi-api-qa.cibak.pk";
+// export let BASE_URL = "https://ececced05539.ngrok.io";
 export let BASE_URL = "https://jovi-api-staging.cibak.pk";
 // export let BASE_URL = "https://jovi-api-dev.cibak.pk";
 

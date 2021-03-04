@@ -66,9 +66,9 @@ function RestaurantHome(props) {
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        categoryData: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name!=='Deals'),
-                        categoryDataTemp: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name!=='Deals'),
-                        dealObj: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name==='Deals')[0]
+                        categoryData: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name !== 'Deals'),
+                        categoryDataTemp: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name !== 'Deals'),
+                        dealObj: res.data.restaurantCategoryVMList.categoryViewModelList.filter(it => it.name === 'Deals')[0]
                         // paginationInfo:res.data.pitstopBrands.paginations
                     }))
                 } else {
@@ -153,13 +153,13 @@ function RestaurantHome(props) {
                         <View style={{ ...stylesHome.homeTabView }}>
                             <SvgXml
                                 fill={props.activeTheme.default}
-                                xml={state.dealObj.categoryImage??common.joviDeal()}
+                                xml={state.dealObj.categoryImage ?? common.joviDeal()}
                                 // xml={common.joviDeal()}
                                 width={'100%'}
                                 height={'100%'}
                             />
                         </View>
-                        <TouchableOpacity style={stylesHome.homeTabText} onPress={()=>setState(pre=>({...pre,focusedField:'deals'}))} >
+                        <TouchableOpacity style={stylesHome.homeTabText} onPress={() => setState(pre => ({ ...pre, focusedField: 'deals' }))} >
                             <View style={{ flex: 0.9 }}>
                                 <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{state.dealObj?.name}</Text>
                             </View>
@@ -169,10 +169,17 @@ function RestaurantHome(props) {
                         </View>
                     </View>
                     {
-                        state.focusedField==='deals'&&state.dealObj.subCategories&&
+                        state.focusedField === 'deals' && state.dealObj.subCategories &&
                         state.dealObj.subCategories?.map((it, j) => {
                             return <View key={j} style={{ marginHorizontal: 5 }}>
-                                <TouchableOpacity onPress={() => navigation.navigate('RestaurantDeals', { key: 'RestaurantDeals', item: it })} style={{ width: '100%', borderRadius: 15, backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
+                                <TouchableOpacity onPress={() => navigation.navigate('RestaurantDeals', { key: 'RestaurantDeals', item: it })} style={{ width: '100%', flexDirection: 'row', borderColor: props.activeTheme.default, borderWidth: 0.5, borderRadius: 15, backgroundColor: 'white', justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10 }}>
+                                    <SvgXml
+                                        fill={props.activeTheme.default}
+                                        xml={it.categoryImage}
+                                        width={20}
+                                        style={{ marginRight: 10 }}
+                                        height={20}
+                                    />
                                     <Text>{it.name}</Text>
                                 </TouchableOpacity>
                             </View>
@@ -210,7 +217,14 @@ function RestaurantHome(props) {
                                     state.focusedField === i &&
                                     item.subCategories?.map((it, j) => {
                                         return <View key={j + i + i} style={{ marginHorizontal: 5 }}>
-                                            <TouchableOpacity onPress={() => navigation.navigate('ProductsRes', { key: 'ProductsRes', item: it })} style={{ width: '100%', borderRadius: 15, backgroundColor: 'white', justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate('ProductsRes', { key: 'ProductsRes', item: it })} style={{ width: '100%', borderRadius: 15, borderColor: props.activeTheme.default, borderWidth: 0.5, marginVertical: 3, backgroundColor: 'white',flexDirection:'row', justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10 }}>
+                                                <SvgXml
+                                                    fill={props.activeTheme.default}
+                                                    xml={it.categoryImage}
+                                                    width={20}
+                                                    style={{ marginRight: 10 }}
+                                                    height={20}
+                                                />
                                                 <Text>{it.name}</Text>
                                             </TouchableOpacity>
                                         </View>

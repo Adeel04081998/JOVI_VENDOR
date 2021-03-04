@@ -104,7 +104,7 @@ const App = (props) => {
             }} ref={NavigationService._navigatorRef} onStateChange={navState => statusBarHandler()}>
                 <RootStack />
                 {loaderState?.isVisible ? <Loader {...props} /> : null}
-                <View>{modalState?.notificationModalVisible ? <NotificationModal {...modalState} /> : null}</View>
+                <View>{modalState?.notificationModalVisible ? <NotificationModal {...modalState} navigation={NavigationService._navigatorRef.current} /> : null}</View>
                 <View>{modalState?.visible ? <BottomAlignedModal {...modalState} /> : null}</View>
                 {modalState.imageViewState?.visible ? <CustomImageView {...modalState.imageViewState} /> : null}
             </NavigationContainer>

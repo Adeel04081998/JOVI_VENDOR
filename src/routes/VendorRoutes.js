@@ -70,6 +70,7 @@ const VendorRoutes = (props) => {
             <Stack.Screen name="Items" children={navigatorPros => <Items {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="Orders" children={navigatorPros => <Orders {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="OrderDetails" children={navigatorPros => <OrderDetails {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
+            <Stack.Screen name="ResOrderDetails" children={navigatorPros => <ResOrderDetails {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="ContactUsPage" children={navigatorPros => <ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ContactUsPage {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} /></ImageBackground>} />
             <Stack.Screen name="Exceptions" children={navigatorPros => <View><Text>error</Text></View>} />
         </Stack.Navigator>

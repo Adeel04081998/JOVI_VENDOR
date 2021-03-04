@@ -15,7 +15,7 @@ import { GET_SET_ENUMS_ACTION, LOGOUT_ACTION, OPEN_MODAL } from '../redux/action
 import { HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import RNLocation from 'react-native-location';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
-import { cartAction, notifyAction } from '../redux/actions/user';
+import { cartAction, notifyAction, userAction } from '../redux/actions/user';
 import moment from 'moment';
 import store from '../redux/store';
 import DeviceInfo from 'react-native-device-info';
@@ -277,7 +277,7 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
                 // Attaching SignalR Event Handlers when SignalR is Connected...
 
                 if (isJoviCustomerApp) {
-                    attachSignalRRatingPopupHandler();
+                    attachOrderRecieveModal();
                 }
                 else {
                     attachSignalRLogoutHandler(postRequest);
@@ -304,7 +304,22 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
     // hubConnection.onreconnecting(err => console.log("hubConnection.onreconnecting called with error :", err));
     // hubConnection.onreconnected(conn => console.log("hubConnection.onreconnected called with connection ID :", conn));
 };
-
+export const getApiDetails = (props) => {
+    props.getRequest(`/api/Vendor/Details`,
+        // getRequest(`/api/User/Details`,
+        { "Authorization": "Bearer " + props.user.tokenObj.token.authToken },
+        store.dispatch,
+        async res => {
+            store.dispatch(userAction({ ...props.user, ...res.data.userDetails, userID: props.user.tokenObj.token.id, tokenObj: props.user.tokenObj, appTutorialsEnabled: false, appearOnTop: false }));
+        },
+        err => {
+            console.log("Problem is here--- :", JSON.stringify(err))
+            if (err) CustomToast.error("Something went wrong!")
+        },
+        '',
+        true,
+    );
+}
 export const sharedHubConnectionStopper = async () => {
     if (hubConnection) {
         hubConnection.closedCallbacks = [];
@@ -577,8 +592,9 @@ export const sharedIsRiderApproved = (userObj = {}) => {
     );
 };
 
-export const attachSignalRRatingPopupHandler = () => {
-    getHubConnectionInstance('VendorOrderRecieved')?.on('VendorOrderRecieved', (order) => {
+export const attachOrderRecieveModal = () => {
+    getHubConnectionInstance('VendorOrderRecieved')?.on('VendorOrderRecieved', (orderId, orderMsg) => {
+        console.log('On Order Recived Signal R: ', orderId, orderMsg);
         store.dispatch({
             type: OPEN_MODAL,
             payload: {
@@ -588,7 +604,7 @@ export const attachSignalRRatingPopupHandler = () => {
                 onRequestCloseHandler: null,
                 ModalContent: null,
                 notificationModalVisible: true,
-                notificationModalContent: order,
+                notificationModalContent: { orderId, orderMsg },
                 modalContentNotification: null,
                 modalFlex: null,
                 modalHeightDefault: null,

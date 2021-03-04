@@ -20,9 +20,11 @@ import AddUpdateDealModal from '../../components/modals/AddUpdateDealModal';
 
 function RestaurantDeals(props) {
     const { navigation, userObj, activeTheme } = props;
+    const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'RestaurantDeals')[0]?.params?.item;
     console.log(navigation)
     const [state, setState] = useState({
         dealsList: [],
+        subCategoryObj:data
     })
     const addProductModalF = () => {
         let ModalComponent = {
@@ -71,7 +73,7 @@ function RestaurantDeals(props) {
     useFocusEffect(useCallback(() => {
         // const permissions = async () => await askForWholeAppPermissions();
         
-        // getData();
+        getData();
         // const locationHandler = async () => {
         //     sharedGetUserCartHandler(getRequest, false, 0);
         //     // openSettings();
@@ -136,8 +138,8 @@ function RestaurantDeals(props) {
 
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={()=>navigation.navigate('Orders')}>Categories</Text>
-                    <Text style={{ marginRight: 14 }}>Total {state.dealsList.length}</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} >{state.subCategoryObj.name}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.dealsList.length < 1 ? '0' : state.dealsList.length < 10 ? '0' + state.dealsList.length : state.dealsList.length}</Text>
                 </View>
                 <ScrollView style={{ flex: 1,marginHorizontal:8 }} >
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}

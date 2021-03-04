@@ -1,18 +1,23 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, Modal, View, Dimensions,Text, TouchableOpacity, BackHandler, KeyboardAvoidingView, Keyboard, Platform, TextInput } from 'react-native';
+import { StyleSheet, Modal, View, Dimensions, Text, TouchableOpacity, BackHandler, KeyboardAvoidingView, Keyboard, Platform, TextInput, ImageBackground } from 'react-native';
 import fontFamilyStyles from '../../styles/styles';
 import { connect } from 'react-redux';
 import { closeModalAction } from '../../redux/actions/modal';
 import Animated from 'react-native-reanimated';
-import { sharedAnimationHandler } from '../../utils/sharedActions';
+import { getApiDetails, sharedAnimationHandler } from '../../utils/sharedActions';
 import store from '../../redux/store';
 import RatingsModal from './RatingsModal';
+import dummy from '../../assets/Common/jovi_admin.png';
+// import dummy from '../../assets/card-image.png';
 import IncomingJobModal from './IncomingJobModal';
-
+import commonStyles from '../../styles/styles';
+import { getRequest } from '../../services/api';
 const NotificationModal = props => {
     // console.log("BottomAlignedModal.Props :", props);
     const { height, width } = Dimensions.get('window');
-    const { transparent, notificationModalVisible, modalContentNotification, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
+    const { theme } = props;
+    let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
+    const { transparent, notificationModalVisible, notificationModalContent, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
     const [state, setState] = useState({
         isKeyboardOpen: false,
         keyboardHeight: 0,
@@ -39,31 +44,35 @@ const NotificationModal = props => {
     }, []), []);
     // console.log("BottomAlignedModal.State :", state);
 
-    let modalContentToRender = modalContentNotification;
+    let modalContentToRender = notificationModalContent;
 
     return (
-        <View style={{...styles.centeredView(centeredViewFlex)}}>
+        <View style={{ ...styles.centeredView(centeredViewFlex) }}>
             <Modal
                 animationType='fade'
                 transparent={transparent}
                 visible={notificationModalVisible}
-                onRequestClose={ () => dispatch(closeModalAction())}
+                onRequestClose={() => dispatch(closeModalAction())}
             >
                 <Animated.View style={styles.fadeAreaView(state, props)}>
-                    <TouchableOpacity onPress={ () => dispatch(closeModalAction())} style={{...styles.emptyView(props)}} />
+                    <TouchableOpacity onPress={() => dispatch(closeModalAction())} style={{ ...styles.emptyView(props) }} />
                     <View style={{ flex: 1 }}>
                         <View style={styles.centeredView(centeredViewFlex)}>
-                            <TouchableOpacity onPress={ () => dispatch(closeModalAction())} style={styles.modalView(modelViewPadding, Dimensions.get('window').height, "center")}>
-                                {
+                            <TouchableOpacity onPress={() => dispatch(closeModalAction())} style={styles.modalView(modelViewPadding, Dimensions.get('window').height, "center")}>
+                                {/* {
                                     modalContentToRender
-                                }
-                                <View style={{height:'50%',overflow:'hidden',borderRadius:10,backgroundColor:'#fff',width:'70%'}}>
-                                    <View style={{flex:4,backgroundColor:'red',justifyContent:'center',alignItems:'center'}}>
-                                        <Text>asd</Text>
+                                } */}
+                                <View style={{ height: '50%', overflow: 'hidden', borderRadius: 10, backgroundColor: '#fff', width: '80%' }}>
+                                    <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 10, alignItems: 'center', alignContent: 'center' }}>
+                                        <View style={{ width: '100%',padding:20,height:'80%' }}>
+                                            <ImageBackground source={dummy} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='stretch'  >
+                                            </ImageBackground>
+                                        </View>
+                                        <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>{notificationModalContent?.orderMsg}</Text>
                                     </View>
-                                    <View style={{flex:1}}>
-
-                                    </View>
+                                    <TouchableOpacity onPress={() => { dispatch(closeModalAction());getApiDetails({...props,getRequest:getRequest}); props.navigation.navigate('Orders') }} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default }}>
+                                        <Text style={{ ...commonStyles.fontStyles(16, activeTheme.white, 3) }}>View Details</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -92,13 +101,13 @@ const styles = StyleSheet.create({
         return {
             // margin: 20,
             flex: modalHeight ? null : 1,
-            height: modalHeight ? modalHeight :Dimensions.get('window').width ,
+            height: modalHeight ? modalHeight : Dimensions.get('window').width,
             width: Dimensions.get('window').width,// - 30,
             // opacity:0.1,
             // backgroundColor: "#fff",
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            justifyContent:'center',alignItems:'center',
+            justifyContent: 'center', alignItems: 'center',
             // padding: modelViewPadding,
             paddingTop: modelViewPadding.top,
             paddingBottom: modelViewPadding.bottom,
@@ -119,6 +128,7 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (store) => {
     return {
+        user: store.userReducer,
         theme: store.themeReducer
     }
 };

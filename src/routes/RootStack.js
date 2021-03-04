@@ -65,13 +65,13 @@ const RootStack = (props) => {
                     // return setState({ ...state, loggedInUser: null, initRoute: checkIntroScreenView == 'true' ? "OTP" : "Introduction" });
                 }
             } else {
-                // console.log("user token obj :", User.token)
+                console.log("user token obj :", User)
                 getRequest(`/api/Vendor/Details`,
                 // getRequest(`/api/User/Details`,
                     { "Authorization": "Bearer " + User.token.authToken },
                     dispatch,
                     async res => {
-                        console.log('Res Details:',res);
+                        console.log('Res Details:',res,User);
                         setState({ ...state, loggedInUser: { ...res.data.userDetails, userID: User.token.id, tokenObj: User }, initRoute: 'Dashboard',initRouteSub:res.data.userDetails.pitstopType===4?'homeRes':'home' });
                         dispatch(userAction({ ...props.user, ...res.data.userDetails, userID: User.token.id, tokenObj: User, appTutorialsEnabled, appearOnTop }));
                         // sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);

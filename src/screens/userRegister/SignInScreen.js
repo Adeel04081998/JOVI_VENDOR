@@ -75,6 +75,8 @@ export default function SignInScreen(props) {
                         navigateWithResetScreen(null, [{ name: 'Dashboard', params: { loginCheck: true, pitstopType: ress.data.userDetails.pitstopType } }])
                         dispatch(userAction({ ...props.user, ...ress.data.userDetails, userID: res.data.loginResult.token.id, tokenObj: res.data.loginResult }));
                         // sharedGetNotificationsHandler(postRequest, 1, 20, true, dispatch);
+                        sharedHubConnectionInitiator(postRequest);
+
                     },
                     err => {
                         console.log("Problem is here--- :", JSON.stringify(err))
