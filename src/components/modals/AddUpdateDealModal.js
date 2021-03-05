@@ -11,6 +11,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import { camelToTitleCase } from '../../utils/sharedActions';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import { connect } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 const AddUpdateDealModal = (props) => {
     const { dispatch, updateDeal } = props;
     // console.log(item)
@@ -83,6 +84,7 @@ const AddUpdateDealModal = (props) => {
     }
     const getDealCategories = () => {
         getRequest('Api/Vendor/Deals/Categories/list',{},props.dispatch,(res)=>{
+            console.log('Deal Categories ---------------------> ',res.data)
             setState(pre=>({...pre,
                 dealTypes:res.data.dealsCategories.dealsCategoriesDataVM.map(it=>{return {...it,text:it.name,value:it.categoryID}}),
             }))
@@ -90,7 +92,7 @@ const AddUpdateDealModal = (props) => {
             if(err)CustomToast.error('Something went wrong');
         },'')
     }
-    useEffect(()=>{
+    useFocusEffect(()=>{
         getDealCategories();
         return()=>{
             setState({
@@ -261,7 +263,7 @@ const AddUpdateDealModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                     }} keyboardShouldPersistTaps="always">
-                                        {renderSelectionList(state.dealTypes, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState,deal:{...prevState.deal,categoryName:e.text,categoryID:e.value} })); }, state.deal.categoryName)}
+                                        {renderSelectionList(state?.dealTypes, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState,deal:{...prevState.deal,categoryName:e.text,categoryID:e.value} })); }, state.deal.categoryName)}
                                     </ScrollView>
                                         :
                                         null

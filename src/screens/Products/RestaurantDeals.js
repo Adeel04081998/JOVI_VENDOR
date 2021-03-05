@@ -20,7 +20,6 @@ import AddUpdateDealModal from '../../components/modals/AddUpdateDealModal';
 function RestaurantDeals(props) {
     const { navigation, userObj, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'RestaurantDeals')[0]?.params?.item;
-    console.log(navigation)
     const [state, setState] = useState({
         dealsList: [],
         subCategoryObj:data
@@ -76,23 +75,12 @@ function RestaurantDeals(props) {
         // getData(val);
     },900)
     useFocusEffect(useCallback(() => {
-        // const permissions = async () => await askForWholeAppPermissions();
-        
         getData();
-        // const locationHandler = async () => {
-        //     sharedGetUserCartHandler(getRequest, false, 0);
-        //     // openSettings();
-        //     await hybridLocationPermission();
-        // }
-        // locationHandler();
-        // const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButtonPressed);
         return () => {
             setState({
                 ...state,
                 dealsList:[]
             })
-            // backHandler.remove();
-
         };
     }, []), []);
     const onFooterItemPressed = async (pressedTab, index) => {
@@ -100,32 +88,9 @@ function RestaurantDeals(props) {
             addProductModalF();
         }else if(pressedTab.title === 'Orders'){
             navigation.navigate("Orders",{});
-
         }
          else{
-            // navigateWithResetScreen(null, [{ name: 'Products', params: { screen: 'dashboard' } }]);
-            // navigation.navigate("Products",{});
         }
-        // if (!pressedTab.pitstopOrCheckOutItemType) {
-        //     props.dispatch(setFooterTabsAction({ pressedTab: { ...pressedTab, index, from: "home" } }));
-        //     navigateWithResetScreen(null, [{ name: 'customer_cart_home', params: { screen: 'customer_cart' } }]);
-        // } else {
-        //     const confirmFinalDestCallback = (origin) => {
-        //         props.dispatch(setFooterTabsAction({ pressedTab: { ...pressedTab, index } }));
-        //         navigateWithResetScreen(null, [{ name: 'super_market_home', params: { screen: 'dashboard' } }]);
-        //     };
-        //     const cancelFinalDestCallback = (origin) => {
-        //         navigateWithResetScreen(null, [{ name: 'home', params: {} }]);
-        //     };
-
-        //     const finalDestination = await AsyncStorage.getItem("customerOrder_finalDestination");
-        //     if (finalDestination) {
-        //         confirmFinalDestCallback(pressedTab.title);
-        //     }
-        //     else {
-        //         navigation.navigate("customer_order", { fetchPreviousOrder: false, openOrderID: null, selectDestination: true, fromHome: true, homeFooterHandler: { name: pressedTab.title, confirmFinalDestCallback, cancelFinalDestCallback } });
-        //     }
-        // }
     }; 
     return (
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
