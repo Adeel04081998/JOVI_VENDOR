@@ -17,7 +17,7 @@ const NotificationModal = props => {
     const { height, width } = Dimensions.get('window');
     const { theme } = props;
     let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
-    const { transparent, notificationModalVisible, notificationModalContent, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
+    const { transparent, notificationModalVisible,vendorSkipped, notificationModalContent, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
     const [state, setState] = useState({
         isKeyboardOpen: false,
         keyboardHeight: 0,
@@ -35,8 +35,9 @@ const NotificationModal = props => {
     useEffect(useCallback(() => {
         Keyboard.addListener('keyboardDidShow', _keyboardShowDetecter);
         Keyboard.addListener('keyboardDidHide', _keyboardHideDetecter);
+        getApiDetails({...props,getRequest:getRequest});
         return () => {
-            console.log('BottomAlignedModal State Cleared-----');
+            console.log('Notification Modal State Cleared-----');
             Keyboard.removeListener('keyboardDidShow', _keyboardShowDetecter);
             Keyboard.removeListener('keyboardDidHide', _keyboardHideDetecter);
             // BackHandler.removeEventListener('hardwareBackPress', bool => Alert.alert(bool));
@@ -70,9 +71,9 @@ const NotificationModal = props => {
                                         </View>
                                         <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>{notificationModalContent?.orderMsg}</Text>
                                     </View>
-                                    <TouchableOpacity onPress={() => { dispatch(closeModalAction());getApiDetails({...props,getRequest:getRequest}); props.navigation.navigate('Orders') }} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default }}>
+                                    {vendorSkipped!==true&&<TouchableOpacity onPress={() => { dispatch(closeModalAction()); props.navigation.navigate('Orders') }} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default }}>
                                         <Text style={{ ...commonStyles.fontStyles(16, activeTheme.white, 3) }}>View Details</Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity>}
                                 </View>
                             </TouchableOpacity>
                         </View>

@@ -1,33 +1,35 @@
 import { CheckBox, Picker, Text, View } from 'native-base';
-import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, TouchableOpacity, Keyboard } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Animated, { set } from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
 import commonStyles from '../../styles/styles';
 import DefaultBtn from '../buttons/DefaultBtn';
-import { postRequest } from '../../services/api';
+import { getRequest, postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { TextInput } from 'react-native-gesture-handler';
 import { camelToTitleCase } from '../../utils/sharedActions';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import { connect } from 'react-redux';
 const AddUpdateDealModal = (props) => {
-    const { dispatch, dealObj } = props;
+    const { dispatch, updateDeal } = props;
     // console.log(item)
     const [state, setState] = useState({
         showDropdown: false,
-        deal: dealObj ? dealObj : {
-            name: '',
+        deal: updateDeal!==null ? {...updateDeal,inActiveIndex:updateDeal.inActive === false?0:1} : {
+            title: '',
             price: '0',
-            dateFrom: '',
+            dealImagesList: {},
+            startDate: '',
             type: '',
-            dateTo: '',
+            description: '',
+            endDate: '',
             availabilityStatus: 'Available',
             categories: []
         },
         productList: [],
         filter: '',
-        dealTypes:[],
+        dealTypes: [],
         selectedProduct: {},
         showDropdown: '',
         mode: '',
@@ -59,7 +61,106 @@ const AddUpdateDealModal = (props) => {
         setState(pre => ({ ...pre, selectedDate: pre.deal[varName], mode: varName }));
         dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.3 });
     }
+    const updateDealOptions = (item,firstIndex,secondIndex) => {
+        let newState = state;
+        newState.deal.dealOptionsList[firstIndex].dealOptionItemsList.splice(secondIndex,1);
+        setState({...newState});
+    }
+    const onChangeDealProduct = (val,index,key) => {
+        let dealCategory = state.deal.dealOptionsList;
+        dealCategory[index][key] = val;
+        setState(pre=>({...pre,deal:{...pre.deal,dealOptionsList:dealCategory}}));
+    }
+    const addNewCategory = () => {
+        setState(pre => ({ ...pre, deal: { ...pre.deal,
+             dealOptionsList: [...pre.deal.dealOptionsList,  {
+                "dealOptionID": 0,
+                "dealOptionDescription": "",
+                "quantity": 1,
+                "isChoosed": false,
+                "dealOptionItemsList": []
+              }] }}))
+    }
+    const getDealCategories = () => {
+        getRequest('Api/Vendor/Deals/Categories/list',{},props.dispatch,(res)=>{
+            setState(pre=>({...pre,
+                dealTypes:res.data.dealsCategories.dealsCategoriesDataVM.map(it=>{return {...it,text:it.name,value:it.categoryID}}),
+            }))
+        },(err)=>{
+            if(err)CustomToast.error('Something went wrong');
+        },'')
+    }
+    useEffect(()=>{
+        getDealCategories();
+        return()=>{
+            setState({
+                showDropdown: false,
+                deal:{
+                    title: '',
+                    price: '0',
+                    dealImagesList: {},
+                    startDate: '',
+                    type: '',
+                    description: '',
+                    endDate: '',
+                    availabilityStatus: 'Available',
+                    categories: []
+                },
+                productList: [],
+                filter: '',
+                dealTypes: [],
+                selectedProduct: {},
+                showDropdown: '',
+                mode: '',
+                selectedDate: 'DD/MM/YYYY',
+            })
+        };
+    },[]);
     const onSave = () => {
+        let formData = new FormData();
+        formData.append('CategoryID', state.deal.type);
+        formData.append('PitstopDealID', 0);
+        // formData.append('PitstopDealID', state.pitstopDealID);
+        formData.append('PitstopID', props.user.pitstopID);
+        formData.append('DealName', state.deal.title);
+        formData.append('StartDate', state.deal.startDate);
+        formData.append('EndDate', state.deal.endDate);
+        formData.append('Description', state.deal.description);
+        formData.append('DealPrice', state.deal.price);
+        formData.append(
+            'DealImageList[0].joviImageID',
+            state.deal.dealImagesList.joviImageID ? state.deal.dealImagesList.joviImageID : 0
+        );
+        formData.append('DealImageList[0].joviImage', state.deal.dealImagesList.joviImage);
+        state.deal.categories.map((obj, i) => {
+            formData.append(`DealOptionsList[${i}].dealOptionID`, obj.dealOptionID);
+            formData.append(`DealOptionsList[${i}].dealOptionDescription`, obj.dealOptionDescription);
+            formData.append(`DealOptionsList[${i}].quantity`, obj.quantity);
+            obj.dealOptionItemsList.map((secondObj, j) => {
+                formData.append(
+                    `DealOptionsList[${i}].dealOptionItemsList[${j}].dealOptionItemID`,
+                    secondObj.dealOptionItemID
+                );
+                formData.append(
+                    `DealOptionsList[${i}].dealOptionItemsList[${j}].pitstopItemID`,
+                    secondObj.pitstopItemID
+                );
+                // formData.append(`DealOptionsList[${i}].dealOptionItemsList[${j}].addOnPrice`, secondObj.addOnPrice);
+                secondObj.dealOptionItemOptionReqList.map((thirdObj, k) => {
+                    formData.append(
+                        `DealOptionsList[${i}].dealOptionItemsList[${j}].dealOptionItemOptionReqList[${k}].dealOptionItemOptionID`,
+                        thirdObj.dealOptionItemOptionID
+                    );
+                    // formData.append(
+                    //  `DealOptionsList${i}.dealOptionItemsList[${j}].dealOptionItemOptionReqList[${k}].dealOptionItemID`
+                    // );
+                    formData.append(
+                        `DealOptionsList[${i}].dealOptionItemsList[${j}].dealOptionItemOptionReqList[${k}].itemOptionID`,
+                        thirdObj.itemOptionID
+                    );
+                });
+            });
+        });
         postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
             "pitstopItemID": state.item.itemID,
             "price": state.item.price,
@@ -123,9 +224,9 @@ const AddUpdateDealModal = (props) => {
                         <View style={{ height: 40, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
                                 ['Available', 'Unavailable'].map((it, i) => {
-                                    return <View key={i} style={{ width: '50%', borderRadius: 5, height: '100%', backgroundColor: state.deal.availabilityStatus === it ? '#7359BE' : 'white' }} >
-                                        <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, availabilityStatus: it } }))}>
-                                            <Text style={[commonStyles.fontStyles(16, state.deal.availabilityStatus === it ? props.activeTheme.white : props.activeTheme.black, 1)]}>{it}</Text>
+                                    return <View key={i} style={{ width: '50%', borderRadius: 5, height: '100%', backgroundColor: state.deal.inActiveIndex === i? '#7359BE' : 'white' }} >
+                                        <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, inActiveIndex: i } }))}>
+                                            <Text style={[commonStyles.fontStyles(16, state.deal.inActiveIndex === i ? props.activeTheme.white : props.activeTheme.black, 1)]}>{it}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 })
@@ -150,7 +251,7 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.type} placeholder={'Choose Deal Type'} onChangeText={(val) => setState(pre => ({ ...pre,showDropdown:'deal_type', deal: {...pre.deal, type: val } }))} />
+                                        <TextInput value={state.deal.categoryName} placeholder={'Choose Deal Type'} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: 'deal_type', deal: { ...pre.deal, categoryName: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     {state.showDropdown === 'deal_type' ? <ScrollView nestedScrollEnabled onScrollEndDrag={(e) => {
@@ -160,7 +261,7 @@ const AddUpdateDealModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                     }} keyboardShouldPersistTaps="always">
-                                        {renderSelectionList(state.dealTypes, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, })); }, state.deal.type)}
+                                        {renderSelectionList(state.dealTypes, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState,deal:{...prevState.deal,categoryName:e.text,categoryID:e.value} })); }, state.deal.categoryName)}
                                     </ScrollView>
                                         :
                                         null
@@ -180,7 +281,7 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.name} placeholder={'Create a Deal'} onChangeText={(val) => setState(pre => ({ ...pre, deal: {...pre.deal, name: val } }))} />
+                                        <TextInput value={state.deal.title} placeholder={'Create a Deal'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, title: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -198,13 +299,13 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.price} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: {...pre.deal, price: val } }))} />
+                                        <TextInput value={state.deal.price.toString()} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     <View style={{ width: '100%', flexDirection: 'row' }}>
                                         <View style={{ width: '50%' }}>
                                             <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                                Date From
+                                                Start Date
                                         </Text>
                                             <View style={{
                                                 paddingHorizontal: 12,
@@ -218,14 +319,14 @@ const AddUpdateDealModal = (props) => {
                                                 alignItems: 'center',
                                                 flexDirection: 'row'
                                             }}>
-                                                <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.grey, 3) }} onPress={() => setDatePickerState('dateFrom')}>{state.deal.dateFrom ? state.deal.dateFrom : 'Date From'}</Text>
-                                                {/* <TextInput value={state.deal} placeholder={'Date From'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { name: val } }))} /> */}
+                                                <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.grey, 3) }} onPress={() => setDatePickerState('startDate')}>{state.deal.startDate ? state.deal.startDate : 'Start Date'}</Text>
+                                                {/* <TextInput value={state.deal} placeholder={'Date From'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { title: val } }))} /> */}
                                             </View>
 
                                         </View>
                                         <View style={{ width: '50%' }}>
                                             <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                                Date To
+                                                End Date
                                         </Text>
                                             <View style={{
                                                 paddingHorizontal: 12,
@@ -239,20 +340,39 @@ const AddUpdateDealModal = (props) => {
                                                 alignItems: 'center',
                                                 flexDirection: 'row'
                                             }}>
-                                                <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.grey, 3) }} onPress={() => setDatePickerState('dateTo')}>{state.deal.dateTo ? state.deal.dateTo : 'Date To'}</Text>
-                                                {/* // <TextInput value={state.deal} placeholder={'Date To'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { name: val } }))} /> */}
+                                                <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.grey, 3) }} onPress={() => setDatePickerState('endDate')}>{state.deal.endDate ? state.deal.endDate : 'End Date'}</Text>
+                                                {/* // <TextInput value={state.deal} placeholder={'Date To'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { title: val } }))} /> */}
                                             </View>
                                         </View>
                                     </View>
-                                    <TouchableOpacity style={{ width: '100%', marginVertical: 10, borderRadius: 7, justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default, height: 40 }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, categories: [...pre.deal.categories, pre.deal.categories.length + 1] } }))}>
+                                    <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                        Description
+                                </Text>
+                                    <View style={{
+                                        paddingHorizontal: 12,
+                                        borderWidth: 1,
+                                        borderRadius: 5,
+                                        borderColor: 'rgba(0,0,0,0.1)',
+                                        backgroundColor: 'transparent',
+                                        height: 100,
+                                        justifyContent: 'flex-start',
+                                        alignContent:'flex-start',
+                                        alignItems: 'flex-start',
+                                        flexDirection: 'row'
+                                    }}>
+                                        {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
+                                        <TextInput value={state.deal.description} multiline={true} numberOfLines={5} placeholder={'Description'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, description: val } }))} />
+                                        {/* </TouchableOpacity> */}
+                                    </View>
+                                    <TouchableOpacity style={{ width: '100%', marginVertical: 10, borderRadius: 7, justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default, height: 40 }} onPress={() => addNewCategory()}>
                                         <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.white, 4) }}>+ Create New</Text>
                                     </TouchableOpacity>
                                     {
-                                        state.deal.categories.map((item, i) => {
+                                        state.deal?.dealOptionsList?.map((item, i) => {
                                             return <View key={i} style={{ marginVertical: 5, paddingBottom: state.showDropdown !== '' && i === state.deal.categories.length - 1 ? 70 : 0, }}>
                                                 <View style={{ height: 30, borderRadius: 7, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, backgroundColor: props.activeTheme.default }}>
                                                     <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }}>Category {i + 1}</Text>
-                                                    <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, categories: pre.deal.categories.filter((it, j) => j !== i) } }))}>X</Text>
+                                                    <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, dealOptionsList: pre.deal.dealOptionsList.filter((it, j) => j !== i) } }))}>X</Text>
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                                     Category Name
@@ -268,10 +388,11 @@ const AddUpdateDealModal = (props) => {
                                                     alignItems: 'center',
                                                     flexDirection: 'row'
                                                 }}>
-                                                    <TextInput placeholder={'Enter Category Name'} />
+                                                    <TextInput placeholder={'Enter Category Name'} onChangeText={(val)=>onChangeDealProduct(val,i,'dealOptionDescription')} value={item.dealOptionDescription} />
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
-                                                <Text onPress={() => setState(pre => ({ ...pre, mode: 'select_attributes' }))} style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                                {/* <Text onPress={() => setState(pre => ({ ...pre, mode: 'select_attributes' }))} style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}> */}
                                                     Quantity
                                                 </Text>
                                                 <View style={{
@@ -285,7 +406,7 @@ const AddUpdateDealModal = (props) => {
                                                     alignItems: 'center',
                                                     flexDirection: 'row'
                                                 }}>
-                                                    <TextInput placeholder={'Enter Quantity'} />
+                                                    <TextInput keyboardType={'numeric'} placeholder={'Enter Quantity'} onChangeText={(val)=>onChangeDealProduct(val,i,'quantity')} value={item.quantity.toString()} />
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -324,11 +445,11 @@ const AddUpdateDealModal = (props) => {
                                                 </Text>
                                                 <ScrollView nestedScrollEnabled style={{ width: '100%', flexDirection: 'row', flexWrap: 'wrap', height: 180, padding: 5, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
                                                     {
-                                                        state.productList.map((item, i) => {
-                                                            return <View key={i} style={{ height: 40, justifyContent: 'center', paddingTop: 4, width: 230, margin: 5, marginTop: 10, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
-                                                                <Text style={[commonStyles.fontStyles(15, props.activeTheme.white, 1), { backgroundColor: 'black', marginLeft: 5, paddingTop: 2, width: '75%', position: 'absolute', top: -10, paddingLeft: 3, height: 25 }]}>Product Name</Text>
-                                                                <Text style={[commonStyles.fontStyles(13, props.activeTheme.black, 1), { marginLeft: 5 }]}>Rs: 10</Text>
-                                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() => setState(pre => ({ ...pre, }))}>X</Text>
+                                                        item.dealOptionItemsList.map((dealOption, j) => {
+                                                            return <View key={j} style={{ height: 40, justifyContent: 'center', paddingTop: 4, width: 230, margin: 5, marginTop: 10, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
+                                                                <Text style={[commonStyles.fontStyles(15, props.activeTheme.white, 1), { backgroundColor: 'black', marginLeft: 5, paddingTop: 2, width: '75%', position: 'absolute', top: -10, paddingLeft: 3, height: 25 }]}>{dealOption.pitstopItemName}</Text>
+                                                                <Text style={[commonStyles.fontStyles(13, props.activeTheme.black, 1), { marginLeft: 5 }]}>Rs:{dealOption.addOnPrice}</Text>
+                                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() =>updateDealOptions(dealOption,i,j)}>X</Text>
                                                             </View>
                                                         })
                                                     }

@@ -592,9 +592,34 @@ export const sharedIsRiderApproved = (userObj = {}) => {
     );
 };
 
+export const attachVendorSkipEvent = () => {
+    getHubConnectionInstance('VendorJobSkipped')?.on('VendorJobSkipped', (orderId, orderMsg) => {
+        console.log('---------------------------> On Vendor Skipped Signal R: ', orderId, orderMsg);
+        store.dispatch({
+            type: OPEN_MODAL,
+            payload: {
+                visible: false,
+                transparent: true,
+                okHandler: null,
+                onRequestCloseHandler: null,
+                ModalContent: null,
+                notificationModalVisible: true,
+                notificationModalContent: { orderId, orderMsg },
+                vendorSkipped:true,
+                modalContentNotification: null,
+                modalFlex: null,
+                modalHeightDefault: null,
+                modelViewPadding: 35,
+                fadeAreaViewFlex: 1,
+                fadeAreaViewStyle: {},
+                imageViewState: {},
+            }
+        })
+    });
+};
 export const attachOrderRecieveModal = () => {
     getHubConnectionInstance('VendorOrderRecieved')?.on('VendorOrderRecieved', (orderId, orderMsg) => {
-        console.log('On Order Recived Signal R: ', orderId, orderMsg);
+        console.log('---------------------------> On Order Recived Signal R: ', orderId, orderMsg);
         store.dispatch({
             type: OPEN_MODAL,
             payload: {
@@ -615,23 +640,6 @@ export const attachOrderRecieveModal = () => {
             }
         })
     });
-    // getHubConnectionInstance("ComplaintRatingReminder")?.on("ComplaintRatingReminder", (userID, complaintID, randomNumber) => {
-    //     console.log(`[SignalR].on(ComplaintRatingReminder).data -> `, "userID", userID, "complaintID", complaintID, "randomNumber", randomNumber);
-    //     store.dispatch(openModalAction(
-    //         {
-    //             dispatch: store.dispatch, visible: true, transparent: true, modalHeight: 250, modelViewPadding: 0,
-    //             ModalContent: {
-    //                 name: "ratings_pop_up",
-    //                 data: {
-    //                     userID,
-    //                     complaintID,
-    //                     fromSignalR: true
-    //                 }
-    //             },
-    //             okHandler: () => { }, onRequestCloseHandler: () => { }, androidKeyboardExtraOffset: 0
-    //         }
-    //     ));
-    // });
 };
 
 export const sharedImagePickerHandler = async (cb, next) => {

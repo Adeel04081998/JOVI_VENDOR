@@ -78,7 +78,7 @@ class LocalNotificationService {
             userInteraction: options.userInteraction || false,
             invokeApp: options.invokeApp || true,
             actions,
-            ignoreInForeground: true
+            ignoreInForeground: false
         })
     };
 

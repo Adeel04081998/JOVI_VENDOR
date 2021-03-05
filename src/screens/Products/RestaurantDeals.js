@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground,StyleSheet, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
-import { renderPictureResizeable, sharedConfirmationAlert} from "../../utils/sharedActions";
+import { renderPicture, renderPictureResizeable, sharedConfirmationAlert} from "../../utils/sharedActions";
 import {  getRequest, postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
 import commonStyles from '../../styles/styles';
@@ -17,7 +17,6 @@ import AddBrandModal from '../../components/modals/AddBrandModal';
 import { debounce } from 'debounce';
 import AddProductModalR from '../../components/modals/AddProductModalR';
 import AddUpdateDealModal from '../../components/modals/AddUpdateDealModal';
-
 function RestaurantDeals(props) {
     const { navigation, userObj, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'RestaurantDeals')[0]?.params?.item;
@@ -26,14 +25,14 @@ function RestaurantDeals(props) {
         dealsList: [],
         subCategoryObj:data
     })
-    const addProductModalF = () => {
+    const addProductModalF = (deal=null) => {
         let ModalComponent = {
             visible: true,
             transparent: true,
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddUpdateDealModal {...props} onSave={()=>{getData()}} />
+                <AddUpdateDealModal updateDeal={deal}  {...props} onSave={()=>{getData()}} />
                 // <AddProductModalR {...props} onSave={()=>{getData()}} />
             ),
             // modalFlex: 0,
@@ -47,14 +46,20 @@ function RestaurantDeals(props) {
     }
     const getData = (keywords=false) => {
 
-        getRequest('Api/Vendor/Restaurant/PitstopProductsAndDeals/List',{}
+        postRequest('Api/Vendor/Restaurant/Deals/List',{
+            "pageNumber": 1,
+            "itemsPerPage": 1000,
+            "isAscending": true,
+            "pitstopID": props.user.pitstopID,
+            "categoryID": data.categoryID
+          },{}
         , props.dispatch, (res) => {
             console.log('Restaurant Product Request:', res)
             if(res.data.statusCode === 200){
                 setState(prevState => ({
                     ...prevState,
-                    dealsList: res.data.pitstopBrands.pitstopBrandsList,
-                    paginationInfo:res.data.pitstopBrands.paginations
+                    dealsList: res.data.pitstopDealsListViewModel.data,
+                    paginationInfo:res.data.pitstopDealsListViewModel.paginationInfo
                 }))
             }else{
                 CustomToast.error("Not Found");
@@ -149,15 +154,16 @@ function RestaurantDeals(props) {
                                     <View style={{...stylesHome.homeTabView}}>
                                         <ImageBackground
                                             resizeMode='stretch'
-                                            source={dummy}
+                                            source={item.dealImagesList&&item.dealImagesList.length>0?{uri:renderPicture(item.dealImagesList[0].joviImageThumbnail)}:dummy}
                                             // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                             style={{...stylesHome.homeTabImage}}
                                         />
                                     </View>
-                                    <TouchableOpacity style={stylesHome.homeTabText} onPress={()=>{}}>
+                                    <TouchableOpacity style={stylesHome.homeTabText} onPress={()=>addProductModalF(item)}>
                                         <View style={{ flex: 0.9 }}>
-                                            <Text style={{...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300')}}>{'Deal '+i}</Text>
-                                            <Text style={{...stylesHome.homeTabDesc(props)}}>{'Abc'.toLocaleUpperCase()}</Text>
+                                            <Text style={{...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300')}}>{item.title}</Text>
+                                            <Text style={{...stylesHome.homeTabDesc(props)}}>{item.description}</Text>
+                                            <Text style={{...stylesHome.homeTabDesc(props,12,4)}}>Rs.{item.price}</Text>
                                         </View>
                                     </TouchableOpacity>
                                     {/* <View style={{...stylesHome.homeTabCounter(props)}}>
@@ -179,7 +185,7 @@ const mapStateToProps = (store) => {
     }
 };
 const stylesHome = StyleSheet.create({
-    homeTab:props=>{return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
+    homeTab:props=>{return { height: 130, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
     homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
     homeTabImage:{
         flex: 1,
@@ -190,7 +196,7 @@ const stylesHome = StyleSheet.create({
     },
     homeTabText:{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName:{ marginTop: 0},
-    homeTabDesc:(props)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2} },
+    homeTabDesc:(props,fSize=10,fWeight=1)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(fSize, props.activeTheme.black, fWeight, '300'), padding: 2} },
     homeTabCounter:(props)=>{return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
 
 });

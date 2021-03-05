@@ -120,8 +120,8 @@ const RootStack = (props) => {
                 console.log("onNotification.notify -> ", notify)
                 console.log("MainDrawer.Props :", props);
                 localNotificationService.showNotification(0, notify.title, notify.body, notify, {
-                    soundName: "my_sound.mp3",
-                    playSound: true,
+                    // soundName: "my_sound.mp3",
+                    // playSound: true,
                     userInteraction: true,
                 },
                     // actions array
@@ -130,6 +130,9 @@ const RootStack = (props) => {
             };
             function onOpenNotification(notify) {
                 console.log("onOpenNotification.notify -> ", notify)
+                // if(notify.title && notify.title.toLowerCase().includes('recieved')){
+                //     props.navigation.navigate('Orders');
+                // }
                 // console.log("MainDrawer.Props :", props);
                 // if (notify.body) Alert.alert("Open Notification: ", notify.body);
             };
