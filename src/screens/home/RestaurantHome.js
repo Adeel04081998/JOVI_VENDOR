@@ -141,7 +141,7 @@ function RestaurantHome(props) {
                 screenProps={{ ...props }}
                 noBackButton={true}
             />
-            <View style={{ flex: 1, marginTop: 30 }}>
+            <View style={{ flex: 1,zIndex:88, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Menu</Text>
                     <Text style={{ marginRight: 14 }}>Total: {state.categoryData.length < 1 ? '0' : state.categoryData.length < 10 ? '0' + state.categoryData.length : state.categoryData.length}</Text>

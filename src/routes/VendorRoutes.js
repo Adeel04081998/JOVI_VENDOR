@@ -12,6 +12,7 @@ import ContactUsPage from '../screens/contactUs/ContactUs';
 import RestaurantHome from '../screens/home/RestaurantHome';
 import RestaurantDeals from '../screens/Products/RestaurantDeals';
 import RestaurantProducts from '../screens/Products/RestaurantProducts';
+import ResOrderDetails from '../screens/order/ResOrderDetails';
 
 
 // import jwt_decode from 'jwt-decode';

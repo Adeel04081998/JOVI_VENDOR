@@ -10,7 +10,7 @@ import CustomToast from '../../components/toast/CustomToast';
 import { useFocusEffect } from '@react-navigation/native';
 import SharedFooter from '../../components/footer/SharedFooter';
 // import dummy from '../../assets/card-image.png';
-import dummy from '../../assets/bike.png';
+import dummy from '../../assets/card-image.png';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
@@ -139,7 +139,7 @@ function RestaurantDeals(props) {
                         }
                 </ScrollView>
             </View>
-            <SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
+            <SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
         </View>
     )
 }
@@ -151,14 +151,23 @@ const mapStateToProps = (store) => {
 };
 const stylesHome = StyleSheet.create({
     homeTab:props=>{return { height: 130, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
-    homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
+    homeTabView:{ flex: 0.38,margin:7, overflow: 'hidden', borderRadius: 15 },
     homeTabImage:{
         flex: 1,
-        top: 1,
-        marginLeft: 10,
-        width: '90%',
-        "height": "90%",
+        // top: 1,
+        // marginLeft: 10,
+        width: '100%',
+        borderRadius:15,
+        "height": "100%",
     },
+    // homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
+    // homeTabImage:{
+    //     flex: 1,
+    //     top: 1,
+    //     marginLeft: 10,
+    //     width: '90%',
+    //     "height": "90%",
+    // },
     homeTabText:{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName:{ marginTop: 0},
     homeTabDesc:(props,fSize=10,fWeight=1)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(fSize, props.activeTheme.black, fWeight, '300'), padding: 2} },

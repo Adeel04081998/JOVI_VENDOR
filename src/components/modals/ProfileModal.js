@@ -160,9 +160,9 @@ const ProfileModal = (props) => {
                                 <View style={{backgroundColor:props.activeTheme.warning,padding:5,borderRadius:5}}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => { props.dispatch(closeModalAction()); sharedlogoutUser(props.navigation, postRequest, props.dispatch, props.user, false) }}>Logout</Text></View>
 
                             </View>
-                            <View style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }}>
+                            {/* <View style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }}>
                                 <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 4) }}>Balance: 4234</Text>
-                            </View>
+                            </View> */}
                             {/* <Text style={styles.catpion(props.activeTheme),{width:50,alignSelf:'flex-start'}}>Profile</Text> */}
                             {/* <Text style={{alignSelf:'flex-end'}}>Logout</Text> */}
                             {/* <ScrollView style={{ flex: 1, marginBottom: 30 }} keyboardShouldPersistTaps="always"> */}

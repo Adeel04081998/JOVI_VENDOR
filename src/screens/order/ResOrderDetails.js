@@ -15,6 +15,7 @@ import { SvgXml } from 'react-native-svg';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
+import { CheckBox } from 'native-base';
 function ResOrderDetails(props) {
     const { navigation, userObj, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'ResOrderDetails')[0]?.params?.item;
@@ -24,7 +25,7 @@ function ResOrderDetails(props) {
         totalAmount: 0,
         joviJobID: 0,
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
-        focusedItem:null,
+        focusedItem: null,
     });
     const changeStatusItem = (item) => {
         item = {
@@ -61,7 +62,7 @@ function ResOrderDetails(props) {
         }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
     }
     const getData = (keywords = false) => {
-        // console.log('URL', `Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`)
+        console.log('URL', `Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`)
         getRequest(`Api/Vendor/RestaurantOrder/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`, {
             // "pageNumber": 1,
             // "itemsPerPage": 2,
@@ -74,9 +75,9 @@ function ResOrderDetails(props) {
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        orderList: res.data.vendorOrderDetailsVM.itemsList,
-                        joviJobID: res.data.vendorOrderDetailsVM.joviJobID,
-                        totalAmount: res.data.vendorOrderDetailsVM.totalAmount
+                        orderList: res.data.vendorRestaurantOrderDetailsVM.itemsList,
+                        joviJobID: res.data.vendorRestaurantOrderDetailsVM.joviJobID,
+                        totalAmount: res.data.vendorRestaurantOrderDetailsVM.totalAmount
                     }))
                 } else {
                     CustomToast.error("Not Found");
@@ -87,6 +88,8 @@ function ResOrderDetails(props) {
                     }))
                 }
             }, (err) => {
+                console.log('err:  ------->', err)
+                debugger;
                 if (err) CustomToast.error("Something went wrong");
             }, '');
     }
@@ -136,42 +139,81 @@ function ResOrderDetails(props) {
                                 );
                             }}
                         >
-                            <View style={{ ...stylesOrder.homeTab({ activeTheme: props.activeTheme }), margin: 5 }}>
-                                {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
-                                </View>}
-                                {item.jobItemStatus === 4 && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Replaced</Text>
-                                </View>}
-                                <View style={{ ...stylesOrder.homeTabView }}>
-                                    <ImageBackground
-                                        resizeMode='stretch'
-                                        source={item.jobItemImageList && item.jobItemImageList.length > 0 ? { uri: renderPictureResizeable(item.jobItemImageList[0], 190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
-                                        style={{ ...stylesOrder.homeTabImage }}
-                                    />
-                                </View>
-                                <View style={stylesOrder.homeTabText}>
-                                    <View style={{ flex: 0.9 }}>
-                                        <Text style={{ flex: 2, ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(14, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it, j) => {
-                                            return <Text key={j + state.orderList.length}>{it.productAttrName + "  "}</Text>
-                                        })}</View>
-                                        <Text style={{ flex: 1, ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
+                            <View style={{ flex: 1, backgroundColor: '#fff',height: state.focusedItem !== null && state.focusedItem.jobItemID === item.jobItemID ? 270 : 110, borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, marginVertical:5,marginHorizontal:5,overflow:'hidden' }}>
+                                <View style={{ ...stylesOrder.homeTab({ activeTheme: props.activeTheme,height:110 }) }}>
+                                    {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
+                                    </View>}
+                                    {item.jobItemStatus === 4 && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Replaced</Text>
+                                    </View>}
+                                    <View style={{ ...stylesOrder.homeTabView }}>
+                                        <ImageBackground
+                                            resizeMode='stretch'
+                                            source={item.jobItemImagesList && item.jobItemImagesList.length > 0 ? { uri: renderPictureResizeable(item.jobItemImagesList[0].joviImage, 190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
+                                            style={{ ...stylesOrder.homeTabImage }}
+                                        />
                                     </View>
-                                </View>
-                                {/* {state.orderObj.orderStatus === 1 ? <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
-                                    {
-                                        ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor:disableQuantityCounter(item,idx), height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item, idx)}>
-                                            <Text style={{}}>{btn}</Text>
-                                        </TouchableOpacity>)
-                                    }
-                                </View>
-                                    : <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 25, height: 25 }}>
+                                    <View style={stylesOrder.homeTabText}>
+                                        <TouchableOpacity style={{ flex: 0.9 }} onPress={() => setState(pre => ({ ...pre, focusedItem: pre.focusedItem !== null && state.focusedItem.jobItemID === item.jobItemID ? null : { ...item, index: i } }))}>
+                                            <Text style={{ flex: 2, ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(14, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, ...stylesOrder.homeTabDesc(props) }}>{item?.attributeDataVMList?.filter(it => it.attributeTypeName !== 'Quantity').map((it, j) => {
+                                                return <Text key={j + state.orderList.length}>{it.productAttrName + "  "}</Text>
+                                            })}</View>
+                                            <Text style={{ flex: 1, ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
+                                        </TouchableOpacity>
+
+                                    </View>
+                                    <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 25, height: 25 }}>
                                         {
                                             <Text style={{}}>{item.quantity}</Text>
                                         }
                                     </View>
-                                } */}
+                                </View>
+                                {state.focusedItem !== null && state.focusedItem.jobItemID === item.jobItemID &&
+                                    <ScrollView style={{height:20,marginHorizontal:5}}>
+                                         <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,4)}}>
+                                            Description
+                                        </Text>
+                                        <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>
+                                            {item.description}
+                                        </Text>
+                                        {item.jobDealOptionList&&item.jobDealOptionList.length>0&&<><Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,4)}}>
+                                            Selected
+                                        </Text>
+                                        {item.jobDealOptionList?.map((itemOptions,j)=>{
+                                            return <View key={j} style={stylesOrder.checkboxContainer}>
+                                            <CheckBox
+                                                checked={true}
+                                                onPress={() => { }}
+                                                style={stylesOrder.checkbox}
+                                                color={props.activeTheme.default}
+                                            />
+                                            <Text style={stylesOrder.label}>{itemOptions.itemName}</Text>
+                                        </View>
+                                        })}</>}
+                                        {item.jobItemOptionList&&item.jobItemOptionList.length>0&&<><Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,4)}}>
+                                            Selected
+                                        </Text>
+                                        {item.jobItemOptionList?.map((itemOptions,j)=>{
+                                            return <View key={j} style={stylesOrder.checkboxContainer}>
+                                            <CheckBox
+                                                checked={true}
+                                                onPress={() => { }}
+                                                style={stylesOrder.checkbox}
+                                                color={props.activeTheme.default}
+                                            />
+                                            <Text style={stylesOrder.label}>{itemOptions.productAttributeName}</Text>
+                                        </View>
+                                        })}</>}
+                                            <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,4)}}>
+                                            Special Description
+                                        </Text>
+                                        <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>
+                                            {item.specialInstructions}
+                                        </Text>
+                                    </ScrollView>
+                                }
                             </View>
                         </Swipeable>
                     }}
@@ -199,14 +241,35 @@ const mapStateToProps = (store) => {
     }
 };
 const stylesOrder = StyleSheet.create({
-    homeTab: props => { return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 } },
-    homeTabView: { flex: 0.38, paddingTop: 5, overflow: 'hidden', borderRadius: 10 },
-    homeTabImage: {
+    homeTab: props => { return { height: props.height, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', flexDirection: 'row' } },
+    // homeTabView: { flex: 0.38, paddingTop: 5, overflow: 'hidden', borderRadius: 10 },
+    // homeTabImage: {
+    //     flex: 1,
+    //     top: 1,
+    //     marginLeft: 10,
+    //     width: '90%',
+    //     "height": "90%",
+    // },
+    homeTabView:{ flex: 0.38,margin:7, overflow: 'hidden', borderRadius: 15 },
+    homeTabImage:{
         flex: 1,
-        top: 1,
-        marginLeft: 10,
-        width: '90%',
-        "height": "90%",
+        // top: 1,
+        // marginLeft: 10,
+        width: '100%',
+        borderRadius:15,
+        "height": "100%",
+    },
+    label: {
+        margin: 8,
+    },
+    checkboxContainer: {
+        width: '100%', flexDirection: 'row'
+    },
+    checkbox: {
+        alignSelf: "center",
+        color: '#7359BE',
+        borderColor: '#7359BE',
+        borderRadius: 12, margin: 8
     },
     homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName: { marginTop: 0 },

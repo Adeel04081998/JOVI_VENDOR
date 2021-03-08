@@ -1,5 +1,5 @@
 import { CheckBox, Picker, Text, View } from 'native-base';
-import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, TouchableOpacity, Keyboard, ImageBackground } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Animated, { set } from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
@@ -8,27 +8,34 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { getRequest, postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { TextInput } from 'react-native-gesture-handler';
-import { camelToTitleCase } from '../../utils/sharedActions';
+import modalCam from '../../assets/profile/camera.svg'
+import { camelToTitleCase, renderPicture } from '../../utils/sharedActions';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import { connect } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
+import { SvgXml } from 'react-native-svg';
+import { sharedImagePickerHandler } from '../../utils/sharedActions';
+import { closeModalAction } from '../../redux/actions/modal';
 const AddUpdateDealModal = (props) => {
     const { dispatch, updateDeal } = props;
     // console.log(item)
     const [state, setState] = useState({
         showDropdown: false,
-        deal: updateDeal!==null ? {...updateDeal,inActiveIndex:updateDeal.inActive === false?0:1} : {
+        deal: updateDeal !== null ? { ...updateDeal, inActiveIndex: updateDeal.inActive === false ? 0 : 1 } : {
             title: '',
             price: '0',
             dealImagesList: {},
             startDate: '',
+            pitstopDealID:0,
             type: '',
+            inActive: true,
+            inActiveIndex: 0,
+            dealOptionsList: [],
             description: '',
             endDate: '',
-            availabilityStatus: 'Available',
             categories: []
         },
         productList: [],
+        picturePicked: false,
         filter: '',
         dealTypes: [],
         selectedProduct: {},
@@ -38,9 +45,6 @@ const AddUpdateDealModal = (props) => {
     })
     const onDropdownClick = (dropdownTitle) => {
         setState(pre => ({ ...pre, showDropdown: pre.showDropdown !== '' ? '' : dropdownTitle }));
-    }
-    const getPitstopProducts = () => {
-
     }
     const saveDate = () => {
         setState(pre => ({
@@ -62,42 +66,123 @@ const AddUpdateDealModal = (props) => {
         setState(pre => ({ ...pre, selectedDate: pre.deal[varName], mode: varName }));
         dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.3 });
     }
-    const updateDealOptions = (item,firstIndex,secondIndex) => {
+    const updateDealOptions = (item, firstIndex, secondIndex) => {
         let newState = state;
-        newState.deal.dealOptionsList[firstIndex].dealOptionItemsList.splice(secondIndex,1);
-        setState({...newState});
+        newState.deal.dealOptionsList[firstIndex].dealOptionItemsList.splice(secondIndex, 1);
+        setState({ ...newState });
     }
-    const onChangeDealProduct = (val,index,key) => {
+    const onChangeDealProduct = (val, index, key) => {
         let dealCategory = state.deal.dealOptionsList;
         dealCategory[index][key] = val;
-        setState(pre=>({...pre,deal:{...pre.deal,dealOptionsList:dealCategory}}));
+        setState(pre => ({ ...pre, deal: { ...pre.deal, dealOptionsList: dealCategory } }));
     }
     const addNewCategory = () => {
-        setState(pre => ({ ...pre, deal: { ...pre.deal,
-             dealOptionsList: [...pre.deal.dealOptionsList,  {
-                "dealOptionID": 0,
-                "dealOptionDescription": "",
-                "quantity": 1,
-                "isChoosed": false,
-                "dealOptionItemsList": []
-              }] }}))
+        setState(pre => ({
+            ...pre, deal: {
+                ...pre.deal,
+                dealOptionsList: [...pre.deal.dealOptionsList, {
+                    "dealOptionID": 0,
+                    "dealOptionDescription": "",
+                    "quantity": 1,
+                    "isChoosed": false,
+                    "dealOptionItemsList": []
+                }]
+            }
+        }))
+    }
+    const addProductInCategory = () => {
+        let arr = state.deal.dealOptionsList;
+        let updatedArr = [...arr[state.selectedProduct.category.catIndex].dealOptionItemsList, {
+            addOnPrice: 0,
+            dealOptionItemID: 0,
+            dealOptionItemOptionReqList: state.selectedProduct.product.dealOptionItemOptionReqList,
+            pitstopItemID: state.selectedProduct.product.pitstopItemID,
+            pitstopItemName: state.selectedProduct.product.productName
+        }]
+        arr[state.selectedProduct.category.catIndex].dealOptionItemsList = updatedArr;
+        setState(pre => ({
+            ...pre,
+            mode:'',
+            deal: {
+                ...pre.deal,
+                dealOptionsList: arr
+            }
+        }))
+    }
+    const changeAttribute = (e, i, j) => {
+        let selectedP = state.selectedProduct.product;
+        let obj = selectedP.attributeTypeGroupedList[i].productAttributeList[j];
+        let updateArr = selectedP.attributeTypeGroupedList;
+        updateArr[i].productAttributeList[j].isActive = !updateArr[i].productAttributeList[j].isActive;
+        selectedP = {
+            ...selectedP, attributeTypeGroupedList: updateArr, dealOptionItemOptionReqList: selectedP?.dealOptionItemOptionReqList?.filter(it => it.itemOptionID === obj.itemOptionID)?.length > 0 ? selectedP?.dealOptionItemOptionReqList?.filter(it => it.itemOptionID !== obj.itemOptionID) : [...selectedP.dealOptionItemOptionReqList, {
+                dealOptionItemOptionID: 0,
+                itemOptionID: obj.itemOptionID
+            }]
+        }
+        setState(pre => ({ ...pre, selectedProduct: { ...pre.selectedProduct, product: selectedP } }));
+
     }
     const getDealCategories = () => {
-        getRequest('Api/Vendor/Deals/Categories/list',{},props.dispatch,(res)=>{
-            console.log('Deal Categories ---------------------> ',res.data)
-            setState(pre=>({...pre,
-                dealTypes:res.data.dealsCategories.dealsCategoriesDataVM.map(it=>{return {...it,text:it.name,value:it.categoryID}}),
+        getRequest('Api/Vendor/Deals/Categories/list', {}, props.dispatch, (res) => {
+            console.log('Deal Categories ---------------------> ', res.data)
+            setState(pre => ({
+                ...pre,
+                dealTypes: res.data.dealsCategories.dealsCategoriesDataVM.map(it => { return { ...it, text: it.name, value: it.categoryID } }),
             }))
-        },(err)=>{
-            if(err)CustomToast.error('Something went wrong');
-        },'')
+        }, (err) => {
+            if (err) CustomToast.error('Something went wrong');
+        }, '')
     }
-    useFocusEffect(()=>{
+    const getRestaurantProducts = () => {
+
+        postRequest('Api/Vendor/Restaurant/Product/List', {
+            "pageNumber": 1,
+            "itemsPerPage": 10,
+            "isAscending": true,
+            "pitstopID": props.user.pitstopID,
+            "genericSearch": "",
+            "isPagination": false
+        }, {}, props.dispatch, (res) => {
+            console.log('Restaurant Products ---------------------> ', res.data)
+            setState(pre => ({
+                ...pre,
+                productList: res.data.getRestauranProductListViewModel?.productData.map(it => { return { ...it, text: it.productName, value: it.productID } }),
+            }))
+        }, (err) => {
+            if (err) CustomToast.error('Something went wrong');
+        }, '')
+    }
+    const getPicture = (picData) => {
+        // debugger; 
+        setState(pre => ({
+            ...pre, picturePicked: true, deal: {
+                ...pre.deal,
+                dealImagesList: [{
+                    joviImage: picData.uri,
+                    fileObj:picData,
+                    joviImageID: pre.deal.dealImagesList?.length>0?pre.deal.dealImagesList[0].joviImageID:0,
+                    joviImageThumbnail: picData.uri
+                }]
+            }
+        }))
+    }
+    const takePictureHandler = async (takePick) => {
+        if (!takePick) return;
+        else {
+            try {
+                await sharedImagePickerHandler(() => { }, picData => getPicture(picData))
+            } catch (error) {
+            }
+        }
+    };
+    useEffect(() => {
         getDealCategories();
-        return()=>{
+        getRestaurantProducts();
+        return () => {
             setState({
                 showDropdown: false,
-                deal:{
+                deal: {
                     title: '',
                     price: '0',
                     dealImagesList: {},
@@ -117,24 +202,24 @@ const AddUpdateDealModal = (props) => {
                 selectedDate: 'DD/MM/YYYY',
             })
         };
-    },[]);
+    }, []);
     const onSave = () => {
         let formData = new FormData();
-        formData.append('CategoryID', state.deal.type);
-        formData.append('PitstopDealID', 0);
+        formData.append('CategoryID', state.deal.categoryID);
+        formData.append('PitstopDealID', state.deal.pitstopDealID);
         // formData.append('PitstopDealID', state.pitstopDealID);
         formData.append('PitstopID', props.user.pitstopID);
         formData.append('DealName', state.deal.title);
-        formData.append('StartDate', state.deal.startDate);
-        formData.append('EndDate', state.deal.endDate);
+        formData.append('StartDate',state.deal.pitstopDealID ===0? state.deal.startDate+' 00:10':state.deal.startDate);
+        formData.append('EndDate', state.deal.pitstopDealID ===0? state.deal.endDate+' 23:50':state.deal.endDate);
         formData.append('Description', state.deal.description);
         formData.append('DealPrice', state.deal.price);
         formData.append(
             'DealImageList[0].joviImageID',
-            state.deal.dealImagesList.joviImageID ? state.deal.dealImagesList.joviImageID : 0
+            state.deal.dealImagesList?.length>0&&state.deal.dealImagesList[0]?.joviImageID ? state.deal.dealImagesList[0].joviImageID : 0
         );
-        formData.append('DealImageList[0].joviImage', state.deal.dealImagesList.joviImage);
-        state.deal.categories.map((obj, i) => {
+        formData.append('DealImageList[0].joviImage',state.picturePicked===true?state.deal.dealImagesList[0].fileObj:state.deal.dealImagesList[0]?.joviImage);
+        state.deal.dealOptionsList.map((obj, i) => {
             formData.append(`DealOptionsList[${i}].dealOptionID`, obj.dealOptionID);
             formData.append(`DealOptionsList[${i}].dealOptionDescription`, obj.dealOptionDescription);
             formData.append(`DealOptionsList[${i}].quantity`, obj.quantity);
@@ -163,22 +248,22 @@ const AddUpdateDealModal = (props) => {
                 });
             });
         });
-        postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
-            "pitstopItemID": state.item.itemID,
-            "price": state.item.price,
-            "availablityStatus": state.item.availabilityStatus === 'Available' ? 1 : state.item.availabilityStatus === 'Out Of Stock' ? 2 : 3
-        }, {}, props.dispatch, (res) => {
-            // props.dispatch(closeModalAction());
+        postRequest('Api/Vendor/Restaurant/AddUpdateDeal',formData, {}, props.dispatch, (res) => {
+            if(state.pitstopDealID!==0){
+                CustomToast.error('Deal Update Successfully')
+            }else{
+                CustomToast.error('Deal Added Successfully')
+            }
+            props.dispatch(closeModalAction());
             props.onSave();
         }, (err) => {
-            debugger;
             if (err) CustomToast.error('Something went wrong!');
         }, '');
     }
     const renderSelectionList = (options, onChange, filter = false) => {
         // let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
         let optionsFilter = filter !== false ? options.filter(item => { return item.text.toLowerCase().includes(filter.toLowerCase()) }) : options;
-        if (optionsFilter.length < 1) {
+        if (optionsFilter?.length < 1) {
             return <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' })); }} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
                 height: 40,
@@ -197,7 +282,7 @@ const AddUpdateDealModal = (props) => {
                 <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>No Data Found</Text>
             </TouchableOpacity>
         }
-        return optionsFilter.map((r, i) => (
+        return optionsFilter?.map((r, i) => (
             <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' })); onChange(r) }} key={i} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
                 height: 40,
@@ -210,13 +295,16 @@ const AddUpdateDealModal = (props) => {
                 // borderBottomRightRadius: 10,
                 flexDirection: 'row',
                 alignItems: 'center',
-                borderBottomWidth: i === (options.length - 1) ? 0 : 1,
+                borderBottomWidth: i === (options?.length - 1) ? 0 : 1,
 
             }}>
                 <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>{r.text}</Text>
             </TouchableOpacity>
         ));
     }
+    useEffect(() => {
+        console.log(state)
+    }, [state])
     return (
         <View style={{ ...StyleSheet.absoluteFill }}>
 
@@ -226,7 +314,7 @@ const AddUpdateDealModal = (props) => {
                         <View style={{ height: 40, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
                                 ['Available', 'Unavailable'].map((it, i) => {
-                                    return <View key={i} style={{ width: '50%', borderRadius: 5, height: '100%', backgroundColor: state.deal.inActiveIndex === i? '#7359BE' : 'white' }} >
+                                    return <View key={i} style={{ width: '50%', borderRadius: 5, height: '100%', backgroundColor: state.deal.inActiveIndex === i ? '#7359BE' : 'white' }} >
                                         <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, inActiveIndex: i } }))}>
                                             <Text style={[commonStyles.fontStyles(16, state.deal.inActiveIndex === i ? props.activeTheme.white : props.activeTheme.black, 1)]}>{it}</Text>
                                         </TouchableOpacity>
@@ -263,7 +351,7 @@ const AddUpdateDealModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                     }} keyboardShouldPersistTaps="always">
-                                        {renderSelectionList(state?.dealTypes, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState,deal:{...prevState.deal,categoryName:e.text,categoryID:e.value} })); }, state.deal.categoryName)}
+                                        {renderSelectionList(state?.dealTypes, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, deal: { ...prevState.deal, categoryName: e.text, categoryID: e.value } })); }, state.deal.categoryName)}
                                     </ScrollView>
                                         :
                                         null
@@ -301,7 +389,7 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.price.toString()} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: val } }))} />
+                                        <TextInput keyboardType={'numeric'} value={state.deal.price.toString()} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     <View style={{ width: '100%', flexDirection: 'row' }}>
@@ -358,7 +446,7 @@ const AddUpdateDealModal = (props) => {
                                         backgroundColor: 'transparent',
                                         height: 100,
                                         justifyContent: 'flex-start',
-                                        alignContent:'flex-start',
+                                        alignContent: 'flex-start',
                                         alignItems: 'flex-start',
                                         flexDirection: 'row'
                                     }}>
@@ -366,12 +454,18 @@ const AddUpdateDealModal = (props) => {
                                         <TextInput value={state.deal.description} multiline={true} numberOfLines={5} placeholder={'Description'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, description: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
+                                    {/* <ImageBackground source={{ uri: 'file:///storage/emulated/0/Pictures/images/image-a93ff1b6-0a80-4474-b4b3-d924b6749f11.jpg' }} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10, height: 170 }}> */}
+                                    <ImageBackground source={state.deal.dealImagesList && state.deal.dealImagesList.length > 0 ? { uri: state.picturePicked === true ? state.deal.dealImagesList[0].joviImage : renderPicture(state.deal.dealImagesList[0].joviImage) } : ''} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10, height: 170 }}>
+                                        <TouchableOpacity onPress={() => takePictureHandler(true)}>
+                                            <SvgXml xml={modalCam} height={40} width={40} style={{ alignSelf: 'flex-end', marginHorizontal: 10 }} />
+                                        </TouchableOpacity>
+                                    </ImageBackground>
                                     <TouchableOpacity style={{ width: '100%', marginVertical: 10, borderRadius: 7, justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default, height: 40 }} onPress={() => addNewCategory()}>
                                         <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.white, 4) }}>+ Create New</Text>
                                     </TouchableOpacity>
                                     {
                                         state.deal?.dealOptionsList?.map((item, i) => {
-                                            return <View key={i} style={{ marginVertical: 5, paddingBottom: state.showDropdown !== '' && i === state.deal.categories.length - 1 ? 70 : 0, }}>
+                                            return <View key={i} style={{ marginVertical: 5, paddingBottom: state.showDropdown !== '' && i === state.deal.dealOptionsList?.length - 1 ? 70 : 0, }}>
                                                 <View style={{ height: 30, borderRadius: 7, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, backgroundColor: props.activeTheme.default }}>
                                                     <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }}>Category {i + 1}</Text>
                                                     <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.white, 3) }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, dealOptionsList: pre.deal.dealOptionsList.filter((it, j) => j !== i) } }))}>X</Text>
@@ -390,11 +484,11 @@ const AddUpdateDealModal = (props) => {
                                                     alignItems: 'center',
                                                     flexDirection: 'row'
                                                 }}>
-                                                    <TextInput placeholder={'Enter Category Name'} onChangeText={(val)=>onChangeDealProduct(val,i,'dealOptionDescription')} value={item.dealOptionDescription} />
+                                                    <TextInput placeholder={'Enter Category Name'} onChangeText={(val) => onChangeDealProduct(val, i, 'dealOptionDescription')} value={item.dealOptionDescription} />
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                                {/* <Text onPress={() => setState(pre => ({ ...pre, mode: 'select_attributes' }))} style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}> */}
+                                                    {/* <Text onPress={() => setState(pre => ({ ...pre, mode: 'select_attributes' }))} style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}> */}
                                                     Quantity
                                                 </Text>
                                                 <View style={{
@@ -408,7 +502,7 @@ const AddUpdateDealModal = (props) => {
                                                     alignItems: 'center',
                                                     flexDirection: 'row'
                                                 }}>
-                                                    <TextInput keyboardType={'numeric'} placeholder={'Enter Quantity'} onChangeText={(val)=>onChangeDealProduct(val,i,'quantity')} value={item.quantity.toString()} />
+                                                    <TextInput keyboardType={'numeric'} placeholder={'Enter Quantity'} onChangeText={(val) => onChangeDealProduct(val, i, 'quantity')} value={item.quantity.toString()} />
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -437,7 +531,7 @@ const AddUpdateDealModal = (props) => {
                                                     borderBottomLeftRadius: 10,
                                                     borderBottomRightRadius: 10, position: 'absolute', marginTop: 290, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                                 }} keyboardShouldPersistTaps="always">
-                                                    {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, })); }, state.filter)}
+                                                    {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, mode: 'select_attributes', selectedProduct: { product: { ...e, dealOptionItemOptionReqList: [] }, category: { ...item, catIndex: i } } })); }, state.filter)}
                                                 </ScrollView>
                                                     :
                                                     null
@@ -451,7 +545,7 @@ const AddUpdateDealModal = (props) => {
                                                             return <View key={j} style={{ height: 40, justifyContent: 'center', paddingTop: 4, width: 230, margin: 5, marginTop: 10, borderColor: '#929293', borderWidth: 0.5, borderRadius: 7 }}>
                                                                 <Text style={[commonStyles.fontStyles(15, props.activeTheme.white, 1), { backgroundColor: 'black', marginLeft: 5, paddingTop: 2, width: '75%', position: 'absolute', top: -10, paddingLeft: 3, height: 25 }]}>{dealOption.pitstopItemName}</Text>
                                                                 <Text style={[commonStyles.fontStyles(13, props.activeTheme.black, 1), { marginLeft: 5 }]}>Rs:{dealOption.addOnPrice}</Text>
-                                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() =>updateDealOptions(dealOption,i,j)}>X</Text>
+                                                                <Text style={{ position: 'absolute', top: 1, right: 2 }} onPress={() => updateDealOptions(dealOption, i, j)}>X</Text>
                                                             </View>
                                                         })
                                                     }
@@ -479,22 +573,33 @@ const AddUpdateDealModal = (props) => {
                                 <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                                     <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
                                         <Text style={{ margin: 15, ...commonStyles.fontStyles(18, props.activeTheme.black, 5), alignSelf: 'flex-start' }, styles.catpion(props.activeTheme)}>Select Attributes</Text>
-                                        <ScrollView style={{ marginBottom: 15 }}>
-                                            <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
-                                                {
-                                                    ['ab', 'asd'].map((it, i) => {
-                                                        return <View key={i} style={stylesHome.checkboxContainer}>
-                                                            <CheckBox
-                                                                // checked={state.workingDays[i]}
-                                                                onPress={() => { }}
-                                                                style={stylesHome.checkbox}
-                                                                color={props.activeTheme.default}
-                                                            />
-                                                            <Text style={stylesHome.label}>{it}</Text>
-                                                        </View>
-                                                    })
-                                                }
-                                            </View>
+                                        <ScrollView style={{ marginBottom: 25 }}>
+                                            {state.selectedProduct?.product.attributeTypeGroupedList?.length > 0 ? state.selectedProduct?.product.attributeTypeGroupedList?.map((item, j) => {
+                                                return <View key={j} style={{ width: '100%' }}><View style={{ width: '100%', marginVertical: 10, borderRadius: 7, justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.default, height: 40 }}>
+                                                    <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.white, 4) }}>{item.attributeTypeName}</Text>
+                                                </View>
+                                                    <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
+                                                        {
+                                                            item.productAttributeList.map((it, i) => {
+                                                                return <View key={i} style={stylesHome.checkboxContainer}>
+                                                                    <CheckBox
+                                                                        checked={it.isActive ? true : false}
+                                                                        onPress={(e) => changeAttribute(e, j, i)}
+                                                                        style={stylesHome.checkbox}
+                                                                        color={props.activeTheme.default}
+                                                                    />
+                                                                    <Text style={stylesHome.label}>{it.attributeName}</Text>
+                                                                </View>
+                                                            })
+                                                        }
+                                                    </View>
+                                                </View>
+                                            })
+                                                :
+                                                <View>
+                                                    <Text>No Attributes Available</Text>
+                                                </View>
+                                            }
                                         </ScrollView>
                                     </View>
                                     <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
@@ -503,7 +608,7 @@ const AddUpdateDealModal = (props) => {
                                         </TouchableOpacity>
 
 
-                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { }}>
+                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => addProductInCategory()}>
                                             <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
                                         </TouchableOpacity>
                                     </View>
