@@ -28,11 +28,27 @@ function ResOrderDetails(props) {
         focusedItem: null,
     });
     const changeStatusItem = (item) => {
+        if(item.pitstopDealID>0){
+            outOfStock(item);
+            return;
+        }
         item = {
             ...item,
             jobItemStatus: item.jobItemStatus === 1 ? 2 : 1, jobItemStatusStr: item.jobItemStatusStr === 'Available' ? 'Out Of Stock' : 'Available'
         }
         confirmOrder(item);
+    }
+    const outOfStock = (item) => {
+        let payload = {
+            "jobItemID": item.jobItemID,
+            "jobItemStatus": item.jobItemStatus === 1 ? 2 : 1,
+        }
+        postRequest('Api/Vendor/Restaurant/JobDeal/Update',payload, {}, props.dispatch, (res) => {
+            if (res.data.statusCode === 200) {
+                CustomToast.success('Order Updated');
+                getData();
+            }
+        }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
     }
     const confirmOrder = (latestArr = false, isConfirmed = false, replacedItem = false) => {
         let payloadArr = latestArr !== false && isConfirmed === false ? {
@@ -139,14 +155,11 @@ function ResOrderDetails(props) {
                                 );
                             }}
                         >
-                            <View style={{ flex: 1, backgroundColor: '#fff',height: state.focusedItem !== null && state.focusedItem.jobItemID === item.jobItemID ? 270 : 110, borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, marginVertical:5,marginHorizontal:5,overflow:'hidden' }}>
-                                <View style={{ ...stylesOrder.homeTab({ activeTheme: props.activeTheme,height:110 }) }}>
-                                    {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ flex: 1, backgroundColor: '#fff', height: state.focusedItem !== null && state.focusedItem.jobItemID === item.jobItemID ? 270 : 110, borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, marginVertical: 5, marginHorizontal: 5, overflow: 'hidden' }}>
+                                <View style={{ ...stylesOrder.homeTab({ activeTheme: props.activeTheme, height: 110 }) }}>
+                                    {item.jobItemStatusStr === 'Out Of Stock' && <TouchableOpacity onPress={() => setState(pre => ({ ...pre, focusedItem: pre.focusedItem !== null && state.focusedItem.jobItemID === item.jobItemID ? null : { ...item, index: i } }))} style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                         <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
-                                    </View>}
-                                    {item.jobItemStatus === 4 && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
-                                        <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Replaced</Text>
-                                    </View>}
+                                    </TouchableOpacity>}
                                     <View style={{ ...stylesOrder.homeTabView }}>
                                         <ImageBackground
                                             resizeMode='stretch'
@@ -171,45 +184,45 @@ function ResOrderDetails(props) {
                                     </View>
                                 </View>
                                 {state.focusedItem !== null && state.focusedItem.jobItemID === item.jobItemID &&
-                                    <ScrollView style={{height:20,marginHorizontal:5}}>
-                                         <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,4)}}>
+                                    <ScrollView style={{ height: 20, marginHorizontal: 5 }}>
+                                        <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>
                                             Description
                                         </Text>
-                                        <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>
+                                        <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 3) }}>
                                             {item.description}
                                         </Text>
-                                        {item.jobDealOptionList&&item.jobDealOptionList.length>0&&<><Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,4)}}>
+                                        {item.jobDealOptionList && item.jobDealOptionList.length > 0 && <><Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>
                                             Selected
                                         </Text>
-                                        {item.jobDealOptionList?.map((itemOptions,j)=>{
-                                            return <View key={j} style={stylesOrder.checkboxContainer}>
-                                            <CheckBox
-                                                checked={true}
-                                                onPress={() => { }}
-                                                style={stylesOrder.checkbox}
-                                                color={props.activeTheme.default}
-                                            />
-                                            <Text style={stylesOrder.label}>{itemOptions.itemName}</Text>
-                                        </View>
-                                        })}</>}
-                                        {item.jobItemOptionList&&item.jobItemOptionList.length>0&&<><Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,4)}}>
+                                            {item.jobDealOptionList?.map((itemOptions, j) => {
+                                                return <View key={j} style={stylesOrder.checkboxContainer}>
+                                                    <CheckBox
+                                                        checked={true}
+                                                        onPress={() => { }}
+                                                        style={stylesOrder.checkbox}
+                                                        color={props.activeTheme.default}
+                                                    />
+                                                    <Text style={stylesOrder.label}>{itemOptions.itemName}</Text>
+                                                </View>
+                                            })}</>}
+                                        {item.jobItemOptionList && item.jobItemOptionList.length > 0 && <><Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>
                                             Selected
                                         </Text>
-                                        {item.jobItemOptionList?.map((itemOptions,j)=>{
-                                            return <View key={j} style={stylesOrder.checkboxContainer}>
-                                            <CheckBox
-                                                checked={true}
-                                                onPress={() => { }}
-                                                style={stylesOrder.checkbox}
-                                                color={props.activeTheme.default}
-                                            />
-                                            <Text style={stylesOrder.label}>{itemOptions.productAttributeName}</Text>
-                                        </View>
-                                        })}</>}
-                                            <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,4)}}>
+                                            {item.jobItemOptionList?.map((itemOptions, j) => {
+                                                return <View key={j} style={stylesOrder.checkboxContainer}>
+                                                    <CheckBox
+                                                        checked={true}
+                                                        onPress={() => { }}
+                                                        style={stylesOrder.checkbox}
+                                                        color={props.activeTheme.default}
+                                                    />
+                                                    <Text style={stylesOrder.label}>{itemOptions.productAttributeName}</Text>
+                                                </View>
+                                            })}</>}
+                                        <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>
                                             Special Description
                                         </Text>
-                                        <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>
+                                        <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 3) }}>
                                             {item.specialInstructions}
                                         </Text>
                                     </ScrollView>
@@ -250,13 +263,13 @@ const stylesOrder = StyleSheet.create({
     //     width: '90%',
     //     "height": "90%",
     // },
-    homeTabView:{ flex: 0.38,margin:7, overflow: 'hidden', borderRadius: 15 },
-    homeTabImage:{
+    homeTabView: { flex: 0.38, margin: 7, overflow: 'hidden', borderRadius: 15 },
+    homeTabImage: {
         flex: 1,
         // top: 1,
         // marginLeft: 10,
         width: '100%',
-        borderRadius:15,
+        borderRadius: 15,
         "height": "100%",
     },
     label: {

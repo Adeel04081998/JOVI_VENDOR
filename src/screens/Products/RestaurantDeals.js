@@ -113,9 +113,10 @@ function RestaurantDeals(props) {
                 </View>
                 <ScrollView style={{ flex: 1,marginHorizontal:8 }} >
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
-                        {state.dealsList.length>0&&
+                        {state.dealsList.length>0?
                             state.dealsList.map((item, i) => {
                                 return <View key={i} style={{...stylesHome.homeTab({activeTheme:props.activeTheme})}}>
+                                {item.isActive === false && <TouchableOpacity onPress={()=>addProductModalF(item)} style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></TouchableOpacity>}
                                     <View style={{...stylesHome.homeTabView}}>
                                         <ImageBackground
                                             resizeMode='stretch'
@@ -136,6 +137,10 @@ function RestaurantDeals(props) {
                                     </View> */}
                                 </View>
                             })
+                            :
+                            <View style={{flex:1,height:100,justifyContent:'center',alignItems:'center'}}>
+                                <Text>No Deals Found</Text>
+                            </View>
                         }
                 </ScrollView>
             </View>

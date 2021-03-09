@@ -20,7 +20,7 @@ const AddUpdateDealModal = (props) => {
     // console.log(item)
     const [state, setState] = useState({
         showDropdown: false,
-        deal: updateDeal !== null ? { ...updateDeal, inActiveIndex: updateDeal.inActive === false ? 0 : 1 } : {
+        deal: updateDeal !== null ? { ...updateDeal, inActiveIndex: updateDeal.isActive === true ? 0 : 1 } : {
             title: '',
             price: '0',
             dealImagesList: {},
@@ -204,6 +204,10 @@ const AddUpdateDealModal = (props) => {
         };
     }, []);
     const onSave = () => {
+        let check = false;
+        if(state.deal.title === '' || state.deal.startDate === '' || state.deal.endDate === '' || state.deal.description === '' || state.deal.price===0 || state.deal.dealImagesList.length<1){
+            check = true;
+        }
         let formData = new FormData();
         formData.append('CategoryID', state.deal.categoryID);
         formData.append('PitstopDealID', state.deal.pitstopDealID);
@@ -214,16 +218,25 @@ const AddUpdateDealModal = (props) => {
         formData.append('EndDate', state.deal.pitstopDealID ===0? state.deal.endDate+' 23:50':state.deal.endDate);
         formData.append('Description', state.deal.description);
         formData.append('DealPrice', state.deal.price);
+        formData.append('IsActive', state.deal.inActiveIndex===0?true:false);
         formData.append(
             'DealImageList[0].joviImageID',
             state.deal.dealImagesList?.length>0&&state.deal.dealImagesList[0]?.joviImageID ? state.deal.dealImagesList[0].joviImageID : 0
         );
-        formData.append('DealImageList[0].joviImage',state.picturePicked===true?state.deal.dealImagesList[0].fileObj:state.deal.dealImagesList[0]?.joviImage);
-        state.deal.dealOptionsList.map((obj, i) => {
+        formData.append('DealImageList[0].joviImage',state.picturePicked===true?{
+            uri:  state.deal.dealImagesList[0].fileObj.uri,
+            name: state.deal.dealImagesList[0].fileObj.uri.split('/').pop(),
+            type: state.deal.dealImagesList[0].fileObj.type
+            // type: 'image/jpg'
+        }:state.deal.dealImagesList[0]?.joviImage);
+        state.deal.dealOptionsList?.map((obj, i) => {
             formData.append(`DealOptionsList[${i}].dealOptionID`, obj.dealOptionID);
+            if(obj.dealOptionDescription === '' || obj.quantity === '' || obj.dealOptionItemsList?.length<1){
+                check = true;
+            }
             formData.append(`DealOptionsList[${i}].dealOptionDescription`, obj.dealOptionDescription);
             formData.append(`DealOptionsList[${i}].quantity`, obj.quantity);
-            obj.dealOptionItemsList.map((secondObj, j) => {
+            obj.dealOptionItemsList?.map((secondObj, j) => {
                 formData.append(
                     `DealOptionsList[${i}].dealOptionItemsList[${j}].dealOptionItemID`,
                     secondObj.dealOptionItemID
@@ -233,7 +246,7 @@ const AddUpdateDealModal = (props) => {
                     secondObj.pitstopItemID
                 );
                 // formData.append(`DealOptionsList[${i}].dealOptionItemsList[${j}].addOnPrice`, secondObj.addOnPrice);
-                secondObj.dealOptionItemOptionReqList.map((thirdObj, k) => {
+                secondObj.dealOptionItemOptionReqList?.map((thirdObj, k) => {
                     formData.append(
                         `DealOptionsList[${i}].dealOptionItemsList[${j}].dealOptionItemOptionReqList[${k}].dealOptionItemOptionID`,
                         thirdObj.dealOptionItemOptionID
@@ -248,17 +261,22 @@ const AddUpdateDealModal = (props) => {
                 });
             });
         });
-        postRequest('Api/Vendor/Restaurant/AddUpdateDeal',formData, {}, props.dispatch, (res) => {
-            if(state.pitstopDealID!==0){
-                CustomToast.error('Deal Update Successfully')
-            }else{
-                CustomToast.error('Deal Added Successfully')
-            }
-            props.dispatch(closeModalAction());
-            props.onSave();
-        }, (err) => {
-            if (err) CustomToast.error('Something went wrong!');
-        }, '');
+        if(check === true){
+            CustomToast.error('Please Fill All Details')
+        }else{
+            postRequest('Api/Vendor/Restaurant/AddUpdateDeal',formData, {}, props.dispatch, (res) => {
+                if(state.pitstopDealID!==0){
+                    CustomToast.error('Deal Update Successfully')
+                }else{
+                    CustomToast.error('Deal Added Successfully')
+                }
+                props.dispatch(closeModalAction());
+                props.onSave();
+            }, (err) => {
+                if (err) CustomToast.error('Something went wrong!');
+            }, '');
+
+        }
     }
     const renderSelectionList = (options, onChange, filter = false) => {
         // let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
@@ -531,7 +549,7 @@ const AddUpdateDealModal = (props) => {
                                                     borderBottomLeftRadius: 10,
                                                     borderBottomRightRadius: 10, position: 'absolute', marginTop: 290, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                                 }} keyboardShouldPersistTaps="always">
-                                                    {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, mode: 'select_attributes', selectedProduct: { product: { ...e, dealOptionItemOptionReqList: [] }, category: { ...item, catIndex: i } } })); }, state.filter)}
+                                                    {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState,filter:'',mode: 'select_attributes', selectedProduct: { product: { ...e, dealOptionItemOptionReqList: [] }, category: { ...item, catIndex: i } } })); }, state.filter)}
                                                 </ScrollView>
                                                     :
                                                     null
@@ -597,7 +615,7 @@ const AddUpdateDealModal = (props) => {
                                             })
                                                 :
                                                 <View>
-                                                    <Text>No Attributes Available</Text>
+                                                    <Text style={{...commonStyles.fontStyles(13,props.activeTheme.black,3)}}>No Attributes Available</Text>
                                                 </View>
                                             }
                                         </ScrollView>

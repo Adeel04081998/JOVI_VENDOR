@@ -278,6 +278,7 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
 
                 if (isJoviCustomerApp) {
                     attachOrderRecieveModal();
+                    attachVendorSkipEvent();
                 }
                 else {
                     attachSignalRLogoutHandler(postRequest);
@@ -307,7 +308,7 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
 export const getApiDetails = (props) => {
     props.getRequest(`/api/Vendor/Details`,
         // getRequest(`/api/User/Details`,
-        { "Authorization": "Bearer " + props.user.tokenObj.token.authToken },
+        { "Authorization": "Bearer " + props?.user?.tokenObj?.token?.authToken },
         store.dispatch,
         async res => {
             store.dispatch(userAction({ ...props.user, ...res.data.userDetails, userID: props.user.tokenObj.token.id, tokenObj: props.user.tokenObj, appTutorialsEnabled: false, appearOnTop: false }));

@@ -172,7 +172,7 @@ function RestaurantHome(props) {
                         state.focusedField === 'deals' && state.dealObj.subCategories &&
                         state.dealObj.subCategories?.map((it, j) => {
                             return <View key={j} style={{ marginHorizontal: 5 }}>
-                                <TouchableOpacity onPress={() => navigation.navigate('RestaurantDeals', { key: 'RestaurantDeals', item: it })} style={{ width: '100%', flexDirection: 'row', borderColor: props.activeTheme.default, borderWidth: 0.5, borderRadius: 15, backgroundColor: 'white', justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10 }}>
+                                <TouchableOpacity onPress={() => navigation.navigate('RestaurantDeals', { key: 'RestaurantDeals', item: it })} style={{ width: '100%', borderRadius: 15, borderColor: props.activeTheme.default, borderWidth: 0.5, marginVertical: 3, backgroundColor: 'white',flexDirection:'row', justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10 }}>
                                     <SvgXml
                                         fill={props.activeTheme.default}
                                         xml={it.categoryImage}

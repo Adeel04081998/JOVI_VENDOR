@@ -1,23 +1,55 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, Modal, View, Dimensions, Text, TouchableOpacity, BackHandler, KeyboardAvoidingView, Keyboard, Platform, TextInput, ImageBackground } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { StyleSheet, Animated, Modal, View, Dimensions, Text, TouchableOpacity, BackHandler, KeyboardAvoidingView, Keyboard, Platform, TextInput, ImageBackground } from 'react-native';
 import fontFamilyStyles from '../../styles/styles';
 import { connect } from 'react-redux';
 import { closeModalAction } from '../../redux/actions/modal';
-import Animated from 'react-native-reanimated';
 import { getApiDetails, sharedAnimationHandler } from '../../utils/sharedActions';
 import store from '../../redux/store';
 import RatingsModal from './RatingsModal';
-import dummy from '../../assets/Common/jovi_admin.png';
+import dummy from '../../assets/orderImage.png';
 // import dummy from '../../assets/card-image.png';
 import IncomingJobModal from './IncomingJobModal';
 import commonStyles from '../../styles/styles';
 import { getRequest } from '../../services/api';
+const FadeInView = (props) => {
+    const fadeAnim = useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
+    const [state, setState] = useState(0);
+    const infiniteLoop = () => {
+        fadeAnim.setValue(0);
+        Animated.timing(
+            fadeAnim,
+            {
+                toValue: 0.7,
+                duration: 1000,
+            }
+        ).start(({ finished }) => {
+            if(finished === true){
+                infiniteLoop();
+            }
+        });
+    }
+    useEffect(() => {
+        console.log('Fade ----->>>>', fadeAnim)
+        infiniteLoop();
+    }, [])
+
+    return (
+        <Animated.View
+            style={{
+                ...props.style,
+                opacity: fadeAnim,         // Bind opacity to animated value
+            }}
+        >
+            {props.children}
+        </Animated.View>
+    );
+}
 const NotificationModal = props => {
     // console.log("BottomAlignedModal.Props :", props);
     const { height, width } = Dimensions.get('window');
     const { theme } = props;
     let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
-    const { transparent, notificationModalVisible,vendorSkipped, notificationModalContent, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
+    const { transparent, notificationModalVisible, vendorSkipped, notificationModalContent, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
     const [state, setState] = useState({
         isKeyboardOpen: false,
         keyboardHeight: 0,
@@ -35,7 +67,7 @@ const NotificationModal = props => {
     useEffect(useCallback(() => {
         Keyboard.addListener('keyboardDidShow', _keyboardShowDetecter);
         Keyboard.addListener('keyboardDidHide', _keyboardHideDetecter);
-        getApiDetails({...props,getRequest:getRequest});
+        getApiDetails({ ...props, getRequest: getRequest });
         return () => {
             console.log('Notification Modal State Cleared-----');
             Keyboard.removeListener('keyboardDidShow', _keyboardShowDetecter);
@@ -45,7 +77,6 @@ const NotificationModal = props => {
     }, []), []);
     // console.log("BottomAlignedModal.State :", state);
 
-    let modalContentToRender = notificationModalContent;
 
     return (
         <View style={{ ...styles.centeredView(centeredViewFlex) }}>
@@ -65,13 +96,16 @@ const NotificationModal = props => {
                                 } */}
                                 <View style={{ height: '50%', overflow: 'hidden', borderRadius: 10, backgroundColor: '#fff', width: '80%' }}>
                                     <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 10, alignItems: 'center', alignContent: 'center' }}>
-                                        <View style={{ width: '100%',padding:20,height:'80%' }}>
-                                            <ImageBackground source={dummy} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='stretch'  >
-                                            </ImageBackground>
+                                        <View style={{ width: '100%', padding: 20, height: '80%' }}>
+                                                <ImageBackground source={dummy} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='contain'  >
+                                                </ImageBackground>
+                                            {/* <FadeInView style={{ width: '100%', height: '100%', }}> */}
+                                            {/* </FadeInView> */}
                                         </View>
                                         <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>{notificationModalContent?.orderMsg}</Text>
+                                        <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>Order No: {notificationModalContent?.orderId}</Text>
                                     </View>
-                                    {vendorSkipped!==true&&<TouchableOpacity onPress={() => { dispatch(closeModalAction()); props.navigation.navigate('Orders') }} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default }}>
+                                    {vendorSkipped !== true && <TouchableOpacity onPress={() => { dispatch(closeModalAction()); props.navigation.navigate('Orders') }} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default }}>
                                         <Text style={{ ...commonStyles.fontStyles(16, activeTheme.white, 3) }}>View Details</Text>
                                     </TouchableOpacity>}
                                 </View>
