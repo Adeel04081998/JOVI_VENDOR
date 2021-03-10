@@ -9,6 +9,7 @@ let initState = {
     notificationModalVisible:false,
     notificationModalContent:null,
     modalContentNotification:null,
+    orderRecievedCheck:null,
     vendorSkipped:null,
     modalFlex: null,
     modalHeightDefault:null,

@@ -62,7 +62,7 @@ const DisableProductModal = (props) => {
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
-                        <View style={{ height: 40, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
+                        <View style={{ height: 40, top: 5, flexWrap: 'wrap',zIndex:1000, overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
                                 ['Available', 'Out Of Stock', 'Discontinued'].map((it, i) => {
                                     return <View key={i} style={{ width: '33.33%', borderRadius: 5, height: '100%', backgroundColor: state.item.availabilityStatus === it ? '#7359BE' : 'white' }} >
@@ -167,7 +167,7 @@ const DisableProductModal = (props) => {
                                     <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.item.price.toString()} onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val.includes(' ')||val.includes('-')?pre.item.price:val } }))} />
                                 </View>
                                 {state.item.attributes && state.item.attributes.length > 0 ?
-                                    state.item.attributes.map((it, i) => {
+                                    state.item.attributes.filter(it => it.attributeName !== 'Quantity').map((it, i) => {
                                         return <View key={i}>
                                             <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                                 {it.type}

@@ -25,6 +25,7 @@ import VendorRoutes from './VendorRoutes';
 import { UPDATE_MODAL_HEIGHT } from '../redux/actions/types';
 import { fcmService } from '../services/FCMServices';
 import { localNotificationService } from '../services/LocalNotificationServices';
+import plateformSpecific from '../utils/plateformSpecific';
 
 // import jwt_decode from 'jwt-decode';
 const Stack = createStackNavigator();
@@ -156,11 +157,11 @@ const RootStack = (props) => {
     return state.initRoute && (
         (APP_MODE === MODES.CUSTOMER) ?
             <Stack.Navigator initialRouteName={state.initRoute} mode="card" screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Introduction" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><IntroScreen {...state} {...navigatorPros} {...props} activeTheme={activeTheme} /></ImageBackground></View>} />
-                <Stack.Screen name="OTP" children={navigatorPros => <OtpScreen {...state}  {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} />
-                <Stack.Screen name="Code" children={navigatorPros => <OtpCode {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} />
-                <Stack.Screen name="Email_Otp_verify" children={navigatorPros => <EmailOtpVerify {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} />
-                <Stack.Screen name="Reset_Password" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ResetPassword {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
+                {/* <Stack.Screen name="Introduction" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><IntroScreen {...state} {...navigatorPros} {...props} activeTheme={activeTheme} /></ImageBackground></View>} /> */}
+                {/* <Stack.Screen name="OTP" children={navigatorPros => <OtpScreen {...state}  {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} /> */}
+                {/* <Stack.Screen name="Code" children={navigatorPros => <OtpCode {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} /> */}
+                {/* <Stack.Screen name="Email_Otp_verify" children={navigatorPros => <EmailOtpVerify {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} /> */}
+                {/* <Stack.Screen name="Reset_Password" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ResetPassword {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
                 {/* <Stack.Screen name="Registration" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><UserRegister {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
                 <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/signInRess.png')} style={{ flex: 1,paddingBottom:30 }} resizeMode={'stretch'}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
                 {/* <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></View>} /> */}
@@ -169,7 +170,8 @@ const RootStack = (props) => {
                 <Stack.Screen name="Dashboard" children={navigatorPros => <VendorRoutes navigatorPros={navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} />
                 {/* <Stack.Screen name="Dashboard" children={navigatorPros => <Home {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} /> */}
                 {/* <Stack.Screen name="Products" children={navigatorPros => <Products {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} /> */}
-                <Stack.Screen name="Exceptions" children={navigatorPros => <View><Text>error</Text></View>} />
+                <Stack.Screen name="Exceptions" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1,justifyContent:'center',alignContent:'center',alignItems:'center' }}><Text style={{fontSize:15,color:activeTheme.default,fontWeight:'500',fontFamily:'Proxima Nova Bold'}}>Something went wrong!</Text></ImageBackground></View>} />
+                {/* <Stack.Screen name="Exceptions" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1,justifyContent:'center',alignContent:'center',alignItems:'center' }}><Text style={{fontSize:15,color:activeTheme.default,fontWeight:'500'}}>Something went wrong!</Text></ImageBackground></View>} /> */}
             </Stack.Navigator>
             :
             <Stack.Navigator initialRouteName={state.initRoute} mode="card" screenOptions={{ headerShown: false }}>

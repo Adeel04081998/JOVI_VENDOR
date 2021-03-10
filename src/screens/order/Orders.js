@@ -13,24 +13,25 @@ import AddBrandModal from '../../components/modals/AddBrandModal';
 import AddProductModalR from '../../components/modals/AddProductModalR';
 import plateformSpecific from '../../utils/plateformSpecific';
 function Orders(props) {
-    const { navigation, userObj, activeTheme } = props;
+    const { navigation, modalState, userObj, activeTheme } = props;
     const [state, setState] = useState({
         "loader": false,
         orderList: [],
         orderListTemp: [],
-        paginationInfo: {}
+        itemsPerPage: 10,
+        paginationInfo: { totalItems:0 }
     });
-    const addBrandProductModal = () =>{
+    const addBrandProductModal = () => {
         let ModalComponent = {
             visible: true,
             transparent: true,
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                props.user.pitstopType === 4?
-                <AddProductModalR {...props} onSave={()=>{}} />
-                :
-                <AddBrandModal type={1} {...props} onSave={()=>{}} />
+                props.user.pitstopType === 4 ?
+                    <AddProductModalR {...props} onSave={() => { }} />
+                    :
+                    <AddBrandModal type={1} {...props} onSave={() => { }} />
             ),
             // modalFlex: 0,
             // modalHeight: Dimensions.get('window').height * 0.85,
@@ -41,16 +42,21 @@ function Orders(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-    const getData = (keywords = false) => {
-        getRequest('/api/Vendor/OrdersSummary', {}
+    const getData = (keywords=false,itemsPerPageNew = false) => {
+        postRequest('/api/Vendor/OrdersSummary',{
+            "pageNumber": 1,
+            "itemsPerPage":itemsPerPageNew!==false?itemsPerPageNew:state.itemsPerPage,
+            'genericSearch':keywords!==false?keywords:''
+          }, {}
             , props.dispatch, (res) => {
                 console.log('Order Request:', res)
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        orderList: res.data.vendorOrdersViewModel.ordersDataList.sort((a,b)=>{if(a['orderNo']<b['orderNo']){return 1;}else if(a['orderNo']>b['orderNo']){return -1;}else{return 0; }}).sort((a,b)=>{if(a['orderStatus']<b['orderStatus']){return -1;}else if(a['orderStatus']>b['orderStatus']){return 1;}else{return 0; }}),
-                        orderListTemp: res.data.vendorOrdersViewModel.ordersDataList.sort((a,b)=>{if(a['orderNo']<b['orderNo']){return 1;}else if(a['orderNo']>b['orderNo']){return -1;}else{return 0; }}).sort((a,b)=>{if(a['orderStatus']<b['orderStatus']){return -1;}else if(a['orderStatus']>b['orderStatus']){return 1;}else{return 0; }}),
-                        paginationInfo: res.data?.pitstopBrands?.paginations
+                        itemsPerPage:itemsPerPageNew!==false?itemsPerPageNew:prevState.itemsPerPage,
+                        orderList: res.data.vendorOrdersViewModel.ordersDataList.sort((a, b) => { if (a['orderNo'] < b['orderNo']) { return 1; } else if (a['orderNo'] > b['orderNo']) { return -1; } else { return 0; } }).sort((a, b) => { if (a['orderStatus'] < b['orderStatus']) { return -1; } else if (a['orderStatus'] > b['orderStatus']) { return 1; } else { return 0; } }),
+                        orderListTemp: res.data.vendorOrdersViewModel.ordersDataList.sort((a, b) => { if (a['orderNo'] < b['orderNo']) { return 1; } else if (a['orderNo'] > b['orderNo']) { return -1; } else { return 0; } }).sort((a, b) => { if (a['orderStatus'] < b['orderStatus']) { return -1; } else if (a['orderStatus'] > b['orderStatus']) { return 1; } else { return 0; } }),
+                        paginationInfo: res.data?.vendorOrdersViewModel?.paginationInfo
                     }))
                 } else {
                     CustomToast.error("Not Found");
@@ -60,20 +66,18 @@ function Orders(props) {
                     }))
                 }
             }, (err) => {
-                if(err.response.data.statusCode===404) CustomToast.error("No Orders Found")
+                if (err.response.data.statusCode === 404) CustomToast.error("No Orders Found")
                 else if (err) CustomToast.error("Something went wrong");
             }, '');
     }
-    const searchOrder = (val) => {
-        setState(pre=>({...pre,
-            orderList:val===''?pre.orderListTemp:pre.orderListTemp.filter(it=>it.orderNo.toString().includes(val)),
-        }))
-    }
+    const searchOrder = debounce((val) => {
+        getData(val,false);
+    },900)
     const onFooterItemPressed = async (pressedTab, index) => {
-        if(pressedTab.title==='Add'){
+        if (pressedTab.title === 'Add') {
             addBrandProductModal();
         }
-    }; 
+    };
     useFocusEffect(useCallback(() => {
         getData();
         return () => {
@@ -84,6 +88,11 @@ function Orders(props) {
             });
         };
     }, []), []);
+    useEffect(() => {
+        if (modalState.orderRecievedCheck !== null) {
+            getData();
+        }
+    }, [modalState.orderRecievedCheck])
     return (
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
             <HeaderApp
@@ -92,34 +101,54 @@ function Orders(props) {
                 state={state}
                 user={props.user}
                 onChangeText={(val) => searchOrder(val)}
-                screenProps={{...props}}
+                screenProps={{ ...props }}
                 activeTheme={activeTheme}
             />
-            <View style={{ zIndex:1, flex: 1, marginTop: 30 }}>
+            <View style={{ zIndex: 1, flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
-                    <Text style={{ marginRight: 14 }}>Total: {state.orderList.length<1?'0':state.orderList.length<10?'0'+state.orderList.length:state.orderList.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.orderList.length < 1 ? '0' : state.orderList.length < 10 ? '0' + state.orderList.length : state.orderList.length}</Text>
                 </View>
-                <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }} onTouchEnd={() => {
-                    if (state.isSmModalOpen) showHideModal(false, 1);
-                }}>
+                <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }}
+                    onScroll={(e) => {
+                        let paddingToBottom = 10;
+                        paddingToBottom += e.nativeEvent.layoutMeasurement.height;
+                        if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
+                            // make something...
+                            if (state.itemsPerPage < state.paginationInfo.totalItems) {
+                                getData(false,state.itemsPerPage+10);
+                            }
+                        }
+                    }
+                    }
+                //  onScrollEndDrag={(e) => {
+                //                     e.persist();
+                //                     setHorizontalScrollState(pre => ({ ...pre, lastOffset: e.nativeEvent.contentOffset.y }));
+                //                     if (e.nativeEvent.contentOffset.y > horizontalScrollState.lastOffset) {
+                //                         debugger;
+                //                         console.log(e.nativeEvent.contentOffset.y,horizontalScrollState.lastOffset,state.paginationInfo)
+                //                         if (state.paginationInfo.itemsPerPage < state.paginationInfo.totalItems) {
+                //                             getData();
+                //                         }
+                //                     }
+                //                 }}
+                >
                     {
-                        // [{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', },{ orderNo: '12312', orderItems: '05', }].map((item, i) => {
                         state.orderList.length < 1 ?
                             <View style={{ flex: 1, height: 100, justifyContent: 'center', alignItems: 'center' }}>
                                 <Text>No Orders Found</Text>
                             </View>
                             :
                             state.orderList.map((item, i) => {
-                                return <View key={i} style={{ ...stylesOrder.productTab,borderWidth:item.orderStatus===1?2:0.5,borderColor:item.orderStatus===1?props.activeTheme.default:'#929293'}}>
-                                    <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={props.user.pitstopType === 4 ?()=>navigation.navigate('ResOrderDetails',{key:'resOrderDetails',item:{item}}):() => navigation.navigate('OrderDetails',{key:'orderDetails',item:{item}})}>
+                                return <View key={i} style={{ ...stylesOrder.productTab, borderWidth: item.orderStatus === 1 ? 2 : 0.5, borderColor: item.orderStatus === 1 ? props.activeTheme.default : '#929293' }}>
+                                    <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={props.user.pitstopType === 4 ? () => navigation.navigate('ResOrderDetails', { key: 'resOrderDetails', item: { item } }) : () => navigation.navigate('OrderDetails', { key: 'orderDetails', item: { item } })}>
                                         {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
-                                        <View style={{ ...stylesOrder.productImageContainer,backgroundColor:item.orderStatus===1?props.activeTheme.defaultLight:'white', borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 200, margin: 10, width: '70%', height: '32%' }}>
-                                            <Text style={{ ...commonStyles.fontStyles(22,item.orderStatus===1?props.activeTheme.white: props.activeTheme.default, 10) }}>{item.noOfItems}</Text>
+                                        <View style={{ ...stylesOrder.productImageContainer, backgroundColor: item.isVendorConfirmed === true && item.orderStatus === 1 ? '#99c6a8' : item.orderStatus === 1 ? props.activeTheme.defaultLight : 'white', borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 200, margin: 10, width: '70%', height: '32%' }}>
+                                            <Text style={{ ...commonStyles.fontStyles(22, item.orderStatus === 1 ? props.activeTheme.white : props.activeTheme.default, 10) }}>{item.noOfItems}</Text>
                                         </View>
                                         <View style={{ ...stylesOrder.productName }}>
-                                            <Text style={{ ...commonStyles.fontStyles(14,props.activeTheme.black, 4) }}>Order No: </Text><Text>{item.orderNo}</Text>
-                                            <Text style={{ ...commonStyles.fontStyles(12,props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.totalPrice}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Order No: </Text><Text>{item.orderNo}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.totalPrice}</Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -128,13 +157,15 @@ function Orders(props) {
 
                 </ScrollView>
             </View>
-            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={1} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
+            {props.stackState.keypaidOpen === false && <SharedFooter activeTheme={activeTheme} activeTab={1} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }
 const mapStateToProps = (store) => {
     return {
-        userObj: store.userReducer
+        userObj: store.userReducer,
+        modalState: store.modalReducer,
+
     }
 };
 const stylesOrder = StyleSheet.create({
@@ -153,7 +184,7 @@ const stylesOrder = StyleSheet.create({
     homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } },
     productListContainer: { paddingBottom: 20, justifyContent: 'space-between', flexDirection: 'row', flexWrap: 'wrap' },
     productTab: { height: 180, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
-    productImageContainer: { flex: 2, width: '100%',height:10, justifyContent: 'center', alignItems: 'center' },
+    productImageContainer: { flex: 2, width: '100%', height: 10, justifyContent: 'center', alignItems: 'center' },
     productImage: {
         width: '90%',
         marginLeft: 17,

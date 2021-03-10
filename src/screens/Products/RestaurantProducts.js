@@ -5,7 +5,7 @@ import { SvgXml } from 'react-native-svg';
 import { renderPicture, renderPictureResizeable, sharedConfirmationAlert } from "../../utils/sharedActions";
 import { getRequest, postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
-import commonStyles from '../../styles/styles';
+import commonStyles, { tabStyles } from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
 import { useFocusEffect } from '@react-navigation/native';
 import SharedFooter from '../../components/footer/SharedFooter';
@@ -135,28 +135,24 @@ function RestaurantProducts(props) {
                     {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
                     {state.productList.length > 0 ?
                         state.productList.map((item, i) => {
-                            return <View key={i} style={{ ...stylesHome.homeTab({ activeTheme: props.activeTheme }) }} >
+                            return <View key={i} style={{ ...tabStyles.tabContainer(props.activeTheme,null,null,null,null,0.3) }} >
                                 {item.availabilityStatusStr === 'Out Of Stock' && <TouchableOpacity onPress={()=>updateRestaurantProduct(item)} style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></TouchableOpacity>}
                                 {item.availabilityStatusStr === 'Discontinued' && <TouchableOpacity onPress={()=>updateRestaurantProduct(item)} style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                     <SvgXml xml={blockSvg} height={'60%'} width={'60%'} />
                                 </TouchableOpacity>}
-                                <View style={{ ...stylesHome.homeTabView }}>
+                                <View style={{ ...tabStyles.imageTabContainer }}>
                                     <ImageBackground
                                         resizeMode='stretch'
                                         source={item.productImageList && item.productImageList.length > 0 ? { uri: renderPicture(item.productImageList[0].joviImageThumbnail) } : dummy}
-                                        // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                        style={{ ...stylesHome.homeTabImage }}
+                                        style={{ ...tabStyles.imageTab }}
                                     />
                                 </View>
-                                <TouchableOpacity style={stylesHome.homeTabText} onPress={() => updateRestaurantProduct(item)}>
+                                <TouchableOpacity style={tabStyles.tabText} onPress={() => updateRestaurantProduct(item)}>
                                     <View style={{ flex: 0.9 }}>
-                                        <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.productName}</Text>
-                                        <Text style={{ ...stylesHome.homeTabDesc(props) }}>{item.description.toLocaleUpperCase()}</Text>
+                                        <Text style={{...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{item.productName}</Text>
+                                        <Text style={{ ...tabStyles.tabDescription(10, props.activeTheme.black, 1, '300') }}>{item.description.toLocaleUpperCase()}</Text>
                                     </View>
                                 </TouchableOpacity>
-                                {/* <View style={{...stylesHome.homeTabCounter(props)}}>
-                                        <Text style={{ color: 'white' }}>{item.noOfProducts}</Text>
-                                    </View> */}
                             </View>
                         })
                         :
@@ -176,21 +172,5 @@ const mapStateToProps = (store) => {
         userObj: store.userReducer
     }
 };
-const stylesHome = StyleSheet.create({
-    homeTab: props => { return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 } },
-    homeTabView: { flex: 0.38, margin: 7, overflow: 'hidden', borderRadius: 10 },
-    homeTabImage: {
-        // flex: 1,
-        // top: 1,
-        // marginLeft: 10,
-        width: '100%',
-        "height": "100%",
-    },
-    homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
-    homeTabBrandName: { marginTop: 0 },
-    homeTabDesc: (props) => { return { maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 } },
-    homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
-
-});
 export default connect(mapStateToProps)(RestaurantProducts);
 

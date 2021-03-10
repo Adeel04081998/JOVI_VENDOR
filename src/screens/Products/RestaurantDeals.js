@@ -5,7 +5,7 @@ import { SvgXml } from 'react-native-svg';
 import { renderPicture, renderPictureResizeable, sharedConfirmationAlert} from "../../utils/sharedActions";
 import {  getRequest, postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
-import commonStyles from '../../styles/styles';
+import commonStyles, { tabStyles } from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
 import { useFocusEffect } from '@react-navigation/native';
 import SharedFooter from '../../components/footer/SharedFooter';
@@ -112,29 +112,24 @@ function RestaurantDeals(props) {
                     <Text style={{ marginRight: 14 }}>Total: {state.dealsList.length < 1 ? '0' : state.dealsList.length < 10 ? '0' + state.dealsList.length : state.dealsList.length}</Text>
                 </View>
                 <ScrollView style={{ flex: 1,marginHorizontal:8 }} >
-                    {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
                         {state.dealsList.length>0?
                             state.dealsList.map((item, i) => {
-                                return <View key={i} style={{...stylesHome.homeTab({activeTheme:props.activeTheme})}}>
+                                return <View key={i} style={{...stylesDeals.dealTab({activeTheme:props.activeTheme})}}>
                                 {item.isActive === false && <TouchableOpacity onPress={()=>addProductModalF(item)} style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></TouchableOpacity>}
-                                    <View style={{...stylesHome.homeTabView}}>
+                                    <View style={{...tabStyles.imageTabContainer}}>
                                         <ImageBackground
                                             resizeMode='stretch'
                                             source={item.dealImagesList&&item.dealImagesList.length>0?{uri:renderPicture(item.dealImagesList[0].joviImageThumbnail)}:dummy}
-                                            // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{...stylesHome.homeTabImage}}
+                                            style={{...tabStyles.imageTab}}
                                         />
                                     </View>
-                                    <TouchableOpacity style={stylesHome.homeTabText} onPress={()=>addProductModalF(item)}>
+                                    <TouchableOpacity style={tabStyles.tabTextContainer} onPress={()=>addProductModalF(item)}>
                                         <View style={{ flex: 0.9 }}>
-                                            <Text style={{...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300')}}>{item.title}</Text>
-                                            <Text style={{...stylesHome.homeTabDesc(props)}}>{item.description}</Text>
-                                            <Text style={{...stylesHome.homeTabDesc(props,12,4)}}>Rs.{item.price}</Text>
+                                            <Text style={{...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{item.title}</Text>
+                                            <Text style={{...stylesDeals.dealTabDesc(props)}}>{item.description}</Text>
+                                            <Text style={{...stylesDeals.dealTabDesc(props,12,4)}}>Rs.{item.price}</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    {/* <View style={{...stylesHome.homeTabCounter(props)}}>
-                                        <Text style={{ color: 'white' }}>{item.noOfProducts}</Text>
-                                    </View> */}
                                 </View>
                             })
                             :
@@ -154,30 +149,9 @@ const mapStateToProps = (store) => {
         userObj: store.userReducer
     }
 };
-const stylesHome = StyleSheet.create({
-    homeTab:props=>{return { height: 130, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
-    homeTabView:{ flex: 0.38,margin:7, overflow: 'hidden', borderRadius: 15 },
-    homeTabImage:{
-        flex: 1,
-        // top: 1,
-        // marginLeft: 10,
-        width: '100%',
-        borderRadius:15,
-        "height": "100%",
-    },
-    // homeTabView:{ flex: 0.38,paddingTop:5, overflow: 'hidden', borderRadius: 10 },
-    // homeTabImage:{
-    //     flex: 1,
-    //     top: 1,
-    //     marginLeft: 10,
-    //     width: '90%',
-    //     "height": "90%",
-    // },
-    homeTabText:{ flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
-    homeTabBrandName:{ marginTop: 0},
-    homeTabDesc:(props,fSize=10,fWeight=1)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(fSize, props.activeTheme.black, fWeight, '300'), padding: 2} },
-    homeTabCounter:(props)=>{return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
-
+const stylesDeals = StyleSheet.create({
+    dealTab:props=>{return { height: 130, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
+    dealTabDesc:(props,fSize=10,fWeight=1)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(fSize, props.activeTheme.black, fWeight, '300'), padding: 2} },
 });
 export default connect(mapStateToProps)(RestaurantDeals);
 

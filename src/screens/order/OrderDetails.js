@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground, View, StyleSheet, Alert, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
-import commonStyles from '../../styles/styles';
+import commonStyles, { tabStyles } from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
 import { connect } from 'react-redux';
 import { HeaderApp } from '../../components/header/CustomHeader';
@@ -210,34 +210,30 @@ function OrderDetails(props) {
                                 );
                             }}
                         >
-                            <View style={{ ...stylesOrder.homeTab({ activeTheme: props.activeTheme }), margin: 5 }}>
+                            <View style={{ ...tabStyles.tabContainer(props.activeTheme,null,null,null,null,0.3), margin: 5 }}>
                                 {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
                                 </View>}
                                 {item.jobItemStatus === 4 && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Replaced</Text>
                                 </View>}
-                                <View style={{ ...stylesOrder.homeTabView }}>
+                                <View style={{ ...tabStyles.imageTabContainer }}>
                                     <ImageBackground
                                         resizeMode='stretch'
                                         source={item.jobItemImageList && item.jobItemImageList.length > 0 ? { uri: renderPictureResizeable(item.jobItemImageList[0], 190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
-                                        // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                        style={{ ...stylesOrder.homeTabImage }}
+                                        style={{ ...tabStyles.imageTab }}
                                     />
                                 </View>
-                                <View style={stylesOrder.homeTabText}>
+                                <View style={tabStyles.tabTextContainer}>
                                     <View style={{ flex: 0.9 }}>
-                                        <Text style={{ flex: 2, ...stylesOrder.homeTabBrandName, maxWidth: 255, ...commonStyles.fontStyles(14, props.activeTheme.black, 3, '300') }}>{item.jobItemName}</Text>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, ...stylesOrder.homeTabDesc(props) }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it, j) => {
+                                        <Text style={{ flex: 2, ...tabStyles.tabTitle(14, props.activeTheme.black, 3, '300'), maxWidth: 255 }}>{item.jobItemName}</Text>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, ...tabStyles.tabDescription(12, props.activeTheme.black, 1, '300') }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it, j) => {
                                             if (it.attributeTypeName === 'Color') {
                                                 return <View key={j + state.orderList.length} style={{ backgroundColor: it.productAttrName.toLowerCase(), height: 13, width: 13, borderRadius: 10, marginRight: 5 }}></View>
-
-                                                // return <View key={j + state.orderList.length} style={{ justifyContent: 'center', marginHorizontal: 5 }}>
-                                                // </View>
                                             }
                                             return <Text key={j + state.orderList.length}>{it.productAttrName + "  "}</Text>
                                         })}</View>
-                                        <Text style={{ flex: 1, ...stylesOrder.homeTabDesc(props) }}>Rs. {item.price}</Text>
+                                        <Text style={{ flex: 1, ...tabStyles.tabDescription(12, props.activeTheme.black, 1, '300') }}>Rs. {item.price}</Text>
                                     </View>
                                 </View>
                                 {state.orderObj.orderStatus === 1 ? <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
@@ -249,7 +245,7 @@ function OrderDetails(props) {
                                 </View>
                                     : <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 25, height: 25 }}>
                                         {
-                                            <Text style={{}}>{item.quantity}</Text>
+                                            <Text>{item.quantity}</Text>
                                         }
                                     </View>
                                 }
@@ -279,32 +275,4 @@ const mapStateToProps = (store) => {
         userObj: store.userReducer
     }
 };
-const stylesOrder = StyleSheet.create({
-    homeTab: props => { return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 } },
-    homeTabView: { flex: 0.38, paddingTop: 5, overflow: 'hidden', borderRadius: 10 },
-    homeTabImage: {
-        flex: 1,
-        top: 1,
-        marginLeft: 10,
-        width: '90%',
-        "height": "90%",
-    },
-    homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
-    homeTabBrandName: { marginTop: 0 },
-    homeTabDesc: (props) => { return { ...commonStyles.fontStyles(12, props.activeTheme.black, 1, '300'), padding: 2 } },
-    homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } },
-    productListContainer: { paddingBottom: 20, justifyContent: 'space-between', flexDirection: 'row', flexWrap: 'wrap' },
-    productTab: { height: 180, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
-    productImageContainer: { flex: 2, width: '100%', justifyContent: 'center', alignItems: 'center' },
-    productImage: {
-        width: '90%',
-        marginLeft: 17,
-        zIndex: 900,
-        "height": "90%",
-    },
-    productName: { flex: 1, justifyContent: 'space-between', paddingLeft: 8, paddingRight: 8, alignItems: 'center', width: '100%', flexDirection: 'row', flexWrap: 'wrap' },
-    counter: (props) => { return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
-
-
-});
 export default connect(mapStateToProps)(OrderDetails);

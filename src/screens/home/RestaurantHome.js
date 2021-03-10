@@ -5,7 +5,7 @@ import { SvgXml } from 'react-native-svg';
 import { renderPictureResizeable, sharedConfirmationAlert } from "../../utils/sharedActions";
 import { getRequest, postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
-import commonStyles from '../../styles/styles';
+import commonStyles, { tabStyles } from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
 import { useFocusEffect } from '@react-navigation/native';
 import SharedFooter from '../../components/footer/SharedFooter';
@@ -149,8 +149,8 @@ function RestaurantHome(props) {
                 <ScrollView style={{ flex: 1, marginHorizontal: 8 }} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
-                    <View style={{ ...stylesHome.homeTab({ activeTheme: props.activeTheme }) }}>
-                        <View style={{ ...stylesHome.homeTabView }}>
+                    <View style={{ ...tabStyles.tabContainer(props.activeTheme,null,null,null,null,0.3)}}>
+                        <View style={{ ...tabStyles.imageTabContainer }}>
                             <SvgXml
                                 fill={props.activeTheme.default}
                                 xml={state.dealObj.categoryImage ?? common.joviDeal()}
@@ -159,12 +159,12 @@ function RestaurantHome(props) {
                                 height={'100%'}
                             />
                         </View>
-                        <TouchableOpacity style={stylesHome.homeTabText} onPress={() => setState(pre => ({ ...pre, focusedField: 'deals' }))} >
+                        <TouchableOpacity style={tabStyles.tabTextContainer} onPress={() => setState(pre => ({ ...pre, focusedField: 'deals' }))} >
                             <View style={{ flex: 0.9 }}>
-                                <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{state.dealObj?.name}</Text>
+                                <Text style={{ ...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{state.dealObj?.name}</Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={{ ...stylesHome.homeTabCounter(props) }}>
+                        <View style={{...tabStyles.tabCounter(props)}}>
                             <Text style={{ color: 'white' }}>{state.dealObj?.subCategoryCount}</Text>
                         </View>
                     </View>
@@ -189,27 +189,21 @@ function RestaurantHome(props) {
                     {state.categoryData.length > 0 &&
                         state.categoryData.filter(it => it.name !== "Deals").map((item, i) => {
                             return <View key={i} style={{ justifyContent: 'center' }}>
-                                <View style={{ ...stylesHome.homeTab({ activeTheme: props.activeTheme }) }}>
-                                    <View style={{ ...stylesHome.homeTabView }}>
+                                <View style={{ ...tabStyles.tabContainer(props.activeTheme,null,null,null,null,0.3) }}>
+                                    <View style={{ ...tabStyles.imageTabContainer }}>
                                         <SvgXml
                                             fill={props.activeTheme.default}
                                             xml={item.categoryImage}
                                             width={'100%'}
                                             height={'100%'}
                                         />
-                                        {/* <ImageBackground
-                                            resizeMode='stretch'
-                                            source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{...stylesHome.homeTabImage}}
-                                        /> */}
                                     </View>
-                                    <TouchableOpacity style={stylesHome.homeTabText} onPress={() => setState(pre => ({ ...pre, focusedField: pre.focusedField !== null && pre.focusedField === i ? null : i }))}>
+                                    <TouchableOpacity style={tabStyles.tabTextContainer} onPress={() => setState(pre => ({ ...pre, focusedField: pre.focusedField !== null && pre.focusedField === i ? null : i }))}>
                                         <View style={{ flex: 0.9 }}>
-                                            <Text style={{ ...stylesHome.homeTabBrandName, ...commonStyles.fontStyles(18, props.activeTheme.black, 1, '300') }}>{item.name}</Text>
+                                            <Text style={{ ...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{item.name}</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    <View style={{ ...stylesHome.homeTabCounter(props) }}>
+                                    <View style={{ ...tabStyles.tabCounter(props) }}>
                                         <Text style={{ color: 'white' }}>{item.subCategoryCount}</Text>
                                     </View>
                                 </View>
@@ -245,21 +239,5 @@ const mapStateToProps = (store) => {
         userObj: store.userReducer
     }
 };
-const stylesHome = StyleSheet.create({
-    homeTab: props => { return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 } },
-    homeTabView: { flex: 0.38, paddingTop: 5, overflow: 'hidden', borderRadius: 10 },
-    homeTabImage: {
-        flex: 1,
-        top: 1,
-        marginLeft: 10,
-        width: '90%',
-        "height": "90%",
-    },
-    homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
-    homeTabBrandName: { marginTop: 0 },
-    homeTabDesc: (props) => { return { maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 } },
-    homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 33, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
-
-});
 export default connect(mapStateToProps)(RestaurantHome);
 

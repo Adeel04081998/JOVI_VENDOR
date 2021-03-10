@@ -279,6 +279,7 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
                 if (isJoviCustomerApp) {
                     attachOrderRecieveModal();
                     attachVendorSkipEvent();
+                    attachVendorCompleteJobEvent();
                 }
                 else {
                     attachSignalRLogoutHandler(postRequest);
@@ -593,6 +594,11 @@ export const sharedIsRiderApproved = (userObj = {}) => {
     );
 };
 
+export const attachVendorCompleteJobEvent = () => {
+    getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
+        console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
+    });
+};
 export const attachVendorSkipEvent = () => {
     getHubConnectionInstance('VendorJobSkipped')?.on('VendorJobSkipped', (orderId, orderMsg) => {
         console.log('---------------------------> On Vendor Skipped Signal R: ', orderId, orderMsg);
@@ -604,6 +610,7 @@ export const attachVendorSkipEvent = () => {
                 okHandler: null,
                 onRequestCloseHandler: null,
                 ModalContent: null,
+                orderRecievedCheck: new Date().getTime(),
                 notificationModalVisible: true,
                 notificationModalContent: { orderId, orderMsg },
                 vendorSkipped:true,
@@ -629,6 +636,7 @@ export const attachOrderRecieveModal = () => {
                 okHandler: null,
                 onRequestCloseHandler: null,
                 ModalContent: null,
+                orderRecievedCheck: new Date().getTime(),
                 notificationModalVisible: true,
                 notificationModalContent: { orderId, orderMsg },
                 modalContentNotification: null,
@@ -642,7 +650,31 @@ export const attachOrderRecieveModal = () => {
         })
     });
 };
-
+export const error400 = (response) => {
+    if( response && response.status===500){
+      CustomToast.error('Error 500:Something went wrong!')
+    }else if(response&&response.status){
+      if (response.errors && response.errors.length > 0) {
+        if (typeof response.data.errors[0] === 'object') {
+          CustomToast.error(response.errors[0].description)
+        }
+        else {
+          CustomToast.error(response.errors[0])
+        }
+    
+      } else if (!Array.isArray(response.errors) && response.errors) {
+        Object.keys(response.errors).map((item, i) => {
+          CustomToast.error(response.errors[item].length > 0 ? response.errors[item].toString() : "Something Went Wrong!")
+          return () => { }
+        }
+        )
+      } else {
+        CustomToast.error(response.message)
+      }
+    }else{
+      CustomToast.error('Something Went Wrong!');
+    }
+  }
 export const sharedImagePickerHandler = async (cb, next) => {
     try {
         if (Platform.OS === 'android') {

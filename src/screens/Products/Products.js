@@ -1,9 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground, View, Alert, TouchableOpacity,StyleSheet, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
-import { SvgXml } from 'react-native-svg';
 import { renderPicture, renderPictureResizeable } from "../../utils/sharedActions";
-import AsyncStorage from '@react-native-community/async-storage';
 import { getRequest, postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
 import commonStyles from '../../styles/styles';
@@ -13,11 +11,8 @@ import dummy from '../../assets/bike.png';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
-import { CheckBox } from 'native-base';
-import DisableProductModal from '../../components/modals/DisableProductModal';
 function Products(props) {
-    const { navigation, userObj, activeTheme } = props;
-    // console.log(navigation.dangerouslyGetState());
+    const { navigation, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'Products')[0]?.params?.item;
     // console.log('Data:', data)
     const [state, setState] = useState({
@@ -100,7 +95,6 @@ function Products(props) {
     const onFooterItemPressed = async (pressedTab, index) => {
         if (pressedTab.title === 'Add') {
             addBrandModal();
-            // navigateWithResetScreen(null,[{name:'homee', params: {}}]);
         }
         else if(pressedTab.title === 'Orders'){
             navigation.navigate("Orders",{});
@@ -120,7 +114,6 @@ function Products(props) {
                 onChangeText={onProductSearch}
             />
             <View style={{ flex: 1, marginTop: 30 }}>
-                {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Product List</Text>
                     <Text style={{ marginRight: 14 }}>Total: {state.productData.length<1?'0':state.productData.length<10?'0'+state.productData.length:state.productData.length}</Text>
@@ -134,9 +127,7 @@ function Products(props) {
                                         <View style={{...styleProduct.brandImageContainerView}}>
                                             <ImageBackground
                                                 resizeMode="stretch"
-                                                // resizeMode="center"
                                                 source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
-                                                // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
                                                 style={{...styleProduct.brandImage}}
                                             />
                                         </View>
@@ -156,15 +147,12 @@ function Products(props) {
                             state.productData.map((item, i) => {
                                 return <View key={i} style={{...styleProduct.productTab}}>
                                     <TouchableOpacity style={{ width: '100%',padding:10, height: '100%' }} onPress={() => navigation.navigate('Items', { key: 'items', item: { item, data: state.productData, brandObj: state.selectedBrand } })}>
-                                        {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
                                         <View style={{...styleProduct.productImageContainer}}>
                                             <ImageBackground
                                                 resizeMode="stretch"
                                                 source={item.productImages && item.productImages.length > 0 ? { uri: renderPictureResizeable(item.productImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                                // source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{...styleProduct.productImage}}
                                             />
-                                            {/* <CheckBox checked={item.active} color={activeTheme.background} onPress={() => disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} /> */}
                                         </View>
                                             <View style={{...styleProduct.counter(props)}}>
                                                 <Text style={{ color: 'white' }}>{item.noOfItems}</Text>

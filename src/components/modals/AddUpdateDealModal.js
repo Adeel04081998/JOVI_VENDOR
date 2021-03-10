@@ -329,7 +329,7 @@ const AddUpdateDealModal = (props) => {
             {state.mode === '' ? <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
-                        <View style={{ height: 40, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
+                        <View style={{ height: 40,zIndex:1000, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
                                 ['Available', 'Unavailable'].map((it, i) => {
                                     return <View key={i} style={{ width: '50%', borderRadius: 5, height: '100%', backgroundColor: state.deal.inActiveIndex === i ? '#7359BE' : 'white' }} >

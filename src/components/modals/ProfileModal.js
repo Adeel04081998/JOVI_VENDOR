@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, { set } from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
-import { renderPictureResizeable, sharedKeyboardDismissHandler,camelToTitleCase, sharedlogoutUser } from '../../utils/sharedActions';
+import { renderPictureResizeable, sharedKeyboardDismissHandler, camelToTitleCase, sharedlogoutUser, error400 } from '../../utils/sharedActions';
 import CustomAndroidPickerItem from '../dropdowns/picker.android';
 import { favHomeIcon } from '../../assets/svgIcons/customerorder/customerorder'
 import { SvgXml } from 'react-native-svg';
@@ -22,9 +22,9 @@ import { connect } from 'react-redux';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 const ProfileModal = (props) => {
     console.log('USer:', props.user)
-    const {dispatch} = props;
+    const { dispatch } = props;
     let weekArr = [false, false, false, false, false, false, false];
-    props.user?.daysOfTheWeek?.map(it=>{
+    props.user?.daysOfTheWeek?.map(it => {
         weekArr[it] = true;
     });
     const [state, setState] = useState({
@@ -32,9 +32,9 @@ const ProfileModal = (props) => {
         mode: false,
         selectedValue: null,
         timePickMode: null,
-        openingTime: props.user.openingTime.split(':')[0]+':'+props.user.openingTime.split(':')[1],
-        active:props.user.pitstopStatus===1?true:false,
-        closingTime: props.user.closingTime.split(':')[0]+':'+props.user.closingTime.split(':')[1],
+        openingTime: props.user.openingTime.split(':')[0] + ':' + props.user.openingTime.split(':')[1],
+        active: props.user.pitstopStatus === 1 ? true : false,
+        closingTime: props.user.closingTime.split(':')[0] + ':' + props.user.closingTime.split(':')[1],
         workingDays: weekArr,
         vendorList: props?.user?.vendorPitstopDetailsList?.map(item => { return { ...item, text: item.personName } }),
         vendor: props?.user?.vendorPitstopDetailsList[0],
@@ -42,20 +42,29 @@ const ProfileModal = (props) => {
     const onDropdownClick = () => {
         setState(prevState => ({ ...prevState, showDropdown: !prevState.showDropdown }));
     }
-    const onSave = () => {
+    const onSave = (onConfirm = false) => {
+        if (state.workingDays.filter(item => item === true).length < 1 && onConfirm === false) {
+            setState(pre => ({ ...pre, mode: 'confirm' }));
+            dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.25 });
+            return;
+        }
         postRequest('Api/Vendor/Pitstop/Timings/Update', {
             "openingTime": state.openingTime,
             "closingTime": state.closingTime,
-            "daysOfWeek": state.workingDays.map((it,i)=>{if(it===true){return i}}).filter(it=>it!==undefined),
-            "pitstopStatus": state.active===true?1:2,
-          }, {}, props.dispatch, (res) => {
+            "daysOfWeek": state.workingDays.map((it, i) => { if (it === true) { return i } }).filter(it => it !== undefined),
+            "pitstopStatus": state.active === true ? 1 : 2,
+        }, {}, props.dispatch, (res) => {
             if (props.onSave) {
                 props.onSave();
             }
-            props.dispatch(userAction({ ...props.user,pitstopStatusDesc:state.active===true?"Activated":"Deactivated",pitstopStatus:state.active===true?1:2,closingTime:state.closingTime,openingTime:state.openingTime,daysOfTheWeek: state.workingDays.map((it,i)=>{if(it===true){return i}}).filter(it=>it!==undefined)}));
+            props.dispatch(userAction({ ...props.user, pitstopStatusDesc: state.active === true ? "Activated" : "Deactivated", pitstopStatus: state.active === true ? 1 : 2, closingTime: state.closingTime, openingTime: state.openingTime, daysOfTheWeek: state.workingDays.map((it, i) => { if (it === true) { return i } }).filter(it => it !== undefined) }));
             CustomToast.success('Profile updated successfully')
             props.dispatch(closeModalAction());
-        }, (err) => {CustomToast.error('Something went wrong!'); }, '');
+        }, (err) => {
+            console.log(err)
+            if (err.status === 400) error400(err)
+            else CustomToast.error('Something went wrong!');
+        }, '');
     }
     const onTimeChange = (val, index) => {
         let selectedVal = state.selectedValue.split(':');
@@ -72,7 +81,7 @@ const ProfileModal = (props) => {
         }));
     }
     const saveTime = () => {
-        dispatch({type:UPDATE_MODAL_HEIGHT,payload:false});
+        dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false });
         setState(pre => ({
             ...pre,
             [pre.timePickMode]: pre.selectedValue,
@@ -118,28 +127,7 @@ const ProfileModal = (props) => {
     }
     const setTimePickerState = (varName) => {
         setState(pre => ({ ...pre, selectedValue: pre[varName], timePickMode: varName, mode: true }));
-        dispatch({type:UPDATE_MODAL_HEIGHT,payload:Dimensions.get('window').height * 0.3});
-    }
-    const getData = () => {
-        postRequest('Api/Vendor/Pitstop/BrandGeneric/List', {
-            "pageNumber": 1,
-            "itemsPerPage": state.itemsPerPage + 10,
-            "isAscending": true,
-            "brandType": 1,
-            "isPagination": true,
-            "genericSearch": ""
-        }, {}
-            , props.dispatch, (res) => {
-                console.log('Generic Brand Request:', res)
-                setState(prevState => ({
-                    ...prevState,
-                    itemsPerPage: prevState.itemsPerPage + 10,
-                    brandList: res.data.genericBrandListViewModels.brandData.sort((a, b) => { if (a['brandName'] < b['brandName']) { return -1; } else if (a['brandName'] > b['brandName']) { return 1; } else { return 0; } }).map(item => { return { ...item, text: item.brandName, value: item.brandID } }),
-                    paginationInfo: res.data.genericBrandListViewModels.paginationInfo
-                }))
-            }, (err) => {
-                if (err) CustomToast.error("Something went wrong");
-            }, '', false);
+        dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.3 });
     }
     useEffect(useCallback(() => {
         // getData();
@@ -157,7 +145,7 @@ const ProfileModal = (props) => {
                         <View style={{ flex: 1, ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                             <View style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }}>
                                 <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 3) }}>Profile</Text>
-                                <View style={{backgroundColor:props.activeTheme.warning,padding:5,borderRadius:5}}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => { props.dispatch(closeModalAction()); sharedlogoutUser(props.navigation, postRequest, props.dispatch, props.user, false) }}>Logout</Text></View>
+                                <View style={{ backgroundColor: props.activeTheme.warning, padding: 5, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => { props.dispatch(closeModalAction()); sharedlogoutUser(props.navigation, postRequest, props.dispatch, props.user, false) }}>Logout</Text></View>
 
                             </View>
                             {/* <View style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }}>
@@ -215,9 +203,9 @@ const ProfileModal = (props) => {
                                 <View style={{ flex: 7, marginBottom: 20, backgroundColor: '#F5F6FA', borderColor: '#929293', borderWidth: 0.5, borderRadius: 15, marginTop: 20, width: '100%' }}>
                                     <View style={{ height: '42%', flexDirection: 'row', padding: 20, flex: 1, borderBottomWidth: 1, borderBottomColor: '#929293' }}>
                                         <View style={{ flex: 0.62, marginLeft: 20, marginVertical: 5, justifyContent: 'center' }}>
-                                            <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>{state.vendor.personName}</Text>
-                                            <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>{state.vendor.email}</Text>
-                                            <Text style={{...commonStyles.fontStyles(14,props.activeTheme.black,3)}}>{state.vendor.contactNo}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 3) }}>{state.vendor.personName}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 3) }}>{state.vendor.email}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 3) }}>{state.vendor.contactNo}</Text>
                                         </View>
                                         <TouchableOpacity style={{ flex: 0.38 }} onPress={() => setState(pre => ({ ...pre, active: !pre.active }))}>
                                             <View style={{ flex: 1, ...stylesHome.homeTabView, backgroundColor: state.active ? props.activeTheme.default : props.activeTheme.warning, marginVertical: 1, marginHorizontal: 15 }}>
@@ -249,33 +237,17 @@ const ProfileModal = (props) => {
                                 </View>
                                 <Text style={{ marginVertical: 8, marginLeft: 8, ...commonStyles.fontStyles(18, props.activeTheme.black, 4) }}>Working Days:</Text>
                                 <View style={{ flex: 2, width: '100%', flexDirection: 'row', flexWrap: 'nowrap' }}>
-
-                                    {/* {
-                                            ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((item, i) => {
-                                                return <View key={i} style={stylesHome.checkboxContainer}>
-                                                    <CheckBox
-                                                        checked={state.workingDays[i]}
-                                                        onPress={() => setWorkingDay(i)}
-                                                        style={stylesHome.checkbox}
-                                                        color={props.activeTheme.default}
-                                                    />
-                                                    <Text style={stylesHome.label}>{item}</Text>
-                                                </View>
-                                            })
-                                        } */}
                                     {
                                         ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((item, i) => {
-                                            return <View key={i} style={{ backgroundColor: state.workingDays[i] ? props.activeTheme.default : 'white', borderRadius: 5, justifyContent: 'center', alignItems: 'center',height:44, flex:1, margin: 4 }}>
+                                            return <View key={i} style={{ backgroundColor: state.workingDays[i] ? props.activeTheme.default : 'white', borderRadius: 5, justifyContent: 'center', alignItems: 'center', height: 44, flex: 1, margin: 4 }}>
                                                 <Text style={{ ...commonStyles.fontStyles(14, state.workingDays[i] ? 'white' : 'black', 3) }} onPress={() => setWorkingDay(i)}>{item}</Text>
                                             </View>
                                         })
                                     }
                                 </View>
                             </View>
-                            {/* </ScrollView> */}
                             <DefaultBtn
                                 title="Save"
-                                // disabled={checkValidation()?true:false}
                                 backgroundColor={props.activeTheme.default}
                                 onPress={() => onSave()}
                             />
@@ -283,61 +255,75 @@ const ProfileModal = (props) => {
                     </Animated.View>
                 </KeyboardAvoidingView>
                 :
-                <>
-                    <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
-                        <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.timePickMode)}</Text>
+                state.mode === 'confirm' ?
+                    <>
+                        <KeyboardAvoidingView style={{ ...stylesHome.wrapperConfirmation }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0}}>No Working Days Selected</Text>
+                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Are you sure?</Text>
+                            <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false }));dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
+                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); onSave(true);dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
+                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>SAVE{/*SAVE */}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </>
+                    :
+                    <>
+                        <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.timePickMode)}</Text>
 
-                        <View  style={{width:'100%',flexDirection:'row'}}>
-                            <Text style={{ ...stylesHome.caption,paddingLeft:20, width:'50%',left:0, color: '#000' }}>Hour</Text>
-                            <Text style={{ ...stylesHome.caption,paddingLeft:17, width:'50%',left:0, color: '#000' }}>Minutes</Text>
-                        </View>
-                        <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                            <Picker
-                                accessibilityLabel={"hours"}
-                                style={{ zIndex: 500, width: 115 }}
-                                mode="dialog" // "dialog" || "dropdown"
-                                // prompt="Select Hours"
-                                selectedValue={(state.selectedValue || "HH:MM").split(":")[0]}
-                                onValueChange={(value, i) => onTimeChange(value, 0)}
-                            >
-                                {
-                                    Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                        .map((item, i) => (
-                                            <Picker.Item key={i} label={item} value={item} />
-                                        ))
-                                }
-                            </Picker>
+                            <View style={{ width: '100%', flexDirection: 'row' }}>
+                                <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
+                                <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
+                            </View>
+                            <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                                <Picker
+                                    accessibilityLabel={"hours"}
+                                    style={{ zIndex: 500, width: 115 }}
+                                    mode="dialog" // "dialog" || "dropdown"
+                                    // prompt="Select Hours"
+                                    selectedValue={(state.selectedValue || "HH:MM").split(":")[0]}
+                                    onValueChange={(value, i) => onTimeChange(value, 0)}
+                                >
+                                    {
+                                        Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                            .map((item, i) => (
+                                                <Picker.Item key={i} label={item} value={item} />
+                                            ))
+                                    }
+                                </Picker>
 
-                            <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+                                <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
 
-                            <Picker
-                                accessibilityLabel={"minutes"}
-                                style={{ zIndex: 500, width: 115 }}
-                                mode="dialog" // "dialog" || "dropdown"
-                                // prompt="Select Minutes"
-                                selectedValue={(state.selectedValue || "HH:MM").split(":")[1]}
-                                onValueChange={(value, i) => onTimeChange(value, 1)}
-                            >
-                                {
-                                    Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                        .map((item, i) => (
-                                            <Picker.Item key={i} label={item} value={item} />
-                                        ))
-                                }
-                            </Picker>
-                        </View>
-                        <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => {dispatch({type:UPDATE_MODAL_HEIGHT,payload:false});setState(pre => ({ ...pre, mode: false }))}}>
-                                <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
-                            </TouchableOpacity>
-
-
-                            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
-                                <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </KeyboardAvoidingView>
-                </>
+                                <Picker
+                                    accessibilityLabel={"minutes"}
+                                    style={{ zIndex: 500, width: 115 }}
+                                    mode="dialog" // "dialog" || "dropdown"
+                                    // prompt="Select Minutes"
+                                    selectedValue={(state.selectedValue || "HH:MM").split(":")[1]}
+                                    onValueChange={(value, i) => onTimeChange(value, 1)}
+                                >
+                                    {
+                                        Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                            .map((item, i) => (
+                                                <Picker.Item key={i} label={item} value={item} />
+                                            ))
+                                    }
+                                </Picker>
+                            </View>
+                            <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: false })) }}>
+                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
+                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </>
             }
         </View>
     );
@@ -363,6 +349,31 @@ const stylesHome = StyleSheet.create({
     },
     label: {
         margin: 8,
+    },
+    wrapperConfirmation: {
+        // alignItems: 'flex-start',
+        flexDirection: 'column',
+        backgroundColor: '#fff',
+        width: '100%', //'85%'
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        // position: 'absolute',
+        bottom: 0,
+        height: '100%',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        zIndex: 5,
+        shadowColor: '#000',
+        // paddingLeft: 15,
+        // paddingRight: 15,
+        paddingBottom: 30, //15
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
     },
     wrapper: {
         // alignItems: 'flex-start',
