@@ -150,12 +150,12 @@ android {
     }
     signingConfigs {
         release{
-            if (project.hasProperty("my-upload-key.keystore")) {
+            // if (project.hasProperty("my-upload-key.keystore")) {
                 storeFile file("my-upload-key.keystore")
                 storePassword 'jovi123'
                 keyAlias "my-key-alias"
                 keyPassword "jovi123"
-            }
+            // }
         }
         debug {
             storeFile file('debug.keystore')
@@ -171,10 +171,10 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
-            signingConfig signingConfigs.release
-            signingConfig signingConfigs.debug
+            // signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -246,6 +246,9 @@ dependencies {
     }
 
     compile 'com.android.support:multidex:1.0.1'
+    
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+
 
     compile project(':@mauron85_react-native-background-geolocation')
 

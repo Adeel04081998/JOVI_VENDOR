@@ -31,7 +31,7 @@ if (Platform.OS === "android" && Config.BUILD_TYPE === "debug") {
 
 export { APP_MODE, SENDING_LOCATIONS_ENABLED };
 
-export const isJoviCustomerApp =true;
+export const isJoviCustomerApp = true;
 
 export const CONSTANTLATDELTA = 0.0122;
 export const CONSTANTLONGDELTA = (Dimensions.get("window").width / Dimensions.get("window").height) * 0.0122;
@@ -113,7 +113,7 @@ export const BOTTOM_TABS = [
         description: "Add new brand in supermart",
         pitstopOrCheckOutItemType: 1,
         icon: color => commonSvgIcons.footerSuperMarket(color),
-        
+
     },
     // {
     //     title: "Products",
