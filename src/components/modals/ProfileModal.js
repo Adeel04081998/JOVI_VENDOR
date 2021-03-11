@@ -16,6 +16,7 @@ import { closeModalAction } from '../../redux/actions/modal';
 import { postRequest } from '../../services/api';
 import CustomToast from '../../components/toast/CustomToast';
 import dummy from '../../assets/bike.png';
+import dropdownIcon from '../../assets/dropdownIcn.svg';
 import common from '../../assets/svgIcons/common/common';
 import { userAction } from '../../redux/actions/user';
 import { connect } from 'react-redux';
@@ -169,10 +170,16 @@ const ProfileModal = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
+                                    <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%',flexDirection:'row', minWidth: '90%' }}>
                                         {/* <TextInput value={state.brand.text !== '' ? state.brand.text : ''} placeholder={'Choose Brand'}  onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'brand', brand:{...pre.brand,text:val} }))} /> */}
-
                                         <Text>{state.vendor.name ? state.vendor.name : 'Choose Vendor'}</Text>
+                                        <SvgXml
+                                            fill={props.activeTheme.default}
+                                            xml={dropdownIcon}
+                                            width={'5%'}
+                                            style={{position:'absolute',right:-10,top:-5}}
+                                            height={'100%'}
+                                        />
                                     </TouchableOpacity>
                                 </View>
                                 {state.showDropdown === true ? <ScrollView nestedScrollEnabled style={{
