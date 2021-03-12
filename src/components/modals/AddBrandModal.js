@@ -15,6 +15,7 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
 import CustomToast from '../../components/toast/CustomToast';
 import { postRequest } from '../../services/api';
+import dropdownIcon from '../../assets/dropdownIcn.svg';
 const AddBrandModal = (props) => {
     const { brandList,relevantProductID,type,productObj,itemReplace,brandObj } = props;
     console.log('OBJ:',brandObj)
@@ -286,6 +287,13 @@ const AddBrandModal = (props) => {
                                 }}>
                                     <TouchableOpacity onPress={  () => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                         <Text>{state.product.text ? state.product.text : 'Choose Product'}</Text>
+                                        <SvgXml
+                                            fill={props.activeTheme.default}
+                                            xml={dropdownIcon}
+                                            width={'5%'}
+                                            style={{position:'absolute',right:-10,top:-5}}
+                                            height={'100%'}
+                                        />
                                     </TouchableOpacity>
                                 </View>
                                 {state.showDropdown === 'product' ? <ScrollView onScrollEndDrag={(e) => {

@@ -18,6 +18,7 @@ import { closeModalAction } from '../../redux/actions/modal';
 const AddUpdateDealModal = (props) => {
     const { dispatch, updateDeal } = props;
     // console.log(item)
+    let currentDate = (new Date().getDay()<10?'0'+new Date().getDay():new Date().getDay().toString())+'/'+(new Date().getMonth()<10?'0'+new Date().getMonth():new Date().getMonth().toString())+'/'+(new Date().getFullYear())+' 00:00';
     const [state, setState] = useState({
         showDropdown: false,
         deal: updateDeal !== null ? { ...updateDeal, inActiveIndex: updateDeal.isActive === true ? 0 : 1 } : {
@@ -41,8 +42,9 @@ const AddUpdateDealModal = (props) => {
         selectedProduct: {},
         showDropdown: '',
         mode: '',
-        selectedDate: 'DD/MM/YYYY',
+        selectedDate: '',
     })
+    console.log(state)
     const onDropdownClick = (dropdownTitle) => {
         setState(pre => ({ ...pre, showDropdown: pre.showDropdown !== '' ? '' : dropdownTitle }));
     }
@@ -62,9 +64,16 @@ const AddUpdateDealModal = (props) => {
         selectedVal[index] = val;
         setState(pre => ({ ...pre, selectedDate: selectedVal.join('/') }));
     }
+    const onTimeChange = (val, index) => {
+        let selectedVal = state.selectedDate.split(' ');
+        let selectedTime = state.selectedDate[1].split(':');
+        selectedTime[index] = val;
+        selectedVal[1]=selectedTime;
+        setState(pre => ({ ...pre, selectedDate: selectedVal.join(' ') }));
+    }
     const setDatePickerState = (varName) => {
-        setState(pre => ({ ...pre, selectedDate: pre.deal[varName], mode: varName }));
-        dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.3 });
+        setState(pre => ({ ...pre, selectedDate: pre.deal[varName]===''?currentDate:pre.deal[varName], mode: varName }));
+        dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.5 });
     }
     const updateDealOptions = (item, firstIndex, secondIndex) => {
         let newState = state;
@@ -320,9 +329,6 @@ const AddUpdateDealModal = (props) => {
             </TouchableOpacity>
         ));
     }
-    useEffect(() => {
-        console.log(state)
-    }, [state])
     return (
         <View style={{ ...StyleSheet.absoluteFill }}>
 
@@ -644,13 +650,13 @@ const AddUpdateDealModal = (props) => {
                                 <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '33.3%', left: 0, color: '#000' }}>Month</Text>
                                 <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '33.3%', left: 0, color: '#000' }}>Year</Text>
                             </View>
-                            <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                            <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
                                 <Picker
                                     accessibilityLabel={"day"}
                                     style={{ zIndex: 500, width: 70 }}
                                     mode="dialog" // "dialog" || "dropdown"
                                     // prompt="Select Hours"
-                                    selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[0]}
+                                    selectedValue={state.selectedDate!==''?state.selectedDate.split("/")[0]:(new Date().getDay()<10?'0'+new Date().getDay():new Date().getDay().toString())}
                                     onValueChange={(value, i) => onDateChange(value, 0)}
                                 >
                                     {
@@ -660,15 +666,13 @@ const AddUpdateDealModal = (props) => {
                                             ))
                                     }
                                 </Picker>
-
-                                {/* <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>/</Text> */}
-
                                 <Picker
                                     accessibilityLabel={"month"}
                                     style={{ zIndex: 500, width: 70 }}
                                     mode="dialog" // "dialog" || "dropdown"
                                     // prompt="Select Minutes"
-                                    selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[1]}
+                                    selectedValue={state.selectedDate!==''?state.selectedDate.split("/")[1]:(new Date().getMonth()<10?'0'+new Date().getMonth():new Date().getMonth().toString())}
+                                    // selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[1]}
                                     onValueChange={(value, i) => onDateChange(value, 1)}
                                 >
                                     {
@@ -678,15 +682,13 @@ const AddUpdateDealModal = (props) => {
                                             ))
                                     }
                                 </Picker>
-
-                                {/* <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>/</Text> */}
-
                                 <Picker
                                     accessibilityLabel={"year"}
                                     style={{ zIndex: 500, width: 70 }}
                                     mode="dialog" // "dialog" || "dropdown"
                                     // prompt="Select Minutes"
-                                    selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[2]}
+                                    selectedValue={state.selectedDate!==''?state.selectedDate.split("/")[2]:(new Date().getFullYear().toString())}
+                                    // selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[2]}
                                     onValueChange={(value, i) => onDateChange(value, 2)}
                                 >
                                     {
@@ -697,12 +699,51 @@ const AddUpdateDealModal = (props) => {
                                     }
                                 </Picker>
                             </View>
+                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Time</Text>
+
+                            <View style={{ width: '100%', flexDirection: 'row' }}>
+                                <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
+                                <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
+                            </View>
+                            <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                                <Picker
+                                    accessibilityLabel={"hours"}
+                                    style={{ zIndex: 500, width: 115 }}
+                                    mode="dialog" // "dialog" || "dropdown"
+                                    // prompt="Select Hours"
+                                    selectedValue={(state.selectedDate.split(' ')[0] || "HH:MM").split(":")[0]}
+                                    onValueChange={(value, i) => onTimeChange(value, 0)}
+                                >
+                                    {
+                                        Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                            .map((item, i) => (
+                                                <Picker.Item key={i} label={item} value={item} />
+                                            ))
+                                    }
+                                </Picker>
+
+                                <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+
+                                <Picker
+                                    accessibilityLabel={"minutes"}
+                                    style={{ zIndex: 500, width: 115 }}
+                                    mode="dialog" // "dialog" || "dropdown"
+                                    // prompt="Select Minutes"
+                                    selectedValue={(state.selectedDate.split(' ')[1] || "HH:MM").split(":")[1]}
+                                    onValueChange={(value, i) => onTimeChange(value, 1)}
+                                >
+                                    {
+                                        Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                            .map((item, i) => (
+                                                <Picker.Item key={i} label={item} value={item} />
+                                            ))
+                                    }
+                                </Picker>
+                            </View>
                             <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
                                 <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: '' })) }}>
                                     <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
                                 </TouchableOpacity>
-
-
                                 <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveDate()}>
                                     <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
                                 </TouchableOpacity>

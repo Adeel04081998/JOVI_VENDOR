@@ -280,10 +280,11 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
                     attachOrderRecieveModal();
                     attachVendorSkipEvent();
                     attachVendorCompleteJobEvent();
+                    attachVendorOrderCancelEvent();
                 }
                 else {
                     attachSignalRLogoutHandler(postRequest);
-                    attachSignalRIncomingOrderHandler();
+                    // attachSignalRIncomingOrderHandler();
                 }
             }
         } catch (err) {
@@ -623,6 +624,32 @@ export const attachVendorCompleteJobEvent = () => {
 export const attachVendorSkipEvent = () => {
     getHubConnectionInstance('VendorJobSkipped')?.on('VendorJobSkipped', (orderId, orderMsg) => {
         console.log('---------------------------> On Vendor Skipped Signal R: ', orderId, orderMsg);
+        store.dispatch({
+            type: OPEN_MODAL,
+            payload: {
+                visible: false,
+                transparent: true,
+                okHandler: null,
+                onRequestCloseHandler: null,
+                ModalContent: null,
+                orderRecievedCheck: new Date().getTime(),
+                notificationModalVisible: true,
+                notificationModalContent: { orderId, orderMsg },
+                vendorSkipped:true,
+                modalContentNotification: null,
+                modalFlex: null,
+                modalHeightDefault: null,
+                modelViewPadding: 35,
+                fadeAreaViewFlex: 1,
+                fadeAreaViewStyle: {},
+                imageViewState: {},
+            }
+        })
+    });
+};
+export const attachVendorOrderCancelEvent = () => {
+    getHubConnectionInstance('VendorOrderCancelled')?.on('VendorOrderCancelled', (orderId, orderMsg) => {
+        console.log('---------------------------> On Vendor Order Cancelled Signal R: ', orderId, orderMsg);
         store.dispatch({
             type: OPEN_MODAL,
             payload: {
