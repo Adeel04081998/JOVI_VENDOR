@@ -22,7 +22,6 @@ import UpdateR_Product from '../../components/modals/UpdateR_ProductModal';
 
 function RestaurantProducts(props) {
     const { navigation, userObj, activeTheme } = props;
-    console.log(navigation.dangerouslyGetState()?.routes)
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item?.name === 'ProductsRes')[0]?.params?.item;
     const [state, setState] = useState({
         productList: [],
@@ -151,6 +150,7 @@ function RestaurantProducts(props) {
                                     <View style={{ flex: 0.9 }}>
                                         <Text style={{...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{item.productName}</Text>
                                         <Text style={{ ...tabStyles.tabDescription(10, props.activeTheme.black, 1, '300') }}>{item.description.toLocaleUpperCase()}</Text>
+                                        <Text style={{ ...tabStyles.tabDescription(12, props.activeTheme.black, 4) }}>Rs.{item.basePrice}</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>

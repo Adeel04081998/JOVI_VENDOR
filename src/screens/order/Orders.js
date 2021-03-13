@@ -107,7 +107,7 @@ function Orders(props) {
             <View style={{ zIndex: 1, flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
-                    <Text style={{ marginRight: 14 }}>Total: {state.orderList.length < 1 ? '0' : state.orderList.length < 10 ? '0' + state.orderList.length : state.orderList.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.paginationInfo.totalItems < 1 ? '0' : state.paginationInfo.totalItems < 10 ? '0' + state.paginationInfo.totalItems : state.paginationInfo.totalItems}</Text>
                 </View>
                 <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }}
                     onScroll={(e) => {

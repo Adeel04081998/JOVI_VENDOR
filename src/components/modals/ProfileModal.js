@@ -39,6 +39,9 @@ const ProfileModal = (props) => {
         workingDays: weekArr,
         vendorList: props?.user?.vendorPitstopDetailsList?.map(item => { return { ...item, text: item.personName } }),
         vendor: props?.user?.vendorPitstopDetailsList[0],
+        wallet: {},
+        walletTransactions: [],
+        walletPagination: { itemsPerPage: 10 }
     })
     const onDropdownClick = () => {
         setState(prevState => ({ ...prevState, showDropdown: !prevState.showDropdown }));
@@ -75,7 +78,7 @@ const ProfileModal = (props) => {
     const setWorkingDay = (i) => {
         let wrkingD = state.workingDays;
         wrkingD[i] = !wrkingD[i];
-        console.log(wrkingD)
+        // console.log(wrkingD)
         setState(pre => ({
             ...pre,
             workingDays: wrkingD
@@ -130,11 +133,32 @@ const ProfileModal = (props) => {
         setState(pre => ({ ...pre, selectedValue: pre[varName], timePickMode: varName, mode: true }));
         dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.3 });
     }
+    const getBalanceData = (itemPerPage=false) => {
+        postRequest('Api/Vendor/WalletDetails', {
+            "pageNumber": 1,
+            "itemsPerPage":itemPerPage!==false?itemPerPage:state.walletPagination.itemsPerPage,
+        }, {}, props.dispatch, (res) => {
+            console.log('Wallet Request ------->', res)
+            setState(pre => ({
+                ...pre,
+                wallet: res?.data?.transactions?.walletVM,
+                walletTransactions: res?.data?.transactions?.walletTransactionData,
+                walletPagination: res?.data?.transactions?.paginationInfo,
+            }))
+        }, (err) => {
+            if (err.status === 400) error400(err)
+            else CustomToast.error('Something went wrong!');
+        });
+    }
     useEffect(useCallback(() => {
         // getData();
+        getBalanceData();
         return () => {
             setState({
                 ...state,
+                wallet: {},
+                walletTransactions: [],
+                walletPagination: { itemsPerPage: 10 }
             })
         };
     }, []), []);
@@ -149,9 +173,9 @@ const ProfileModal = (props) => {
                                 <View style={{ backgroundColor: props.activeTheme.warning, padding: 5, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => { props.dispatch(closeModalAction()); sharedlogoutUser(props.navigation, postRequest, props.dispatch, props.user, false) }}>Logout</Text></View>
 
                             </View>
-                            {/* <View style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }}>
-                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 4) }}>Balance: 4234</Text>
-                            </View> */}
+                            <TouchableOpacity style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }} onPress={() => setState(pre => ({ ...pre, mode: 'balance_modal' }))}>
+                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 4) }}>Balance: {props.user?.balance}</Text>
+                            </TouchableOpacity>
                             {/* <Text style={styles.catpion(props.activeTheme),{width:50,alignSelf:'flex-start'}}>Profile</Text> */}
                             {/* <Text style={{alignSelf:'flex-end'}}>Logout</Text> */}
                             {/* <ScrollView style={{ flex: 1, marginBottom: 30 }} keyboardShouldPersistTaps="always"> */}
@@ -170,14 +194,14 @@ const ProfileModal = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%',flexDirection:'row', minWidth: '90%' }}>
+                                    <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', flexDirection: 'row', minWidth: '90%' }}>
                                         {/* <TextInput value={state.brand.text !== '' ? state.brand.text : ''} placeholder={'Choose Brand'}  onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'brand', brand:{...pre.brand,text:val} }))} /> */}
                                         <Text>{state.vendor.name ? state.vendor.name : 'Choose Vendor'}</Text>
                                         <SvgXml
                                             fill={props.activeTheme.default}
                                             xml={dropdownIcon}
                                             width={'5%'}
-                                            style={{position:'absolute',right:-10,top:-5}}
+                                            style={{ position: 'absolute', right: -10, top: -5 }}
                                             height={'100%'}
                                         />
                                     </TouchableOpacity>
@@ -262,75 +286,130 @@ const ProfileModal = (props) => {
                     </Animated.View>
                 </KeyboardAvoidingView>
                 :
-                state.mode === 'confirm' ?
+                state.mode === 'balance_modal' ?
                     <>
                         <KeyboardAvoidingView style={{ ...stylesHome.wrapperConfirmation }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
-                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0}}>No Working Days Selected</Text>
-                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Are you sure?</Text>
-                            <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false }));dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
-                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); onSave(true);dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
-                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>SAVE{/*SAVE */}</Text>
-                                </TouchableOpacity>
+                            <View style={{ flex: 1, ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
+                                <View style={{ justifyContent: 'flex-start', width: '100%' }}>
+                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Wallet</Text>
+                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Balance: {state.wallet.balance}</Text>
+                                </View>
+                                <ScrollView style={{ flex: 1, marginBottom: 30, width: '100%' }}
+                                    onScroll={(e) => {
+                                        let paddingToBottom = 10;
+                                        paddingToBottom += e.nativeEvent.layoutMeasurement.height;
+                                        if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
+                                            // make something...
+                                            if (state.walletPagination.itemsPerPage < state.walletPagination.totalItems) {
+                                                getBalanceData(state.walletPagination.itemsPerPage+10);
+                                            }
+                                        }
+                                    }
+                                    }
+                                >
+                                    {
+                                        state.walletTransactions.map((item, i) => {
+                                            return <View key={i} style={{ height: 90, width: '97%', marginHorizontal: 7, marginVertical: 5, borderWidth: 1, borderColor: props.activeTheme.borderColor, borderRadius: 10 }}>
+                                                <View style={{ width: '100%', paddingHorizontal: 5, paddingTop: 5, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                    <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.default, 4) }}>Order No: {item.orderID}</Text>
+                                                    <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.grey, 3) }}>{item.dateTime}</Text>
+                                                </View>
+                                                <View style={{ width: '100%', justifyContent: 'space-between', marginTop: 5, paddingHorizontal: 5, flexDirection: 'row' }}>
+                                                    <View style={{ height: 40 }}>
+                                                        <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Total</Text>
+                                                        <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
+                                                    </View>
+                                                    <View style={{ height: 40 }}>
+                                                        <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Vendor</Text>
+                                                        <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
+                                                    </View>
+                                                    <View style={{ height: 40 }}>
+                                                        <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Jovi</Text>
+                                                        <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        })
+                                    }
+                                </ScrollView>
+                                <View style={{ position: 'absolute', bottom: -30, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                    <TouchableOpacity style={{ width: '100%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); }}>
+                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>Back</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </KeyboardAvoidingView>
                     </>
                     :
-                    <>
-                        <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
-                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.timePickMode)}</Text>
+                    state.mode === 'confirm' ?
+                        <>
+                            <KeyboardAvoidingView style={{ ...stylesHome.wrapperConfirmation }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>No Working Days Selected</Text>
+                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Are you sure?</Text>
+                                <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                    <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
+                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); onSave(true); dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
+                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>SAVE{/*SAVE */}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </KeyboardAvoidingView>
+                        </>
+                        :
+                        <>
+                            <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.timePickMode)}</Text>
 
-                            <View style={{ width: '100%', flexDirection: 'row' }}>
-                                <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                            </View>
-                            <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                <Picker
-                                    accessibilityLabel={"hours"}
-                                    style={{ zIndex: 500, width: 115 }}
-                                    mode="dialog" // "dialog" || "dropdown"
-                                    // prompt="Select Hours"
-                                    selectedValue={(state.selectedValue || "HH:MM").split(":")[0]}
-                                    onValueChange={(value, i) => onTimeChange(value, 0)}
-                                >
-                                    {
-                                        Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                            .map((item, i) => (
-                                                <Picker.Item key={i} label={item} value={item} />
-                                            ))
-                                    }
-                                </Picker>
+                                <View style={{ width: '100%', flexDirection: 'row' }}>
+                                    <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
+                                    <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
+                                </View>
+                                <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                                    <Picker
+                                        accessibilityLabel={"hours"}
+                                        style={{ zIndex: 500, width: 115 }}
+                                        mode="dialog" // "dialog" || "dropdown"
+                                        // prompt="Select Hours"
+                                        selectedValue={(state.selectedValue || "HH:MM").split(":")[0]}
+                                        onValueChange={(value, i) => onTimeChange(value, 0)}
+                                    >
+                                        {
+                                            Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                .map((item, i) => (
+                                                    <Picker.Item key={i} label={item} value={item} />
+                                                ))
+                                        }
+                                    </Picker>
 
-                                <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+                                    <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
 
-                                <Picker
-                                    accessibilityLabel={"minutes"}
-                                    style={{ zIndex: 500, width: 115 }}
-                                    mode="dialog" // "dialog" || "dropdown"
-                                    // prompt="Select Minutes"
-                                    selectedValue={(state.selectedValue || "HH:MM").split(":")[1]}
-                                    onValueChange={(value, i) => onTimeChange(value, 1)}
-                                >
-                                    {
-                                        Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                            .map((item, i) => (
-                                                <Picker.Item key={i} label={item} value={item} />
-                                            ))
-                                    }
-                                </Picker>
-                            </View>
-                            <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: false })) }}>
-                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
-                                    <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </KeyboardAvoidingView>
-                    </>
+                                    <Picker
+                                        accessibilityLabel={"minutes"}
+                                        style={{ zIndex: 500, width: 115 }}
+                                        mode="dialog" // "dialog" || "dropdown"
+                                        // prompt="Select Minutes"
+                                        selectedValue={(state.selectedValue || "HH:MM").split(":")[1]}
+                                        onValueChange={(value, i) => onTimeChange(value, 1)}
+                                    >
+                                        {
+                                            Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                .map((item, i) => (
+                                                    <Picker.Item key={i} label={item} value={item} />
+                                                ))
+                                        }
+                                    </Picker>
+                                </View>
+                                <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                    <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: false })) }}>
+                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
+                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </KeyboardAvoidingView>
+                        </>
             }
         </View>
     );

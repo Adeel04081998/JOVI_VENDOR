@@ -154,6 +154,24 @@ const UpdateR_Product = (props) => {
                                 </TouchableOpacity> */}
                                     <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.product.basePrice?.toString()} onChangeText={(val) => setState(pre => ({ ...pre, product: { ...pre.product, basePrice: val.includes(' ')||val.includes('-')?pre.product.basePrice:val } }))} />
                                 </View>
+                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                        Description
+                                </Text>
+                                    <View style={{
+                                        paddingHorizontal: 12,
+                                        borderWidth: 1,
+                                        borderRadius: 5,
+                                        borderColor: 'rgba(0,0,0,0.1)',
+                                        backgroundColor: 'transparent',
+                                        height: 100,
+                                        justifyContent: 'flex-start',
+                                        alignContent: 'center',
+                                        alignItems: 'center',
+                                        flexDirection: 'row'
+                                    }}>
+                                        {/* <TextInput value={state.product.description} multiline={true} numberOfLines={5} placeholder={'Description'} onChangeText={(val) => setState(pre => ({ ...pre,product:{...pre.product,description:val} }))} /> */}
+                                        <Text>{state.product.description}</Text>
+                                    </View>
                                 {state.product.itemGroupedOptions && state.product.itemGroupedOptions.length > 0 ?
                                     state.product.itemGroupedOptions.map((it, i) => {
                                         return <View key={i} style={{ marginVertical: 5, paddingBottom: 0, }}>
