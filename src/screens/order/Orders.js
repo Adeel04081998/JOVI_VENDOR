@@ -121,17 +121,6 @@ function Orders(props) {
                         }
                     }
                     }
-                //  onScrollEndDrag={(e) => {
-                //                     e.persist();
-                //                     setHorizontalScrollState(pre => ({ ...pre, lastOffset: e.nativeEvent.contentOffset.y }));
-                //                     if (e.nativeEvent.contentOffset.y > horizontalScrollState.lastOffset) {
-                //                         debugger;
-                //                         console.log(e.nativeEvent.contentOffset.y,horizontalScrollState.lastOffset,state.paginationInfo)
-                //                         if (state.paginationInfo.itemsPerPage < state.paginationInfo.totalItems) {
-                //                             getData();
-                //                         }
-                //                     }
-                //                 }}
                 >
                     {
                         state.orderList.length < 1 ?

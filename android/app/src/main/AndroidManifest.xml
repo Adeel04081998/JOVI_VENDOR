@@ -26,6 +26,7 @@
       android:theme="@style/AppTheme"
       android:windowSoftInputMode="adjustResize"
       android:requestLegacyExternalStorage="true"
+      android:networkSecurityConfig="@xml/network_security_config"
       >
     <!-- android:networkSecurityConfig="@xml/network_security_config" -->
      <!-- For background notification actions -->
@@ -66,7 +67,7 @@
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
       <meta-data
      android:name="com.google.android.geo.API_KEY"
-     android:value="AIzaSyBKJWO9UCRwJUDjUhRl9pEZgYnzayeARAg"/>
+     android:value="AIzaSyBBQktq4PCNXWX5xNnIt8t4yRS2k4v6yGU"/>
      <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
      <!-- For local push notification small icon -->

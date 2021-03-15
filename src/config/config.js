@@ -36,7 +36,7 @@ export const isJoviCustomerApp = true;
 export const CONSTANTLATDELTA = 0.0122;
 export const CONSTANTLONGDELTA = (Dimensions.get("window").width / Dimensions.get("window").height) * 0.0122;
 
-export const GOOGLE_API_KEY = "AIzaSyBKJWO9UCRwJUDjUhRl9pEZgYnzayeARAg";
+export const GOOGLE_API_KEY = "AIzaSyBBQktq4PCNXWX5xNnIt8t4yRS2k4v6yGU";
 
 // export let BASE_URL = "https://jovi-api-qa.cibak.pk";
 // export let BASE_URL = "https://fbc91790fb76.ngrok.io";
@@ -105,7 +105,7 @@ export const extractBaseURLFromExternalConfigFile = async () => {
             });
     }
 };
-// extractBaseURLFromExternalConfigFile(); 
+extractBaseURLFromExternalConfigFile(); 
 
 export const BOTTOM_TABS = [
     {

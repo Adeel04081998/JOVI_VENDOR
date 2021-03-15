@@ -44,7 +44,7 @@ const AddUpdateDealModal = (props) => {
         mode: '',
         selectedDate: '',
     })
-    console.log(state)
+    console.log("Date: ",(currentDate.split(' ')[1] || "HH:MM").split(":")[0])
     const onDropdownClick = (dropdownTitle) => {
         setState(pre => ({ ...pre, showDropdown: pre.showDropdown !== '' ? '' : dropdownTitle }));
     }
@@ -55,7 +55,7 @@ const AddUpdateDealModal = (props) => {
                 [pre.mode]: pre.selectedDate,
             },
             mode: '',
-            selectedDate: 'DD/MM/YYYY',
+            selectedDate: '',
         }));
         dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false });
     }
@@ -65,10 +65,11 @@ const AddUpdateDealModal = (props) => {
         setState(pre => ({ ...pre, selectedDate: selectedVal.join('/') }));
     }
     const onTimeChange = (val, index) => {
-        let selectedVal = state.selectedDate.split(' ');
-        let selectedTime = state.selectedDate[1].split(':');
+        let selectedVal = state.selectedDate?.split(' ');
+        let selectedTime = selectedVal[1]?.split(':');
         selectedTime[index] = val;
-        selectedVal[1]=selectedTime;
+        selectedVal[1]=selectedTime.join(':');
+        console.log('Test:',selectedVal,selectedVal.join(' '))
         setState(pre => ({ ...pre, selectedDate: selectedVal.join(' ') }));
     }
     const setDatePickerState = (varName) => {
@@ -479,7 +480,7 @@ const AddUpdateDealModal = (props) => {
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     {/* <ImageBackground source={{ uri: 'file:///storage/emulated/0/Pictures/images/image-a93ff1b6-0a80-4474-b4b3-d924b6749f11.jpg' }} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10, height: 170 }}> */}
-                                    <ImageBackground source={state.deal.dealImagesList && state.deal.dealImagesList.length > 0 ? { uri: state.picturePicked === true ? state.deal.dealImagesList[0].joviImage : renderPicture(state.deal.dealImagesList[0].joviImage) } : ''} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10, height: 170 }}>
+                                    <ImageBackground source={state.deal.dealImagesList && state.deal.dealImagesList.length > 0 ? { uri: state.picturePicked === true ? state.deal.dealImagesList[0].joviImage : renderPicture(state.deal.dealImagesList[0].joviImage) } : ''} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10,height:220 }}>
                                         <TouchableOpacity onPress={() => takePictureHandler(true)}>
                                             <SvgXml xml={modalCam} height={40} width={40} style={{ alignSelf: 'flex-end', marginHorizontal: 10 }} />
                                         </TouchableOpacity>
@@ -711,7 +712,7 @@ const AddUpdateDealModal = (props) => {
                                     style={{ zIndex: 500, width: 115 }}
                                     mode="dialog" // "dialog" || "dropdown"
                                     // prompt="Select Hours"
-                                    selectedValue={(state.selectedDate.split(' ')[0] || "HH:MM").split(":")[0]}
+                                    selectedValue={(state.selectedDate.split(' ')[1] || "HH:MM").split(":")[0]}
                                     onValueChange={(value, i) => onTimeChange(value, 0)}
                                 >
                                     {
