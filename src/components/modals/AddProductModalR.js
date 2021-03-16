@@ -31,6 +31,11 @@ const AddProductModalR = (props) => {
         //     lastOffset: 0
         // });
     }
+    const onTimeChange = (val, index,key) => {
+        let selectedTime = state.selectedProduct[key].split(':');
+        selectedTime[index] = val;
+        setState(pre => ({ ...pre, selectedProduct: {...pre.selectedProduct,[key]:selectedTime.join(':')}}));
+    }
     const changeAttribute = (e, i, j, varName) => {
         let selectedP = state.selectedProduct;
         if (varName === 'isActive') {
@@ -47,25 +52,28 @@ const AddProductModalR = (props) => {
         let payload = {
             "genericProductList": state.addedItems.map(it => {
                 let attrList = [];
-                it.attributeTypeGroupedList?.map(itt=>{
-                    itt.productAttributeList.map(attr=>{
+                it.attributeTypeGroupedList?.map(itt => {
+                    itt.productAttributeList.map(attr => {
                         attrList.push({
-                            addOnPrice:attr.price,
-                            isActive:attr.isActive,
-                            productAttributeID:attr.attributeID
+                            addOnPrice: attr.price,
+                            isActive: attr.isActive,
+                            productAttributeID: attr.attributeID
                         })
                     })
                 });
                 return {
                     "genericProductID": it.genericProductID,
                     "baseprice": it.basePrice,
-                    "productAttributes":attrList
+                    "preparationTime": it.preparationTime,
+                    "availableStartTime": it.availableStartTime,
+                    "availableEndTime": it.availableEndTime,
+                    "productAttributes": attrList
                 }
             }),
             "pitstopID": props.user.pitstopID
         }
-        console.log('Assign Product: ',payload);
-        postRequest('Api/Vendor/Restaurant/AssignPitstopProduct',payload, {}, props.dispatch, (res) => {
+        console.log('Assign Product: ', payload);
+        postRequest('Api/Vendor/Restaurant/AssignPitstopProduct', payload, {}, props.dispatch, (res) => {
             //   console.log('On Assign Brand:',res,state.item.map(item=>{return item.itemID}),state.product);
             CustomToast.success("Product Successfully Assigned");
             if (props.onSave) {
@@ -73,7 +81,7 @@ const AddProductModalR = (props) => {
             }
             props.dispatch(closeModalAction());
         }, (err) => {
-            if(err.statusCode ===404) CustomToast.error(err.message);
+            if (err.statusCode === 404) CustomToast.error(err.message);
             else if (err) CustomToast.error("Something went wrong!");
         }, '');
     }
@@ -196,7 +204,7 @@ const AddProductModalR = (props) => {
                                 borderBottomLeftRadius: 10,
                                 borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                             }} keyboardShouldPersistTaps="always">
-                                {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', selectedProduct: e, mode: 'select-attr' })); }, state.filter)}
+                                {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', selectedProduct: {...e,preparationTime:'00:00',availableStartTime:'00:00',availableEndTime:'00:00'}, mode: 'select-attr' })); }, state.filter)}
                                 {/* {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', addedItems: prevState.addedItems.filter(item => item.productID === e.productID).length < 1 ? [...prevState.addedItems, e] : prevState.addedItems })); }, state.filter)} */}
                             </ScrollView>
                                 :
@@ -250,6 +258,127 @@ const AddProductModalR = (props) => {
                                 }}>
                                     <TextInput keyboardType='numeric' style={{}} onChangeText={(val) => { setState(pre => ({ ...pre, selectedProduct: { ...pre.selectedProduct, basePrice: val } })) }} value={state.selectedProduct.basePrice.toString()} />
                                 </View>
+                                <>
+                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Preparation Time</Text>
+                                    <View style={{ width: '100%', flexDirection: 'row' }}>
+                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
+                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
+                                    </View>
+                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20,flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                                        <Picker
+                                            accessibilityLabel={"hours"}
+                                            style={{ zIndex: 500, width: 115 }}
+                                            mode="dialog" // "dialog" || "dropdown"
+                                            // prompt="Select Hours"
+                                            selectedValue={(state.selectedProduct.preparationTime || "HH:MM").split(":")[0]}
+                                            onValueChange={(value, i) => onTimeChange(value, 0,'preparationTime')}
+                                        >
+                                            {
+                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                    .map((item, i) => (
+                                                        <Picker.Item key={i} label={item} value={item} />
+                                                    ))
+                                            }
+                                        </Picker>
+
+                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+
+                                        <Picker
+                                            accessibilityLabel={"minutes"}
+                                            style={{ zIndex: 500, width: 115 }}
+                                            mode="dialog" // "dialog" || "dropdown"
+                                            // prompt="Select Minutes"
+                                            selectedValue={(state.selectedProduct.preparationTime || "HH:MM").split(":")[1]}
+                                            onValueChange={(value, i) => onTimeChange(value, 1,'preparationTime')}
+                                        >
+                                            {
+                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                    .map((item, i) => (
+                                                        <Picker.Item key={i} label={item} value={item} />
+                                                    ))
+                                            }
+                                        </Picker>
+                                    </View>
+                                </>
+                                <>
+                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Available Time</Text>
+                                    <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4), left: 10 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Start Time</Text>
+                                    <View style={{ width: '100%', flexDirection: 'row' }}>
+                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
+                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
+                                    </View>
+                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20,flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                                        <Picker
+                                            accessibilityLabel={"hours"}
+                                            style={{ zIndex: 500, width: 115 }}
+                                            mode="dialog" // "dialog" || "dropdown"
+                                            selectedValue={(state.selectedProduct.availableStartTime || "HH:MM").split(":")[0]}
+                                            onValueChange={(value, i) => onTimeChange(value, 0,'availableStartTime')}
+                                        >
+                                            {
+                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                    .map((item, i) => (
+                                                        <Picker.Item key={i} label={item} value={item} />
+                                                    ))
+                                            }
+                                        </Picker>
+                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+                                        <Picker
+                                            accessibilityLabel={"minutes"}
+                                            style={{ zIndex: 500, width: 115 }}
+                                            mode="dialog" // "dialog" || "dropdown"
+                                            selectedValue={(state.selectedProduct.availableStartTime || "HH:MM").split(":")[1]}
+                                            onValueChange={(value, i) => onTimeChange(value, 1,'availableStartTime')}
+                                        >
+                                            {
+                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                    .map((item, i) => (
+                                                        <Picker.Item key={i} label={item} value={item} />
+                                                    ))
+                                            }
+                                        </Picker>
+                                    </View>
+                                </>
+                                <>
+                                    <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4), left: 10 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>End Time</Text>
+                                    <View style={{ width: '100%', flexDirection: 'row' }}>
+                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
+                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
+                                    </View>
+                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                                        <Picker
+                                            accessibilityLabel={"hours"}
+                                            style={{ zIndex: 500, width: 115 }}
+                                            mode="dialog" // "dialog" || "dropdown"
+                                            // prompt="Select Hours"
+                                            selectedValue={(state.selectedProduct.availableEndTime || "HH:MM").split(":")[0]}
+                                            onValueChange={(value, i) => onTimeChange(value, 0,'availableEndTime')}
+                                        >
+                                            {
+                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                    .map((item, i) => (
+                                                        <Picker.Item key={i} label={item} value={item} />
+                                                    ))
+                                            }
+                                        </Picker>
+                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+                                        <Picker
+                                            accessibilityLabel={"minutes"}
+                                            style={{ zIndex: 500, width: 115 }}
+                                            mode="dialog" // "dialog" || "dropdown"
+                                            // prompt="Select Minutes"
+                                            selectedValue={(state.selectedProduct.availableEndTime || "HH:MM").split(":")[1]}
+                                            onValueChange={(value, i) => onTimeChange(value, 1,'availableEndTime')}
+                                        >
+                                            {
+                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                    .map((item, i) => (
+                                                        <Picker.Item key={i} label={item} value={item} />
+                                                    ))
+                                            }
+                                        </Picker>
+                                    </View>
+                                </>
                                 {
                                     state.selectedProduct.attributeTypeGroupedList.map((item, i) => {
                                         return <View key={i} style={{ width: '100%' }}>
