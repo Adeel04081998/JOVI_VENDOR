@@ -68,13 +68,13 @@ const AddBrandModal = (props) => {
               props.dispatch(closeModalAction());
         },(err)=>{},'');
     }
-    const renderSelectionList = (options, onChange, filter = false) => {
+    const renderSelectionList = (options, onChange, filter = false,title='Product') => {
         // let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
         let optionsFilter = filter !== false ? options.filter(item => { return item.text.toLowerCase().includes(filter.toLowerCase()) }) : options;
         if(optionsFilter.length<1){
             return <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' }));}} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
-                height: 40,
+                height: 50,
                 justifyContent: "space-between",
                 backgroundColor: 'white',
                 zIndex: 999,
@@ -87,7 +87,7 @@ const AddBrandModal = (props) => {
                 borderBottomWidth: 0,
 
             }}>
-                <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>No Data Found</Text>
+                <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>{title} Not Listed Contact Your Account Manager</Text>
             </TouchableOpacity>
         }
         return optionsFilter.map((r, i) => (
@@ -264,7 +264,7 @@ const AddBrandModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10
                                     }} > */}
-                                    {renderSelectionList(state.brandList, (e) => {Keyboard.dismiss(); setState(prevState => ({ ...prevState, brand: e,product:'',item:[],itemName:'' })); getProductAgainstBrand(e); },state.brand.text)}
+                                    {renderSelectionList(state.brandList, (e) => {Keyboard.dismiss(); setState(prevState => ({ ...prevState, brand: e,product:'',item:[],itemName:'' })); getProductAgainstBrand(e); },state.brand.text,'Brand')}
 
                                     {/* </View> */}
                                 </ScrollView>
@@ -317,7 +317,7 @@ const AddBrandModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10
                                     }} >
-                                        {renderSelectionList(state.productList, (e) => { setState(prevState => ({ ...prevState, product: e })); getItemsAgainstProduct(e); })}
+                                        {renderSelectionList(state.productList, (e) => { setState(prevState => ({ ...prevState, product: e })); getItemsAgainstProduct(e); },false,'Product')}
 
                                     </View>
                                 </ScrollView>
@@ -356,7 +356,7 @@ const AddBrandModal = (props) => {
                                         borderBottomLeftRadius: 10,
                                         borderBottomRightRadius: 10
                                     }} >
-                                        {renderSelectionList(state.itemsList, (e) => { setState(pre => ({ ...pre, item: pre.item.filter(item => item.itemID === e.itemID).length < 1 ? [...pre.item, e] : pre.item, itemName: '' })) }, state.itemName)}
+                                        {renderSelectionList(state.itemsList, (e) => { setState(pre => ({ ...pre, item: pre.item.filter(item => item.itemID === e.itemID).length < 1 ? [...pre.item, e] : pre.item, itemName: '' })) }, state.itemName,'Item')}
 
                                     </View>
                                 </ScrollView>

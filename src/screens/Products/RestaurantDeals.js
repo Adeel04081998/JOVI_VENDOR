@@ -156,7 +156,7 @@ const mapStateToProps = (store) => {
     }
 };
 const stylesDeals = StyleSheet.create({
-    dealTab:props=>{return { height: 130, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
+    dealTab:props=>{return { height: 115, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
     dealTabDesc:(props,fSize=10,fWeight=1)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(fSize, props.activeTheme.black, fWeight, '300'), padding: 2} },
 });
 export default connect(mapStateToProps)(RestaurantDeals);

@@ -18,7 +18,7 @@ import { closeModalAction } from '../../redux/actions/modal';
 const AddUpdateDealModal = (props) => {
     const { dispatch, updateDeal } = props;
     // console.log(item)
-    let currentDate = (new Date().getDay()<10?'0'+new Date().getDay():new Date().getDay().toString())+'/'+(new Date().getMonth()<10?'0'+new Date().getMonth():new Date().getMonth().toString())+'/'+(new Date().getFullYear())+' 00:00';
+    let currentDate = (new Date().getDay() < 10 ? '0' + new Date().getDay() : new Date().getDay().toString()) + '/' + (new Date().getMonth() < 10 ? '0' + new Date().getMonth() : new Date().getMonth().toString()) + '/' + (new Date().getFullYear()) + ' 00:00';
     const [state, setState] = useState({
         showDropdown: false,
         deal: updateDeal !== null ? { ...updateDeal, inActiveIndex: updateDeal.isActive === true ? 0 : 1 } : {
@@ -26,7 +26,7 @@ const AddUpdateDealModal = (props) => {
             price: '0',
             dealImagesList: {},
             startDate: '',
-            pitstopDealID:0,
+            pitstopDealID: 0,
             type: '',
             inActive: true,
             inActiveIndex: 0,
@@ -44,7 +44,7 @@ const AddUpdateDealModal = (props) => {
         mode: '',
         selectedDate: '',
     })
-    console.log("Date: ",(currentDate.split(' ')[1] || "HH:MM").split(":")[0])
+    console.log("Date: ", (currentDate.split(' ')[1] || "HH:MM").split(":")[0])
     const onDropdownClick = (dropdownTitle) => {
         setState(pre => ({ ...pre, showDropdown: pre.showDropdown !== '' ? '' : dropdownTitle }));
     }
@@ -68,12 +68,12 @@ const AddUpdateDealModal = (props) => {
         let selectedVal = state.selectedDate?.split(' ');
         let selectedTime = selectedVal[1]?.split(':');
         selectedTime[index] = val;
-        selectedVal[1]=selectedTime.join(':');
-        console.log('Test:',selectedVal,selectedVal.join(' '))
+        selectedVal[1] = selectedTime.join(':');
+        console.log('Test:', selectedVal, selectedVal.join(' '))
         setState(pre => ({ ...pre, selectedDate: selectedVal.join(' ') }));
     }
     const setDatePickerState = (varName) => {
-        setState(pre => ({ ...pre, selectedDate: pre.deal[varName]===''?currentDate:pre.deal[varName], mode: varName }));
+        setState(pre => ({ ...pre, selectedDate: pre.deal[varName] === '' ? currentDate : pre.deal[varName], mode: varName }));
         dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.5 });
     }
     const updateDealOptions = (item, firstIndex, secondIndex) => {
@@ -112,7 +112,7 @@ const AddUpdateDealModal = (props) => {
         arr[state.selectedProduct.category.catIndex].dealOptionItemsList = updatedArr;
         setState(pre => ({
             ...pre,
-            mode:'',
+            mode: '',
             deal: {
                 ...pre.deal,
                 dealOptionsList: arr
@@ -170,8 +170,8 @@ const AddUpdateDealModal = (props) => {
                 ...pre.deal,
                 dealImagesList: [{
                     joviImage: picData.uri,
-                    fileObj:picData,
-                    joviImageID: pre.deal.dealImagesList?.length>0?pre.deal.dealImagesList[0].joviImageID:0,
+                    fileObj: picData,
+                    joviImageID: pre.deal.dealImagesList?.length > 0 ? pre.deal.dealImagesList[0].joviImageID : 0,
                     joviImageThumbnail: picData.uri
                 }]
             }
@@ -215,7 +215,7 @@ const AddUpdateDealModal = (props) => {
     }, []);
     const onSave = () => {
         let check = false;
-        if(state.deal.title === '' || state.deal.startDate === '' || state.deal.endDate === '' || state.deal.description === '' || state.deal.price===0 || state.deal.dealImagesList.length<1){
+        if (state.deal.title === '' || state.deal.startDate === '' || state.deal.endDate === '' || state.deal.description === '' || state.deal.price === 0 || state.deal.dealImagesList.length < 1) {
             check = true;
         }
         let formData = new FormData();
@@ -224,24 +224,24 @@ const AddUpdateDealModal = (props) => {
         // formData.append('PitstopDealID', state.pitstopDealID);
         formData.append('PitstopID', props.user.pitstopID);
         formData.append('DealName', state.deal.title);
-        formData.append('StartDate',state.deal.pitstopDealID ===0? state.deal.startDate+' 00:10':state.deal.startDate);
-        formData.append('EndDate', state.deal.pitstopDealID ===0? state.deal.endDate+' 23:50':state.deal.endDate);
+        formData.append('StartDate', state.deal.pitstopDealID === 0 ? state.deal.startDate + ' 00:10' : state.deal.startDate);
+        formData.append('EndDate', state.deal.pitstopDealID === 0 ? state.deal.endDate + ' 23:50' : state.deal.endDate);
         formData.append('Description', state.deal.description);
         formData.append('DealPrice', state.deal.price);
-        formData.append('IsActive', state.deal.inActiveIndex===0?true:false);
+        formData.append('IsActive', state.deal.inActiveIndex === 0 ? true : false);
         formData.append(
             'DealImageList[0].joviImageID',
-            state.deal.dealImagesList?.length>0&&state.deal.dealImagesList[0]?.joviImageID ? state.deal.dealImagesList[0].joviImageID : 0
+            state.deal.dealImagesList?.length > 0 && state.deal.dealImagesList[0]?.joviImageID ? state.deal.dealImagesList[0].joviImageID : 0
         );
-        formData.append('DealImageList[0].joviImage',state.picturePicked===true?{
-            uri:  state.deal.dealImagesList[0].fileObj.uri,
+        formData.append('DealImageList[0].joviImage', state.picturePicked === true ? {
+            uri: state.deal.dealImagesList[0].fileObj.uri,
             name: state.deal.dealImagesList[0].fileObj.uri.split('/').pop(),
             type: state.deal.dealImagesList[0].fileObj.type
             // type: 'image/jpg'
-        }:state.deal.dealImagesList[0]?.joviImage);
+        } : state.deal.dealImagesList[0]?.joviImage);
         state.deal.dealOptionsList?.map((obj, i) => {
             formData.append(`DealOptionsList[${i}].dealOptionID`, obj.dealOptionID);
-            if(obj.dealOptionDescription === '' || obj.quantity === '' || obj.dealOptionItemsList?.length<1){
+            if (obj.dealOptionDescription === '' || obj.quantity === '' || obj.dealOptionItemsList?.length < 1) {
                 check = true;
             }
             formData.append(`DealOptionsList[${i}].dealOptionDescription`, obj.dealOptionDescription);
@@ -271,13 +271,13 @@ const AddUpdateDealModal = (props) => {
                 });
             });
         });
-        if(check === true){
+        if (check === true) {
             CustomToast.error('Please Fill All Details')
-        }else{
-            postRequest('Api/Vendor/Restaurant/AddUpdateDeal',formData, {}, props.dispatch, (res) => {
-                if(state.pitstopDealID!==0){
+        } else {
+            postRequest('Api/Vendor/Restaurant/AddUpdateDeal', formData, {}, props.dispatch, (res) => {
+                if (state.pitstopDealID !== 0) {
                     CustomToast.error('Deal Update Successfully')
-                }else{
+                } else {
                     CustomToast.error('Deal Added Successfully')
                 }
                 props.dispatch(closeModalAction());
@@ -336,7 +336,7 @@ const AddUpdateDealModal = (props) => {
             {state.mode === '' ? <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
-                        <View style={{ height: 40,zIndex:1000, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
+                        {/* <View style={{ height: 40, zIndex: 1000, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
                                 ['Available', 'Unavailable'].map((it, i) => {
                                     return <View key={i} style={{ width: '50%', borderRadius: 5, height: '100%', backgroundColor: state.deal.inActiveIndex === i ? '#7359BE' : 'white' }} >
@@ -346,7 +346,7 @@ const AddUpdateDealModal = (props) => {
                                     </View>
                                 })
                             }
-                        </View>
+                        </View> */}
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
                             <Text style={{ margin: 15, ...commonStyles.fontStyles(18, props.activeTheme.black, 5), alignSelf: 'flex-start' }, styles.catpion(props.activeTheme)}>Create a Deal</Text>
                             <ScrollView style={{ marginBottom: 15 }}>
@@ -417,6 +417,27 @@ const AddUpdateDealModal = (props) => {
                                         <TextInput keyboardType={'numeric'} value={state.deal.price.toString()} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
+                                    <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                        Status
+                                    </Text>
+                                    {
+                                        ['Available', 'Unavailable'].map((item, i) => {
+                                            return <TouchableOpacity key={i} style={{ flexDirection: 'row' }} onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, inActiveIndex: i } }))}>
+                                                <CheckBox
+                                                    checked={state.deal.inActiveIndex === i}
+                                                    onPress={() => setState(pre => ({ ...pre, deal: { ...pre.deal, inActiveIndex: i } }))}
+                                                    style={{
+                                                        alignSelf: "center",
+                                                        color: '#7359BE',
+                                                        borderColor: '#7359BE',
+                                                        borderRadius: 12, margin: 8
+                                                    }}
+                                                    color={props.activeTheme.default}
+                                                />
+                                                <Text style={{ margin: 8 }}>{item}</Text>
+                                            </TouchableOpacity>
+                                        })
+                                    }
                                     <View style={{ width: '100%', flexDirection: 'row' }}>
                                         <View style={{ width: '50%' }}>
                                             <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -480,7 +501,7 @@ const AddUpdateDealModal = (props) => {
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     {/* <ImageBackground source={{ uri: 'file:///storage/emulated/0/Pictures/images/image-a93ff1b6-0a80-4474-b4b3-d924b6749f11.jpg' }} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10, height: 170 }}> */}
-                                    <ImageBackground source={state.deal.dealImagesList && state.deal.dealImagesList.length > 0 ? { uri: state.picturePicked === true ? state.deal.dealImagesList[0].joviImage : renderPicture(state.deal.dealImagesList[0].joviImage) } : ''} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10,height:220 }}>
+                                    <ImageBackground source={state.deal.dealImagesList && state.deal.dealImagesList.length > 0 ? { uri: state.picturePicked === true ? state.deal.dealImagesList[0].joviImage : renderPicture(state.deal.dealImagesList[0].joviImage) } : ''} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10, height: 220 }}>
                                         <TouchableOpacity onPress={() => takePictureHandler(true)}>
                                             <SvgXml xml={modalCam} height={40} width={40} style={{ alignSelf: 'flex-end', marginHorizontal: 10 }} />
                                         </TouchableOpacity>
@@ -556,7 +577,7 @@ const AddUpdateDealModal = (props) => {
                                                     borderBottomLeftRadius: 10,
                                                     borderBottomRightRadius: 10, position: 'absolute', marginTop: 290, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                                 }} keyboardShouldPersistTaps="always">
-                                                    {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState,filter:'',mode: 'select_attributes', selectedProduct: { product: { ...e, dealOptionItemOptionReqList: [] }, category: { ...item, catIndex: i } } })); }, state.filter)}
+                                                    {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', mode: 'select_attributes', selectedProduct: { product: { ...e, dealOptionItemOptionReqList: [] }, category: { ...item, catIndex: i } } })); }, state.filter)}
                                                 </ScrollView>
                                                     :
                                                     null
@@ -622,7 +643,7 @@ const AddUpdateDealModal = (props) => {
                                             })
                                                 :
                                                 <View>
-                                                    <Text style={{...commonStyles.fontStyles(13,props.activeTheme.black,3)}}>No Attributes Available</Text>
+                                                    <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 3) }}>No Attributes Available</Text>
                                                 </View>
                                             }
                                         </ScrollView>
@@ -657,7 +678,7 @@ const AddUpdateDealModal = (props) => {
                                     style={{ zIndex: 500, width: 70 }}
                                     mode="dialog" // "dialog" || "dropdown"
                                     // prompt="Select Hours"
-                                    selectedValue={state.selectedDate!==''?state.selectedDate.split("/")[0]:(new Date().getDay()<10?'0'+new Date().getDay():new Date().getDay().toString())}
+                                    selectedValue={state.selectedDate !== '' ? state.selectedDate.split("/")[0] : (new Date().getDay() < 10 ? '0' + new Date().getDay() : new Date().getDay().toString())}
                                     onValueChange={(value, i) => onDateChange(value, 0)}
                                 >
                                     {
@@ -672,7 +693,7 @@ const AddUpdateDealModal = (props) => {
                                     style={{ zIndex: 500, width: 70 }}
                                     mode="dialog" // "dialog" || "dropdown"
                                     // prompt="Select Minutes"
-                                    selectedValue={state.selectedDate!==''?state.selectedDate.split("/")[1]:(new Date().getMonth()<10?'0'+new Date().getMonth():new Date().getMonth().toString())}
+                                    selectedValue={state.selectedDate !== '' ? state.selectedDate.split("/")[1] : (new Date().getMonth() < 10 ? '0' + new Date().getMonth() : new Date().getMonth().toString())}
                                     // selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[1]}
                                     onValueChange={(value, i) => onDateChange(value, 1)}
                                 >
@@ -688,7 +709,7 @@ const AddUpdateDealModal = (props) => {
                                     style={{ zIndex: 500, width: 70 }}
                                     mode="dialog" // "dialog" || "dropdown"
                                     // prompt="Select Minutes"
-                                    selectedValue={state.selectedDate!==''?state.selectedDate.split("/")[2]:(new Date().getFullYear().toString())}
+                                    selectedValue={state.selectedDate !== '' ? state.selectedDate.split("/")[2] : (new Date().getFullYear().toString())}
                                     // selectedValue={(state.selectedDate || "DD/MM/YYYY").split("/")[2]}
                                     onValueChange={(value, i) => onDateChange(value, 2)}
                                 >

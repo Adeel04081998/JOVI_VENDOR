@@ -86,7 +86,7 @@ const UpdateR_Product = (props) => {
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
-                        <View style={{ height: 40, zIndex: 1000, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
+                        {/* <View style={{ height: 40, zIndex: 1000, top: 5, flexWrap: 'wrap', overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
                                 ['Available', 'Out Of Stock', 'Discontinued'].map((it, i) => {
                                     return <View key={i} style={{ width: '33.33%', borderRadius: 5, height: '100%', backgroundColor: state.product.availabilityStatusStr === it ? '#7359BE' : 'white' }} >
@@ -96,7 +96,7 @@ const UpdateR_Product = (props) => {
                                     </View>
                                 })
                             }
-                        </View>
+                        </View> */}
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -136,6 +136,27 @@ const UpdateR_Product = (props) => {
                                 </TouchableOpacity> */}
                                     <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.product.categoryName}</Text>
                                 </View>
+                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                    Status
+                            </Text>
+                                {
+                                     ['Available', 'Out Of Stock', 'Discontinued'].map((item,i)=>{
+                                            return  <TouchableOpacity key={i} style={{ flexDirection: 'row' }} onPress={() => setState(pre => ({ ...pre, product: { ...pre.product, availabilityStatusStr: item } }))}>
+                                            <CheckBox
+                                                checked={state.product.availabilityStatusStr === item}
+                                                onPress={() => setState(pre => ({ ...pre, product: { ...pre.product, availabilityStatusStr: item } }))}
+                                                style={{
+                                                    alignSelf: "center",
+                                                    color: '#7359BE',
+                                                    borderColor: '#7359BE',
+                                                    borderRadius: 12, margin: 8
+                                                }}
+                                                color={props.activeTheme.default}
+                                            />
+                                            <Text style={{ margin: 8 }}>{item}</Text>
+                                        </TouchableOpacity>
+                                     })
+                                }
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Base Price
                             </Text>

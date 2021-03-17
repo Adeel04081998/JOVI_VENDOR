@@ -1,6 +1,6 @@
-import { Text, View } from 'native-base';
+import { CheckBox, Text, View } from 'native-base';
 import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import Animated from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
 import commonStyles from '../../styles/styles';
@@ -37,8 +37,8 @@ const DisableProductModal = (props) => {
             props.onSave();
         }, (err) => {
             debugger;
-            if(err) CustomToast.error('Something went wrong!');
-         }, '');
+            if (err) CustomToast.error('Something went wrong!');
+        }, '');
     }
     // const renderSelectionList = () => {
     //     let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
@@ -62,7 +62,7 @@ const DisableProductModal = (props) => {
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null} style={{ ...styles.tempContainer(props.activeTheme) }}>
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
-                        <View style={{ height: 40, top: 5, flexWrap: 'wrap',zIndex:1000, overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
+                        {/* <View style={{ height: 40, top: 5, flexWrap: 'wrap',zIndex:1000, overflow: 'hidden', borderRadius: 5, borderWidth: 0.5, borderColor: '#7359BE', width: '90%', marginHorizontal: 20 }}>
                             {
                                 ['Available', 'Out Of Stock', 'Discontinued'].map((it, i) => {
                                     return <View key={i} style={{ width: '33.33%', borderRadius: 5, height: '100%', backgroundColor: state.item.availabilityStatus === it ? '#7359BE' : 'white' }} >
@@ -72,23 +72,7 @@ const DisableProductModal = (props) => {
                                     </View>
                                 })
                             }
-                            {/* <View
-                                style={{ width: '33.33%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#7359BE' }}
-                            >
-                                <Text style={[commonStyles.fontStyles(16, props.activeTheme.white, 1)]}>Available</Text>
-                            </View>
-                            <View
-                                style={{ width: '33.33%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <Text style={[commonStyles.fontStyles(16, props.activeTheme.black, 1)]}>Out of stock</Text>
-                            </View>
-                            <View
-                                style={{ width: '33.33%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <Text style={[commonStyles.fontStyles(16, props.activeTheme.black, 1)]}>Discontinue</Text>
-                            </View> */}
-                            {/* <Text style={styles.catpion(props.activeTheme)}>Change Item Status</Text> */}
-                        </View>
+                        </View> */}
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -148,6 +132,27 @@ const DisableProductModal = (props) => {
                                     <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.item.itemName}</Text>
                                 </View>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                    Status
+                                    </Text>
+                                {
+                                    ['Available', 'Out Of Stock', 'Discontinued'].map((item, i) => {
+                                        return <TouchableOpacity key={i} style={{ flexDirection: 'row' }} onPress={() => setState(pre => ({ ...pre, item: { ...pre.item, availabilityStatus: item } }))}>
+                                            <CheckBox
+                                                checked={state.item.availabilityStatus === item}
+                                                onPress={() => setState(pre => ({ ...pre, item: { ...pre.item, availabilityStatus: item } }))}
+                                                style={{
+                                                    alignSelf: "center",
+                                                    color: '#7359BE',
+                                                    borderColor: '#7359BE',
+                                                    borderRadius: 12, margin: 8
+                                                }}
+                                                color={props.activeTheme.default}
+                                            />
+                                            <Text style={{ margin: 8 }}>{item}</Text>
+                                        </TouchableOpacity>
+                                    })
+                                }
+                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Price
                             </Text>
                                 <View style={{
@@ -164,7 +169,7 @@ const DisableProductModal = (props) => {
                                     {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                     <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
                                 </TouchableOpacity> */}
-                                    <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.item.price.toString()} onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val.includes(' ')||val.includes('-')?pre.item.price:val } }))} />
+                                    <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.item.price.toString()} onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val.includes(' ') || val.includes('-') ? pre.item.price : val } }))} />
                                 </View>
                                 {state.item.attributes && state.item.attributes.length > 0 ?
                                     state.item.attributes.filter(it => it.attributeName !== 'Quantity').map((it, i) => {

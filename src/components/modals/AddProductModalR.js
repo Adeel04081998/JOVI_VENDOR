@@ -91,7 +91,7 @@ const AddProductModalR = (props) => {
         if (optionsFilter.length < 1) {
             return <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' })); }} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
-                height: 40,
+                height:50,
                 justifyContent: "space-between",
                 backgroundColor: 'white',
                 zIndex: 999,
@@ -104,7 +104,7 @@ const AddProductModalR = (props) => {
                 borderBottomWidth: 0,
 
             }}>
-                <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>No Data Found</Text>
+                <Text style={{ paddingLeft: 10, color: props.activeTheme.default }}>Product Not Listed Contact Your Account Manager</Text>
             </TouchableOpacity>
         }
         return optionsFilter.map((r, i) => (
