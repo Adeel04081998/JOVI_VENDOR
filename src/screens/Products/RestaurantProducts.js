@@ -1,27 +1,23 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Text, ImageBackground, StyleSheet, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { Text, ImageBackground, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
-import { renderPicture, renderPictureResizeable, sharedConfirmationAlert } from "../../utils/sharedActions";
-import { getRequest, postRequest } from '../../services/api';
+import { renderPicture} from "../../utils/sharedActions";
+import {  postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
 import commonStyles, { tabStyles } from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
 import { useFocusEffect } from '@react-navigation/native';
 import SharedFooter from '../../components/footer/SharedFooter';
-// import dummy from '../../assets/card-image.png';
-import dummy from '../../assets/bike.png';
+import dummy from '../../assets/card-image.png';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
-import AddBrandModal from '../../components/modals/AddBrandModal';
 import blockSvg from '../../assets/svgIcons/common/block.svg';
-import { debounce } from 'debounce';
 import AddProductModalR from '../../components/modals/AddProductModalR';
-import AddUpdateDealModal from '../../components/modals/AddUpdateDealModal';
 import UpdateR_Product from '../../components/modals/UpdateR_ProductModal';
 
 function RestaurantProducts(props) {
-    const { navigation, userObj, activeTheme } = props;
+    const { navigation, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item?.name === 'ProductsRes')[0]?.params?.item;
     const [state, setState] = useState({
         productList: [],
@@ -84,7 +80,7 @@ function RestaurantProducts(props) {
                 if (err) CustomToast.error("Something went wrong");
             }, '');
     }
-    const searchBrand = (val) => {
+    const searchProduct = (val) => {
         // getData(val);
         setState(pre => ({
             ...pre,
@@ -121,7 +117,7 @@ function RestaurantProducts(props) {
                 commonStyles={commonStyles}
                 state={state}
                 user={props.user}
-                onChangeText={searchBrand}
+                onChangeText={searchProduct}
                 activeTheme={activeTheme}
                 screenProps={{ ...props }}
             />
