@@ -36,7 +36,7 @@ export const refreshTokenMiddleware = async (requestCallback, params, dispatch) 
 
 };
 export const postRequest = async (url, data, headers, dispatch, onSuccess, onError, loaderMsg, loaderBool, middleWareCallback = () => { }) => {
-    console.log(data)
+    // console.log(data)
     // debugger;
     let internetConnectivity = await NetInfo.fetch();
     if (!internetConnectivity.isConnected) {

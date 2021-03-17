@@ -39,7 +39,7 @@ const ProfileModal = (props) => {
         workingDays: weekArr,
         vendorList: props?.user?.vendorPitstopDetailsList?.map(item => { return { ...item, text: item.personName } }),
         vendor: props?.user?.vendorPitstopDetailsList[0],
-        wallet: {},
+        wallet: {balance:0},
         walletTransactions: [],
         walletPagination: { itemsPerPage: 10 }
     })
@@ -134,9 +134,11 @@ const ProfileModal = (props) => {
         dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.3 });
     }
     const getBalanceData = (itemPerPage=false) => {
+
         postRequest('Api/Vendor/WalletDetails', {
-            "pageNumber": 1,
-            "itemsPerPage":itemPerPage!==false?itemPerPage:state.walletPagination.itemsPerPage,
+            pitstopID:props?.user?.pitstopID
+            // "pageNumber": 1,
+            // "itemsPerPage":itemPerPage!==false?itemPerPage:state.walletPagination.itemsPerPage,
         }, {}, props.dispatch, (res) => {
             console.log('Wallet Request ------->', res)
             setState(pre => ({
@@ -174,7 +176,7 @@ const ProfileModal = (props) => {
 
                             </View>
                             <TouchableOpacity style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }} onPress={() => setState(pre => ({ ...pre, mode: 'balance_modal' }))}>
-                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 4) }}>Balance: {props.user?.balance}</Text>
+                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 4) }}>Balance: {state.wallet.balance}</Text>
                             </TouchableOpacity>
                             {/* <Text style={styles.catpion(props.activeTheme),{width:50,alignSelf:'flex-start'}}>Profile</Text> */}
                             {/* <Text style={{alignSelf:'flex-end'}}>Logout</Text> */}
@@ -316,17 +318,17 @@ const ProfileModal = (props) => {
                                                 </View>
                                                 <View style={{ width: '100%', justifyContent: 'space-between', marginTop: 5, paddingHorizontal: 5, flexDirection: 'row' }}>
                                                     <View style={{ height: 40 }}>
-                                                        <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Total</Text>
+                                                        <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Earning</Text>
                                                         <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
                                                     </View>
-                                                    <View style={{ height: 40 }}>
+                                                    {/* <View style={{ height: 40 }}>
                                                         <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Vendor</Text>
                                                         <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
                                                     </View>
                                                     <View style={{ height: 40 }}>
                                                         <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Jovi</Text>
                                                         <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
-                                                    </View>
+                                                    </View> */}
                                                 </View>
                                             </View>
                                         })

@@ -64,9 +64,9 @@ const AddProductModalR = (props) => {
                 return {
                     "genericProductID": it.genericProductID,
                     "baseprice": it.basePrice,
-                    "preparationTime": it.preparationTime,
-                    "availableStartTime": it.availableStartTime,
-                    "availableEndTime": it.availableEndTime,
+                    "estimateTime": it.estimateTime,
+                    "startTime": it.startTime,
+                    "endTime": it.endTime,
                     "productAttributes": attrList
                 }
             }),
@@ -204,7 +204,7 @@ const AddProductModalR = (props) => {
                                 borderBottomLeftRadius: 10,
                                 borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                             }} keyboardShouldPersistTaps="always">
-                                {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', selectedProduct: {...e,preparationTime:'00:00',availableStartTime:'00:00',availableEndTime:'00:00'}, mode: 'select-attr' })); }, state.filter)}
+                                {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', selectedProduct: {...e,estimateTime:'00:00',startTime:'00:00',endTime:'00:00'}, mode: 'select-attr' })); }, state.filter)}
                                 {/* {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', addedItems: prevState.addedItems.filter(item => item.productID === e.productID).length < 1 ? [...prevState.addedItems, e] : prevState.addedItems })); }, state.filter)} */}
                             </ScrollView>
                                 :
@@ -270,8 +270,8 @@ const AddProductModalR = (props) => {
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Hours"
-                                            selectedValue={(state.selectedProduct.preparationTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0,'preparationTime')}
+                                            selectedValue={(state.selectedProduct.estimateTime || "HH:MM").split(":")[0]}
+                                            onValueChange={(value, i) => onTimeChange(value, 0,'estimateTime')}
                                         >
                                             {
                                                 Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
@@ -288,8 +288,8 @@ const AddProductModalR = (props) => {
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Minutes"
-                                            selectedValue={(state.selectedProduct.preparationTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1,'preparationTime')}
+                                            selectedValue={(state.selectedProduct.estimateTime || "HH:MM").split(":")[1]}
+                                            onValueChange={(value, i) => onTimeChange(value, 1,'estimateTime')}
                                         >
                                             {
                                                 Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
@@ -312,8 +312,8 @@ const AddProductModalR = (props) => {
                                             accessibilityLabel={"hours"}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
-                                            selectedValue={(state.selectedProduct.availableStartTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0,'availableStartTime')}
+                                            selectedValue={(state.selectedProduct.startTime || "HH:MM").split(":")[0]}
+                                            onValueChange={(value, i) => onTimeChange(value, 0,'startTime')}
                                         >
                                             {
                                                 Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
@@ -327,8 +327,8 @@ const AddProductModalR = (props) => {
                                             accessibilityLabel={"minutes"}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
-                                            selectedValue={(state.selectedProduct.availableStartTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1,'availableStartTime')}
+                                            selectedValue={(state.selectedProduct.startTime || "HH:MM").split(":")[1]}
+                                            onValueChange={(value, i) => onTimeChange(value, 1,'startTime')}
                                         >
                                             {
                                                 Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
@@ -351,8 +351,8 @@ const AddProductModalR = (props) => {
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Hours"
-                                            selectedValue={(state.selectedProduct.availableEndTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0,'availableEndTime')}
+                                            selectedValue={(state.selectedProduct.endTime || "HH:MM").split(":")[0]}
+                                            onValueChange={(value, i) => onTimeChange(value, 0,'endTime')}
                                         >
                                             {
                                                 Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
@@ -367,8 +367,8 @@ const AddProductModalR = (props) => {
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Minutes"
-                                            selectedValue={(state.selectedProduct.availableEndTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1,'availableEndTime')}
+                                            selectedValue={(state.selectedProduct.endTime || "HH:MM").split(":")[1]}
+                                            onValueChange={(value, i) => onTimeChange(value, 1,'endTime')}
                                         >
                                             {
                                                 Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))

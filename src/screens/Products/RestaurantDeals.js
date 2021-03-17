@@ -22,6 +22,7 @@ function RestaurantDeals(props) {
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'RestaurantDeals')[0]?.params?.item;
     const [state, setState] = useState({
         dealsList: [],
+        dealsListTemp: [],
         subCategoryObj:data
     })
     const addProductModalF = (deal=null) => {
@@ -58,6 +59,7 @@ function RestaurantDeals(props) {
                 setState(prevState => ({
                     ...prevState,
                     dealsList: res.data.pitstopDealsListViewModel.data,
+                    dealsListTemp: res.data.pitstopDealsListViewModel.data,
                     paginationInfo:res.data.pitstopDealsListViewModel.paginationInfo
                 }))
             }else{
@@ -71,9 +73,13 @@ function RestaurantDeals(props) {
             if (err) CustomToast.error("Something went wrong");
         }, '');
     }
-    const searchBrand = debounce((val) => {
+    const searchBrand = (val) => {
         // getData(val);
-    },900)
+        setState(pre => ({
+            ...pre,
+            dealsList: val === '' ? pre.dealsListTemp : pre.dealsListTemp.filter(item => { return item.title.toLowerCase().includes(val.toLowerCase()) })
+        }));
+    }
     useFocusEffect(useCallback(() => {
         getData();
         return () => {
@@ -139,7 +145,7 @@ function RestaurantDeals(props) {
                         }
                 </ScrollView>
             </View>
-            <SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />
+            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }
