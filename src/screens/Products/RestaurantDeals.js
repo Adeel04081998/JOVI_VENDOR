@@ -120,7 +120,7 @@ function RestaurantDeals(props) {
                 <ScrollView style={{ flex: 1,marginHorizontal:8 }} >
                         {state.dealsList.length>0?
                             state.dealsList.map((item, i) => {
-                                return <View key={i} style={{...stylesDeals.dealTab({activeTheme:props.activeTheme})}}>
+                                return <View key={i} style={{overflow:'hidden',...stylesDeals.dealTab({activeTheme:props.activeTheme})}}>
                                 {item.isActive === false && <TouchableOpacity onPress={()=>addProductModalF(item)} style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></TouchableOpacity>}
                                     <View style={{...tabStyles.imageTabContainer}}>
                                         <ImageBackground
@@ -156,7 +156,7 @@ const mapStateToProps = (store) => {
     }
 };
 const stylesDeals = StyleSheet.create({
-    dealTab:props=>{return { height: 130, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5 }},
+    dealTab:props=>{return { height: 110, ...commonStyles.shadowStyles(null, null, null, null, 0.3), backgroundColor: '#fff', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 15, flexDirection: 'row', marginVertical: 5}},
     dealTabDesc:(props,fSize=10,fWeight=1)=>{return{ maxWidth: '90%', ...commonStyles.fontStyles(fSize, props.activeTheme.black, fWeight, '300'), padding: 2} },
 });
 export default connect(mapStateToProps)(RestaurantDeals);
