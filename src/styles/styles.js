@@ -24,7 +24,7 @@ export const tabStyles = {
         fontFamily: plateformSpecific(androidFontsArray[fontIndex], iosFontsArray[fontIndex]),
         fontWeight,
     }),
-    tabCounter: (props) => { return {right:-15, flex: 0.1, width: 5, height: 29, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } },
+    tabCounter: (props) => { return {right:-15, flex: 0.1, width: 30, height: 28, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 20, backgroundColor: props.activeTheme.background } },
     tabTextContainer: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     imageTabContainer: {  margin: 7,height:95,width:110, overflow: 'hidden', borderRadius: 10 },
     imageTab: {

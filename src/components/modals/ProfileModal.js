@@ -39,7 +39,7 @@ const ProfileModal = (props) => {
         workingDays: weekArr,
         vendorList: props?.user?.vendorPitstopDetailsList?.map(item => { return { ...item, text: item.personName } }),
         vendor: props?.user?.vendorPitstopDetailsList[0],
-        wallet: {balance:0},
+        wallet: { balance: 0 },
         walletTransactions: [],
         walletPagination: { itemsPerPage: 10 }
     })
@@ -133,10 +133,10 @@ const ProfileModal = (props) => {
         setState(pre => ({ ...pre, selectedValue: pre[varName], timePickMode: varName, mode: true }));
         dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.3 });
     }
-    const getBalanceData = (itemPerPage=false) => {
+    const getBalanceData = (itemPerPage = false) => {
 
         postRequest('Api/Vendor/WalletDetails', {
-            pitstopID:props?.user?.pitstopID
+            pitstopID: props?.user?.pitstopID
             // "pageNumber": 1,
             // "itemsPerPage":itemPerPage!==false?itemPerPage:state.walletPagination.itemsPerPage,
         }, {}, props.dispatch, (res) => {
@@ -151,6 +151,10 @@ const ProfileModal = (props) => {
             if (err.status === 400) error400(err)
             else CustomToast.error('Something went wrong!');
         });
+    }
+    const navigateToLegalScreen = () => {
+        props.navigation.navigate('Legal');
+        props.dispatch(closeModalAction());
     }
     useEffect(useCallback(() => {
         // getData();
@@ -278,6 +282,16 @@ const ProfileModal = (props) => {
                                         })
                                     }
                                 </View>
+                                <View style={{ marginVertical: 15, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                    <TouchableOpacity activeOpacity={1}  >
+                                        <Text style={{ color: props.activeTheme.grey, fontSize: 14 }}>
+                                            {/* By using this app you are agreeing to our  */}
+                                            <Text onPress={navigateToLegalScreen} style={stylesHome.touchableText(props.activeTheme)}> Terms & conditions </Text>
+                            and
+                            <Text onPress={navigateToLegalScreen} style={stylesHome.touchableText(props.activeTheme)}>  Privacy Policy</Text>
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                             <DefaultBtn
                                 title="Save"
@@ -303,13 +317,17 @@ const ProfileModal = (props) => {
                                         if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
                                             // make something...
                                             if (state.walletPagination.itemsPerPage < state.walletPagination.totalItems) {
-                                                getBalanceData(state.walletPagination.itemsPerPage+10);
+                                                getBalanceData(state.walletPagination.itemsPerPage + 10);
                                             }
                                         }
                                     }
                                     }
                                 >
-                                    {
+                                    {state.walletTransactions.length < 1 ?
+                                        <View style={{ flex: 1, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                                            <Text>No Wallet Transactions Found</Text>
+                                        </View>
+                                        :
                                         state.walletTransactions.map((item, i) => {
                                             return <View key={i} style={{ height: 90, width: '97%', marginHorizontal: 7, marginVertical: 5, borderWidth: 1, borderColor: props.activeTheme.borderColor, borderRadius: 10 }}>
                                                 <View style={{ width: '100%', paddingHorizontal: 5, paddingTop: 5, flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -426,6 +444,9 @@ const stylesHome = StyleSheet.create({
         width: '90%',
         "height": "90%",
     },
+    touchableText: activeTheme => ({
+        ...commonStyles.fontStyles(14, activeTheme.default, 4)
+    }),
     checkboxContainer: {
         width: 120, flexDirection: 'row'
     },

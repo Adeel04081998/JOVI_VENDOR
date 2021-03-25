@@ -20,8 +20,9 @@ export default headerStyles = StyleSheet.create({
 
     },
     "leftIconContainer": {
-        "marginLeft": 10,
+        "marginLeft": 15,
         "opacity": 1,
+        alignSelf:'center',
         "backgroundColor": "transparent",
         // "zIndex": 999,
         // "position": 'absolute',
@@ -42,7 +43,7 @@ export default headerStyles = StyleSheet.create({
         'shadowOpacity': 0.3
     },
     "leftTouchableOpacity": {
-        "backgroundColor": '#fff', "elevation": 3, "borderRadius": 7, "width": 35,
+        "backgroundColor": '#fff', "elevation": 3, "borderRadius": 7, "width": 35,justifyContent:'center',alignItems:'center',
         "height": 35, "shadowColor": "#000", "marginLeft": plateformSpecific(5, 10),
         "borderColor": '#fff',
         "alignItems": "center", "justifyContent": "center"

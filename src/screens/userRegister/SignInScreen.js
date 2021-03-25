@@ -130,6 +130,8 @@ export default function SignInScreen(props) {
     };
     const signInHandler = () => {
         // debugger;
+
+
         Keyboard.dismiss();
         // debugger;
         postRequest(
@@ -152,6 +154,7 @@ export default function SignInScreen(props) {
         // navigation.navigate('Registration', { 'paramsData': { 'phoneNumber': user.phoneNumber, "newUser": user.newUser } });
 
     };
+    const navigateToLegalScreen = () => navigation.navigate('Legal_Login')
     useEffect(() => {
         if (navigation.dangerouslyGetState().routes[navigation.dangerouslyGetState().index].params === "logout") {
             console.log('Logout user')
@@ -221,16 +224,24 @@ export default function SignInScreen(props) {
                     keyboardType={"default"}
                 // keyboardType={Platform.constants.Model === "WAS-LX1A" ? "numeric" : "default"}
                 />
-                {/* <View style={{ marginVertical: 15, justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={navigateToSignup} >
+                <View style={{ marginVertical: 15, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <TouchableOpacity activeOpacity={1}  >
+                        <Text style={{ color: activeTheme.grey, fontSize: 14 }}>
+                            By using this app you are agreeing to our
+                            <Text onPress={navigateToLegalScreen} style={styles.touchableText(activeTheme)}> Terms & conditions </Text>
+                            and
+                            <Text onPress={navigateToLegalScreen} style={styles.touchableText(activeTheme)}>  Privacy Policy</Text>
+                        </Text>
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity onPress={navigateToSignup} >
                         <Text style={{ color: activeTheme.grey, fontSize: 14 }}>{`Don't have an account ? `}
                             <Text style={styles.touchableText(activeTheme)}>{'Sign Up'}</Text>
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => handleScreen('forgot_password')} style={{ marginVertical: 5 }}>
                         <Text style={styles.touchableText(activeTheme)}>Forgot Password?</Text>
-                    </TouchableOpacity>
-                </View> */}
+                    </TouchableOpacity> */}
+                </View>
             </View>
             <View style={{ flex: 0 }}>
                 <SubmitBtn

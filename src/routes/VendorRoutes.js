@@ -13,7 +13,10 @@ import RestaurantHome from '../screens/home/RestaurantHome';
 import RestaurantDeals from '../screens/Products/RestaurantDeals';
 import RestaurantProducts from '../screens/Products/RestaurantProducts';
 import ResOrderDetails from '../screens/order/ResOrderDetails';
-
+import crossIcon from "../assets/svgIcons/common/cross-new.svg";
+import CustomHeader from '../components/header/CustomHeader';
+import CustomWebView from '../components/webView';
+import Legal from '../screens/legal/Legal';
 
 // import jwt_decode from 'jwt-decode';
 // const Drawer = createDrawerNavigator();
@@ -23,12 +26,36 @@ const VendorRoutes = (props) => {
     console.log(props.navigatorPros.navigation.dangerouslyGetState());
     let state = props.navigatorPros.navigation.dangerouslyGetState();
 
-    let routeBase = state.routes[0]?.params?.loginCheck===true?(state.routes[0]?.params?.pitstopType===4?'homeRes':'home'):props.stackState.initRouteSub===null? props.user.pitstopType === 4?'homeRes':'home':props.stackState.initRouteSub;
+    let routeBase = state.routes[0]?.params?.loginCheck === true ? (state.routes[0]?.params?.pitstopType === 4 ? 'homeRes' : 'home') : props.stackState.initRouteSub === null ? props.user.pitstopType === 4 ? 'homeRes' : 'home' : props.stackState.initRouteSub;
     // const _navigationStateObj = NavigationService._navigatorRef;
 
     const { theme, dispatch } = props;
     let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
-
+    const WebViewStack = props => {
+        console.log("WebViewStack.Props :", props);
+        let currentRoute = props?.drawerProps?.route;
+        console.log("WebViewStack.currentRoute", currentRoute);
+        useEffect(() => {
+        }, []);
+        return (
+            <View style={{ flex: 1 }}>
+                <CustomHeader
+                    leftIconHandler={currentRoute?.params?.backScreenObject ? () => props.navigation.navigate(currentRoute?.params?.backScreenObject?.container, { screen: currentRoute?.params?.backScreenObject?.screen }) : () => props.drawerProps.navigation.goBack()}
+                    rightIconHandler={null}
+                    navigation={props.navigation}
+                    leftIcon={crossIcon}
+                    BodyComponent={() => <View />}
+                    rightIcon={null}
+                    activeTheme={props.activeTheme}
+                    height={15}
+                    width={15}
+                />
+                <View style={{ flex: 1 }}>
+                    <CustomWebView {...props} activeTheme={props.activeTheme} html={currentRoute?.params.html} uri={currentRoute?.params.uri} screenStyles={currentRoute?.params.screenStyles || {}} />
+                </View>
+            </View>
+        );
+    };
     const handleBackButtonPressed = bool => {
         props.navigatorPros.navigation.goBack();
         // sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
@@ -73,6 +100,8 @@ const VendorRoutes = (props) => {
             <Stack.Screen name="OrderDetails" children={navigatorPros => <OrderDetails {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="ResOrderDetails" children={navigatorPros => <ResOrderDetails {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />
             <Stack.Screen name="ContactUsPage" children={navigatorPros => <ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ContactUsPage {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} /></ImageBackground>} />
+            <Stack.Screen name="Legal" children={navigatorPros => <Legal {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} />
+            <Stack.Screen name="web_view_container" children={navigatorPros => <WebViewStack drawerProps={navigatorPros} activeTheme={activeTheme} {...props} stackState={state} />} />
             <Stack.Screen name="Exceptions" children={navigatorPros => <View><Text>error</Text></View>} />
         </Stack.Navigator>
     )

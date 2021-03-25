@@ -10,10 +10,8 @@ import { isJoviCustomerApp } from '../../config/config';
 import RiderCommonList from '../../components/lists/RiderCommonList';
 import CustomToast from '../../components/toast/CustomToast';
 import commonStyles from '../../styles/styles';
-import crossIcon from "../../assets/svgIcons/common/cross-new.svg";
-import { connect } from 'react-redux';
 
-export default connect()(function Legal(props) {
+export default function Legal(props) {
     let initState = {
         noRecFound: "",
         customerLegalsObj: {
@@ -26,13 +24,13 @@ export default connect()(function Legal(props) {
         }
     }
     const [state, setState] = useState(initState);
-    const { activeTheme, navigation,onLogin, dispatch } = props;
+    const { activeTheme, navigation, dispatch } = props;
     const onSuccessHandler = response => {
         console.log("Legal.onSuccessHandler ----", response);
         if (response.data.statusCode === 404) setState(prevState => ({ ...prevState, noRecFound: response.data.message || "No Record Found" }));
         else setState(prevState => {
             if (isJoviCustomerApp) return {
-                ...prevState, customerLegalsObj: { ...prevState.customerLegalsObj, id: response.data.id, data: response.data.legalListViewModels }
+                ...prevState, customerLegalsObj: { ...prevState.customerLegalsObj, contentPageID: response.data.contentPageID, data: response.data.contentPageList }
             }
             else return {
                 ...prevState, riderLegalsObj: { ...prevState.riderLegalsObj, id: response.data.id, legalListViewModels: response.data.legalListViewModels }
@@ -41,21 +39,20 @@ export default connect()(function Legal(props) {
     };
     const onErrorHandler = error => {
         console.log("Legal.onErrorHandler ----", error);
-        // if (error) CustomToast.error("Something went wrong!");
+        if (error) CustomToast.error("Something went wrong!");
 
     };
     const getSingleRecord = args => {
         getRequest(`/api/Menu/Legal/List/${args.id}`, {}, props.dispatch, serverRes => {
             if (serverRes.data.statusCode === 200) {
-                props.navigation.navigate(onLogin&&onLogin===true?"web_view_container_login":"web_view_container", { uri: null, html: serverRes.data._legalvm.description, screenStyles: {} })
+                props.navigation.navigate("web_view_container", { uri: null, html: serverRes.data._legalvm.description, screenStyles: {} })
             }
         }, serverErr => {
             if (serverErr) CustomToast.error("Something went wrong!");
         });
     };
     useEffect(useCallback(() => {
-        // getRequest(isJoviCustomerApp ? `/api/Menu/ContentPages/List/${2}` : `/api/Menu/Legal/List`, {}, dispatch, onSuccessHandler, onErrorHandler);
-        getRequest(`/api/Menu/Legal/List`, {}, dispatch, onSuccessHandler, onErrorHandler);
+        getRequest(isJoviCustomerApp ? `/api/Menu/ContentPages/List/${2}` : `/api/Menu/Legal/List`, {}, dispatch, onSuccessHandler, onErrorHandler);
         return () => {
             // console.log('Legal.State Cleared----');
             setState(initState);
@@ -69,8 +66,7 @@ export default connect()(function Legal(props) {
                 listItem={'title'}
                 nextIcon={commonIcons.nextIcon()}
                 activeTheme={activeTheme}
-                // onPress={item => navigation.navigate('legal_details', { dataParams: item })}
-                onPress={item => getSingleRecord(item)}
+                onPress={item => navigation.navigate('legal_details', { dataParams: item })}
             />
         } else return !state.riderLegalsObj.legalListViewModels.length ? null : <View style={{ height: Dimensions.get('window').height * 0.8, paddingVertical: 10 }}>
             {/* <Text style={[commonStyles.fontStyles(15, props.activeTheme.black, 4), { padding: 10, left: 10 }]}>Legal</Text> */}
@@ -97,15 +93,13 @@ export default connect()(function Legal(props) {
         <Container>
             <ImageBackground source={require('../../assets/doodle.png')} style={{ flex: 1 }}>
                 <CustomHeader
-                    leftIconHandler={() => props?.navigation?.goBack()}
-                    rightIconHandler={null}
-                    navigation={props.navigation}
-                    leftIcon={crossIcon}
+                    leftIconHandler={'toggle'}
+                    rightIconHandler={() => Alert.alert('Right icon clicked')}
+                    navigation={props.drawerProps.navigation}
+                    leftIcon={commonIcons.menueIcon(activeTheme)}
                     bodyContent={'Legal'}
                     rightIcon={null}
                     activeTheme={activeTheme}
-                    height={15}
-                    width={15}
                 />
                 <Content style={legalStyles.content(activeTheme)}>
                     {
@@ -116,4 +110,4 @@ export default connect()(function Legal(props) {
         </Container >
 
     )
-})
+}
