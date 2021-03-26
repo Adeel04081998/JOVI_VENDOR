@@ -134,7 +134,7 @@ function Home(props) {
                         }
                 </ScrollView>
             </View>
-            {props.stackState.keypaidOpen===false&&<SharedFooter onHome={true} activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
+            {props.stackState.keypaidOpen===false&&<SharedFooter activeTab={0} onHome={true} activeTheme={activeTheme} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }

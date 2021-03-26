@@ -145,7 +145,7 @@ function RestaurantDeals(props) {
                         }
                 </ScrollView>
             </View>
-            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
+            {props.stackState.keypaidOpen===false&&<SharedFooter activeTab={0} activeTheme={activeTheme} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }

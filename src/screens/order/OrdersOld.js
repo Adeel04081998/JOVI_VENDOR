@@ -18,9 +18,8 @@ function Orders(props) {
         "loader": false,
         orderList: [],
         orderListTemp: [],
-        activeTab: 'Active',
         itemsPerPage: 10,
-        paginationInfo: { totalItems: 0 }
+        paginationInfo: { totalItems:0 }
     });
     const addBrandProductModal = () => {
         let ModalComponent = {
@@ -43,18 +42,18 @@ function Orders(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-    const getData = (keywords = false, itemsPerPageNew = false) => {
-        postRequest('/api/Vendor/OrdersSummary', {
+    const getData = (keywords=false,itemsPerPageNew = false) => {
+        postRequest('/api/Vendor/OrdersSummary',{
             "pageNumber": 1,
-            "itemsPerPage": itemsPerPageNew !== false ? itemsPerPageNew : state.itemsPerPage,
-            'genericSearch': keywords !== false ? keywords : ''
-        }, {}
+            "itemsPerPage":itemsPerPageNew!==false?itemsPerPageNew:state.itemsPerPage,
+            'genericSearch':keywords!==false?keywords:''
+          }, {}
             , props.dispatch, (res) => {
                 console.log('Order Request:', res)
                 if (res.data.statusCode === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        itemsPerPage: itemsPerPageNew !== false ? itemsPerPageNew : prevState.itemsPerPage,
+                        itemsPerPage:itemsPerPageNew!==false?itemsPerPageNew:prevState.itemsPerPage,
                         orderList: res.data.vendorOrdersViewModel.ordersDataList.sort((a, b) => { if (a['orderNo'] < b['orderNo']) { return 1; } else if (a['orderNo'] > b['orderNo']) { return -1; } else { return 0; } }).sort((a, b) => { if (a['orderStatus'] < b['orderStatus']) { return -1; } else if (a['orderStatus'] > b['orderStatus']) { return 1; } else { return 0; } }),
                         orderListTemp: res.data.vendorOrdersViewModel.ordersDataList.sort((a, b) => { if (a['orderNo'] < b['orderNo']) { return 1; } else if (a['orderNo'] > b['orderNo']) { return -1; } else { return 0; } }).sort((a, b) => { if (a['orderStatus'] < b['orderStatus']) { return -1; } else if (a['orderStatus'] > b['orderStatus']) { return 1; } else { return 0; } }),
                         paginationInfo: res.data?.vendorOrdersViewModel?.paginationInfo
@@ -72,8 +71,8 @@ function Orders(props) {
             }, '');
     }
     const searchOrder = debounce((val) => {
-        getData(val, false);
-    }, 900)
+        getData(val,false);
+    },900)
     const onFooterItemPressed = async (pressedTab, index) => {
         if (pressedTab.title === 'Add') {
             addBrandProductModal();
@@ -110,21 +109,6 @@ function Orders(props) {
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
                     <Text style={{ marginRight: 14 }}>Total: {state.paginationInfo.totalItems < 1 ? '0' : state.paginationInfo.totalItems < 10 ? '0' + state.paginationInfo.totalItems : state.paginationInfo.totalItems}</Text>
                 </View>
-                <View style={{ width: '100%', flexDirection: 'row', height: 30, marginVertical: 10 }}>
-                    {
-                        ['Active', 'History'].map((item, i) => {
-                            return <TouchableOpacity onPress={()=>setState(pre=>({...pre,activeTab:item}))} key={i} style={{ width: '50%', borderBottomColor:state.activeTab === item?props.activeTheme.default:props.activeTheme.grey, borderBottomWidth: 1, alignItems: 'center', height:state.activeTab === item?'90%':'100%' }}>
-                                <Text style={{fontWeight:'bold', color:state.activeTab === item?props.activeTheme.default:props.activeTheme.grey}}>{item}</Text>
-                            </TouchableOpacity>
-                        })
-                    }
-                    {/* <View style={{ width: '50%', borderBottomColor: 'red', borderBottomWidth: 1, alignItems: 'center', height: '100%' }}>
-                        <Text>Active</Text>
-                    </View>
-                    <View style={{ width: '50%', alignItems: 'center', borderBottomWidth: 1, height: '100%' }}>
-                        <Text>Recent</Text>
-                    </View> */}
-                </View>
                 <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }}
                     onScroll={(e) => {
                         let paddingToBottom = 10;
@@ -132,7 +116,7 @@ function Orders(props) {
                         if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
                             // make something...
                             if (state.itemsPerPage < state.paginationInfo.totalItems) {
-                                getData(false, state.itemsPerPage + 10);
+                                getData(false,state.itemsPerPage+10);
                             }
                         }
                     }
@@ -144,16 +128,16 @@ function Orders(props) {
                                 <Text>No Orders Found</Text>
                             </View>
                             :
-                            state.orderList.filter(item=>state.activeTab==='Active'?(item.orderStatus===1):(item.orderStatus!==1)).map((item, i) => {
+                            state.orderList.map((item, i) => {
                                 return <View key={i} style={{ ...stylesOrder.productTab, borderWidth: item.orderStatus === 1 ? 2 : 0.5, borderColor: item.orderStatus === 1 ? props.activeTheme.default : '#929293' }}>
-                                    <TouchableOpacity style={{ width: '100%', flexDirection: 'row', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={props.user.pitstopType === 4 ? () => navigation.navigate('ResOrderDetails', { key: 'resOrderDetails', item: { item } }) : () => navigation.navigate('OrderDetails', { key: 'orderDetails', item: { item } })}>
+                                    <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={props.user.pitstopType === 4 ? () => navigation.navigate('ResOrderDetails', { key: 'resOrderDetails', item: { item } }) : () => navigation.navigate('OrderDetails', { key: 'orderDetails', item: { item } })}>
                                         {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
-                                        <View style={{ ...stylesOrder.productImageContainer, backgroundColor: item.orderStatus === 3 ? props.activeTheme.lightGrey : item.isVendorConfirmed === true && item.orderStatus === 1 ? '#ff8c00' : item.orderStatus === 1 ? props.activeTheme.defaultLight : 'white', borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 200, width: 70, height: 75 }}>
+                                        <View style={{ ...stylesOrder.productImageContainer, backgroundColor:item.orderStatus === 3?props.activeTheme.lightGrey :item.isVendorConfirmed === true && item.orderStatus === 1 ? '#ff8c00' : item.orderStatus === 1 ? props.activeTheme.defaultLight : 'white', borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 200, width: 70, height:60 }}>
                                             <Text style={{ ...commonStyles.fontStyles(22, item.orderStatus === 1 ? props.activeTheme.white : props.activeTheme.default, 10) }}>{item.orderNo}</Text>
                                         </View>
                                         <View style={{ ...stylesOrder.productName }}>
-                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Total Price: </Text><Text>{item.totalPrice}</Text>
-                                            <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>No of Items: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.noOfItems}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Order No: </Text><Text>{item.orderNo}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>Rs.{item.totalPrice}</Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -189,15 +173,15 @@ const stylesOrder = StyleSheet.create({
     homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } },
     productListContainer: { paddingBottom: 20, justifyContent: 'space-between', flexDirection: 'row', flexWrap: 'wrap' },
     // productTab: { height: 180, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
-    productTab: { height: 100, marginVertical: 5, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '100%' },
-    productImageContainer: { flex: 1, marginHorizontal: 5, width: '100%', height: 20, justifyContent: 'center', alignItems: 'center' },
+    productTab: { height: 100,marginVertical:5, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '100%' },
+    productImageContainer: {  width: '100%', height: 20, justifyContent: 'center', alignItems: 'center' },
     productImage: {
         width: '90%',
         marginLeft: 17,
         zIndex: 900,
         "height": "90%",
     },
-    productName: { flex: 4, justifyContent: 'space-between', paddingLeft: 8, paddingRight: 8, alignItems: 'flex-start', width: '100%', flexDirection: 'column', },
+    productName: {  justifyContent: 'space-between', paddingLeft: 8, paddingRight: 8, alignItems: 'center', width: '100%', flexDirection: 'row', },
     counter: (props) => { return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
 
 
