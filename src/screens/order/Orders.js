@@ -43,11 +43,12 @@ function Orders(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-    const getData = (keywords = false, itemsPerPageNew = false) => {
+    const getData = (keywords = false, itemsPerPageNew = false,newTab = false) => {
         postRequest('/api/Vendor/OrdersSummary', {
             "pageNumber": 1,
             "itemsPerPage": itemsPerPageNew !== false ? itemsPerPageNew : state.itemsPerPage,
-            'genericSearch': keywords !== false ? keywords : ''
+            'genericSearch': keywords !== false ? keywords : '',
+            'isLive':newTab!==false?(newTab === 'Active'?true:false):(state.activeTab==='Active'?true:false)
         }, {}
             , props.dispatch, (res) => {
                 console.log('Order Request:', res)
@@ -113,7 +114,7 @@ function Orders(props) {
                 <View style={{ width: '100%', flexDirection: 'row', height: 30, marginVertical: 10 }}>
                     {
                         ['Active', 'History'].map((item, i) => {
-                            return <TouchableOpacity onPress={()=>setState(pre=>({...pre,activeTab:item}))} key={i} style={{ width: '50%', borderBottomColor:state.activeTab === item?props.activeTheme.default:props.activeTheme.grey, borderBottomWidth: 1, alignItems: 'center', height:state.activeTab === item?'90%':'100%' }}>
+                            return <TouchableOpacity onPress={()=>{getData(false,false,item);setState(pre=>({...pre,itemsPerPage:10, activeTab:item}))}} key={i} style={{ width: '50%', borderBottomColor:state.activeTab === item?props.activeTheme.default:props.activeTheme.grey, borderBottomWidth: 1, alignItems: 'center', height:state.activeTab === item?'90%':'100%' }}>
                                 <Text style={{fontWeight:'bold', color:state.activeTab === item?props.activeTheme.default:props.activeTheme.grey}}>{item}</Text>
                             </TouchableOpacity>
                         })
@@ -144,7 +145,7 @@ function Orders(props) {
                                 <Text>No Orders Found</Text>
                             </View>
                             :
-                            state.orderList.filter(item=>state.activeTab==='Active'?(item.orderStatus===1):(item.orderStatus!==1)).map((item, i) => {
+                            state.orderList.map((item, i) => {
                                 return <View key={i} style={{ ...stylesOrder.productTab, borderWidth: item.orderStatus === 1 ? 2 : 0.5, borderColor: item.orderStatus === 1 ? props.activeTheme.default : '#929293' }}>
                                     <TouchableOpacity style={{ width: '100%', flexDirection: 'row', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={props.user.pitstopType === 4 ? () => navigation.navigate('ResOrderDetails', { key: 'resOrderDetails', item: { item } }) : () => navigation.navigate('OrderDetails', { key: 'orderDetails', item: { item } })}>
                                         {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}

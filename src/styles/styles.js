@@ -18,7 +18,7 @@ export const tabStyles = {
         marginTop: 0
     }),
     tabDescription:(fontSize, color, fontIndex, fontWeight,)=>({
-        maxWidth: '90%', padding: 2 ,
+        maxWidth: '83%', padding: 2 ,
         fontSize,
         color,
         fontFamily: plateformSpecific(androidFontsArray[fontIndex], iosFontsArray[fontIndex]),
