@@ -135,52 +135,7 @@ const RootStack = (props) => {
             console.log('RootStack State Cleared!');
         }
     }, []);
-    useEffect(() => {
-        // console.log("MainDrawer.useEffect -> push notification effect ran---");
-        // console.log("MainDrawer.Props :", props);
-        if (Platform.OS === 'android') {
-            fcmService.registerAppWithFCM();
-            fcmService.register(onRegister, onNotification, onOpenNotification)
-            localNotificationService.configure(onOpenNotification, onAction, onRegistrationError);
-            function onRegister(token) {
-                console.log('[navigations.js] onRegister token :', token);
-                sharedSendFCMTokenToServer(postRequest, token);
-            };
-            function onNotification(notify) {
-                console.log("onNotification.notify -> ", notify)
-                console.log("MainDrawer.Props :", props);
-                localNotificationService.showNotification(0, notify.title, notify.body, notify, {
-                    // soundName: "my_sound.mp3",
-                    // playSound: true,
-                    userInteraction: true,
-                },
-                    // actions array
-                    []
-                )
-            };
-            function onOpenNotification(notify) {
-                console.log("onOpenNotification.notify -> ", notify)
-                // if(notify.title && notify.title.toLowerCase().includes('recieved')){
-                //     props.navigation.navigate('Orders');
-                // }
-                // console.log("MainDrawer.Props :", props);
-                // if (notify.body) Alert.alert("Open Notification: ", notify.body);
-            };
-            function onAction(notification) {
-                console.log("[navigations] ACTION:", notification.action);
-                console.log("[navigations] NOTIFICATION:", notification);
-            };
-            function onRegistrationError(err) {
-                console.error("[navigations] onRegistrationError :", err.message, err);
-            };
-            return () => {
-                console.log('[MainDrawer] cleared!!');
-                localNotificationService.unRegister();
-                fcmService.unRegister();
-            }
-        }
-
-    }, [])
+  
     // console.log("myhubConnection :", myhubConnection);
     // console.log('RootStack.state :', state);
     return state.initRoute && (

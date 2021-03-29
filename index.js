@@ -22,7 +22,7 @@ const RNRedux = () => (
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   // For background job
   console.log('[Index.js] message handeled in the background :', remoteMessage);
-  invokeApp();
+  // invokeApp();
   // if (remoteMessage.notification.body === "Hello Rider" || remoteMessage.notification.body === "Hello Customer") {
   // }
 });

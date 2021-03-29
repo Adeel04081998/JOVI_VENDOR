@@ -68,7 +68,7 @@ function Orders(props) {
                     }))
                 }
             }, (err) => {
-                if (err.response.data.statusCode === 404) CustomToast.error("No Orders Found")
+                if (err.statusCode === 404){ CustomToast.error("No Orders Found");setState(pre=>({...pre,itemsPerPage:10,orderList:[],orderListTemp:[],paginationInfo:{totalItems: 0}}))}
                 else if (err) CustomToast.error("Something went wrong");
             }, '');
     }

@@ -16,7 +16,11 @@ import ResOrderDetails from '../screens/order/ResOrderDetails';
 import crossIcon from "../assets/svgIcons/common/cross-new.svg";
 import CustomHeader from '../components/header/CustomHeader';
 import CustomWebView from '../components/webView';
+import { fcmService } from '../services/FCMServices';
+import { localNotificationService } from '../services/LocalNotificationServices';
 import Legal from '../screens/legal/Legal';
+import { sharedSendFCMTokenToServer } from '../utils/sharedActions';
+import { postRequest } from '../services/api';
 
 // import jwt_decode from 'jwt-decode';
 // const Drawer = createDrawerNavigator();
@@ -73,21 +77,68 @@ const VendorRoutes = (props) => {
     //     );
     // });
     useEffect(() => {
-        // console.log("[RootStack] Props :", props);
-        // const backHandler = 
-        // const backHandler = BackHandler.removeEventListener("hardwareBackPress", ()=>{});
-        return () => {
-            // backHandler.addEventListener("hardwareBackPress",()=>{});
-            // _unsubscribeSiFocus();
-            // _unsubscribeSiBlur();
-            // BackHandler.removeEventListener('hardwareBackPress', handleBackButtonPressed);
-            // backHandler.remove();
-        };
-        // const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButtonPressed);
-        return () => {
-            console.log('RootStack State Clearing...');
+        // console.log("MainDrawer.useEffect -> push notification effect ran---");
+        // console.log("MainDrawer.Props :", props);
+        if (Platform.OS === 'android') {
+            fcmService.registerAppWithFCM();
+            fcmService.register(onRegister, onNotification, onOpenNotification)
+            localNotificationService.configure(onOpenNotification, onAction, onRegistrationError);
+            function onRegister(token) {
+                console.log('[navigations.js] onRegister token :', token);
+                sharedSendFCMTokenToServer(postRequest, token);
+            };
+            function onNotification(notify) {
+                console.log("onNotification.notify -> ", notify)
+                console.log("MainDrawer.Props :", props);
+                localNotificationService.showNotification(0, notify.title, notify.body, notify, {
+                    // soundName: "my_sound.mp3",
+                    // playSound: true,
+                    userInteraction: true,
+                },
+                    // actions array
+                    []
+                )
+            };
+            function onOpenNotification(notify) {
+                console.log("onOpenNotification.notify -> ", notify)
+                if(notify && notify.title){
+                    if(notify.title.toString().toLowerCase().includes('recieved')){
+                        props.navigatorPros.navigation.navigate('Orders');
+                    }
+                }
+                // if(notify.title && notify.title.toLowerCase().includes('recieved')){
+                //     props.navigation.navigate('Orders');
+                // }
+                // console.log("MainDrawer.Props :", props);
+                // if (notify.body) Alert.alert("Open Notification: ", notify.body);
+            };
+            function onAction(notification) {
+                console.log("[navigations] ACTION:", notification.action);
+                console.log("[navigations] NOTIFICATION:", notification);
+            };
+            function onRegistrationError(err) {
+                console.error("[navigations] onRegistrationError :", err.message, err);
+            };
+            return () => {
+                console.log('[MainDrawer] cleared!!');
+                localNotificationService.unRegister();
+                fcmService.unRegister();
+            }
         }
-    }, []);
+
+    }, [])
+    // useEffect(() => {
+    //     // console.log("[RootStack] Props :", props);
+    //     // const backHandler = 
+    //     // const backHandler = BackHandler.removeEventListener("hardwareBackPress", ()=>{});
+    //     return () => {
+    //         // backHandler.addEventListener("hardwareBackPress",()=>{});
+    //         // _unsubscribeSiFocus();
+    //         // _unsubscribeSiBlur();
+    //         // BackHandler.removeEventListener('hardwareBackPress', handleBackButtonPressed);
+    //         // backHandler.remove();
+    //     };
+    // }, []);
     return (
         <Stack.Navigator initialRouteName={routeBase} mode="card" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="home" children={navigatorPros => <Home {...navigatorPros} stackState={props.stackState} {...props} activeTheme={props.activeTheme} />} />

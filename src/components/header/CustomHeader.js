@@ -135,7 +135,7 @@ export const HeaderApp = (props) => {
                 <ProfileModal {...screenProps} />
             ),
             // modalFlex: 0,
-            modalHeight: Dimensions.get('window').height * 0.85,
+            modalHeight: Dimensions.get('window').height * 0.87,
             modelViewPadding: 0,
             fadeAreaViewFlex: plateformSpecific(1, 0.6),
             screenProps: { ...screenProps }

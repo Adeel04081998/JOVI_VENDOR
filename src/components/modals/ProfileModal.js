@@ -17,10 +17,12 @@ import { postRequest } from '../../services/api';
 import CustomToast from '../../components/toast/CustomToast';
 import dummy from '../../assets/bike.png';
 import dropdownIcon from '../../assets/dropdownIcn.svg';
+import correctIcon from '../../assets/svgIcons/common/correct_icon.svg';
 import common from '../../assets/svgIcons/common/common';
 import { userAction } from '../../redux/actions/user';
 import { connect } from 'react-redux';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
+import errorsUI from '../validations';
 const ProfileModal = (props) => {
     console.log('USer:', props.user)
     const { dispatch } = props;
@@ -41,10 +43,51 @@ const ProfileModal = (props) => {
         vendor: props?.user?.vendorPitstopDetailsList[0],
         wallet: { balance: 0 },
         walletTransactions: [],
-        walletPagination: { itemsPerPage: 10 }
+        walletPagination: { itemsPerPage: 10 },
+        focusedField: '',
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+        validationsArr: [],
     })
     const onDropdownClick = () => {
         setState(prevState => ({ ...prevState, showDropdown: !prevState.showDropdown }));
+    }
+    const showResetPasswordScreen = () => {
+        setState(pre => ({ ...pre, mode: 'resetPassword' }));
+        dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.65 });
+    }
+    const onChangePassword = () => {
+        if (state.oldPassword === '' || state.newPassword === '' || state.confirmPassword === '') {
+            CustomToast.error('All Fields are Required');
+        } else if (state.newPassword !== state.confirmPassword) {
+            CustomToast.error('New Entered Passwords doesnt match');
+        } else if(state.validationsArr.includes(false)){
+            CustomToast.error('Invalid Password');
+        } 
+        else {
+            postRequest('Api/Vendor/ResetPasswordVendor', {
+                "oldPassword": state.oldPassword,
+                "password": state.newPassword,
+                "confirmPassword": state.confirmPassword
+              }, {}, dispatch, (res) => {
+                CustomToast.success(res?.data?.message);
+                dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false });
+                setState(pre=>({...pre,mode:false}))
+            }, (err) => {
+                if(err){
+                    CustomToast.error(err?.message)
+                }
+            });
+        }
+
+    }
+    const checkPasswordValidation = (value) => {
+        state.validationsArr[0] = value.length >= 8 && value.length <= 32 ? true : false
+        state.validationsArr[1] = value.match(/[A-Z]/g) ? true : false
+        state.validationsArr[2] = value.match(/[a-z]/g) ? true : false
+        state.validationsArr[3] = value.match(/[0-9]/g) ? true : false
+        setState(pre => ({ ...pre, newPassword: value, validationsArr: state.validationsArr }));
     }
     const onSave = (onConfirm = false) => {
         if (state.workingDays.filter(item => item === true).length < 1 && onConfirm === false) {
@@ -282,16 +325,18 @@ const ProfileModal = (props) => {
                                         })
                                     }
                                 </View>
-                                <View style={{ marginVertical: 15, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                <View style={{ marginVertical: 13, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
                                     <TouchableOpacity activeOpacity={1}  >
                                         <Text style={{ color: props.activeTheme.grey, fontSize: 14 }}>
-                                            {/* By using this app you are agreeing to our  */}
                                             <Text onPress={navigateToLegalScreen} style={stylesHome.touchableText(props.activeTheme)}> Terms & conditions </Text>
-                            and
-                            <Text onPress={navigateToLegalScreen} style={stylesHome.touchableText(props.activeTheme)}>  Privacy Policy</Text>
+                                            and
+                                            <Text onPress={navigateToLegalScreen} style={stylesHome.touchableText(props.activeTheme)}>  Privacy Policy</Text>
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
+                                <TouchableOpacity onPress={showResetPasswordScreen} style={{ marginVertical: 5, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                    <Text style={stylesHome.touchableText(props.activeTheme)}>Reset Password</Text>
+                                </TouchableOpacity>
                             </View>
                             <DefaultBtn
                                 title="Save"
@@ -361,75 +406,180 @@ const ProfileModal = (props) => {
                         </KeyboardAvoidingView>
                     </>
                     :
-                    state.mode === 'confirm' ?
+                    state.mode === 'resetPassword' ?
                         <>
-                            <KeyboardAvoidingView style={{ ...stylesHome.wrapperConfirmation }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
-                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>No Working Days Selected</Text>
-                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Are you sure?</Text>
+                            <KeyboardAvoidingView style={{ ...stylesHome.wrapperConfirmation, justifyContent: 'flex-start' }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                                <Text style={{ marginVertical: 10, marginHorizontal: 10, ...stylesHome.touchableText(props.activeTheme) }}>Reset Password</Text>
+                                <ScrollView style={{ flex: 1, marginBottom: 40 }}>
+                                    <View style={{ width: '100%', paddingLeft: 10 }}>
+                                        <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                            Old Password
+                                        </Text>
+                                        <View style={{
+                                            paddingHorizontal: 12,
+                                            borderWidth: 1,
+                                            borderRadius: 5,
+                                            borderColor: 'rgba(0,0,0,0.1)',
+                                            backgroundColor: 'transparent',
+                                            height: 40,
+                                            width: '96%',
+                                            justifyContent: "space-between",
+                                            alignItems: 'center',
+                                            flexDirection: 'row'
+                                        }}>
+                                            <TextInput value={state.oldPassword} placeholder={'Old Password'} onChangeText={(val) => setState(pre => ({ ...pre, oldPassword: val }))} />
+                                        </View>
+                                    </View>
+                                    <View style={{ width: '100%', paddingLeft: 10 }}>
+                                        <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                            New Password
+                                        </Text>
+                                        <View style={{
+                                            paddingHorizontal: 12,
+                                            borderWidth: 1,
+                                            borderRadius: 5,
+                                            borderColor: 'rgba(0,0,0,0.1)',
+                                            backgroundColor: 'transparent',
+                                            height: 40,
+                                            width: '96%',
+                                            justifyContent: "space-between",
+                                            alignItems: 'center',
+                                            flexDirection: 'row'
+                                        }}>
+                                            <TextInput value={state.newPassword} onBlur={() => setState(pre => ({ ...pre, focusedField: '' }))} onFocus={() => setState(pre => ({ ...pre, focusedField: 'newPassword' }))} placeholder={'New Password'} onChangeText={(val) => checkPasswordValidation(val)} />
+                                            {state.newPassword !== '' && <SvgXml xml={!state.validationsArr.includes(false) ? correctIcon : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                                <g id="error_Ico" transform="translate(-310 -214)">
+                                  <circle id="Ellipse_41" data-name="Ellipse 41" cx="10" cy="10" r="10" transform="translate(310 214)" fill="#fc3f93"/>
+                                  <g id="error" transform="translate(315 198.641)">
+                                    <path id="Path_208" data-name="Path 208" d="M10.292,28.361l-4.231-7.51a.985.985,0,0,0-1.705,0L.126,28.361a.991.991,0,0,0,.853,1.476H9.407A1,1,0,0,0,10.292,28.361Z" transform="translate(0)" fill="#beb5b5"/>
+                                    <path id="Path_209" data-name="Path 209" d="M46.644,63.025l4.231,7.51H42.413l4.231-7.51Z" transform="translate(-41.435 -41.682)" fill="#fff"/>
+                                    <g id="Group_209" data-name="Group 209" transform="translate(4.518 23.999)">
+                                      <path id="Path_210" data-name="Path 210" d="M195.908,179.013l.262,1.738a.427.427,0,0,0,.426.361h0a.454.454,0,0,0,.426-.361l.262-1.738a.682.682,0,0,0-.689-.787h0A.7.7,0,0,0,195.908,179.013Z" transform="translate(-195.905 -178.226)" fill="#3f4448"/>
+                                      <circle id="Ellipse_176" data-name="Ellipse 176" cx="0.394" cy="0.394" r="0.394" transform="translate(0.298 3.247)" fill="#3f4448"/>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                              `} height={18} width={18} style={{ alignSelf: 'flex-end', bottom: 10 }} />}
+                                        </View>
+                                    </View>
+                                    {
+                                        errorsUI.passwordErrorMessageUi(state.focusedField, 'newPassword', state.newPassword, props.activeTheme, state.validationsArr, 1, 50, 10)
+                                    }
+                                    <View style={{ width: '100%', paddingLeft: 10 }}>
+                                        <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+                                            Confirm Password
+                                        </Text>
+                                        <View style={{
+                                            paddingHorizontal: 12,
+                                            borderWidth: 1,
+                                            borderRadius: 5,
+                                            borderColor: 'rgba(0,0,0,0.1)',
+                                            backgroundColor: 'transparent',
+                                            height: 40,
+                                            width: '96%',
+                                            justifyContent: "space-between",
+                                            alignItems: 'center',
+                                            flexDirection: 'row'
+                                        }}>
+                                            <TextInput value={state.confirmPassword} placeholder={'Confirm Password'} onChangeText={(val) => setState(pre => ({ ...pre, confirmPassword: val }))} />
+                                            {state.confirmPassword !== '' && <SvgXml xml={state.newPassword===state.confirmPassword ? correctIcon : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                                <g id="error_Ico" transform="translate(-310 -214)">
+                                  <circle id="Ellipse_41" data-name="Ellipse 41" cx="10" cy="10" r="10" transform="translate(310 214)" fill="#fc3f93"/>
+                                  <g id="error" transform="translate(315 198.641)">
+                                    <path id="Path_208" data-name="Path 208" d="M10.292,28.361l-4.231-7.51a.985.985,0,0,0-1.705,0L.126,28.361a.991.991,0,0,0,.853,1.476H9.407A1,1,0,0,0,10.292,28.361Z" transform="translate(0)" fill="#beb5b5"/>
+                                    <path id="Path_209" data-name="Path 209" d="M46.644,63.025l4.231,7.51H42.413l4.231-7.51Z" transform="translate(-41.435 -41.682)" fill="#fff"/>
+                                    <g id="Group_209" data-name="Group 209" transform="translate(4.518 23.999)">
+                                      <path id="Path_210" data-name="Path 210" d="M195.908,179.013l.262,1.738a.427.427,0,0,0,.426.361h0a.454.454,0,0,0,.426-.361l.262-1.738a.682.682,0,0,0-.689-.787h0A.7.7,0,0,0,195.908,179.013Z" transform="translate(-195.905 -178.226)" fill="#3f4448"/>
+                                      <circle id="Ellipse_176" data-name="Ellipse 176" cx="0.394" cy="0.394" r="0.394" transform="translate(0.298 3.247)" fill="#3f4448"/>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                              `} height={18} width={18} style={{ alignSelf: 'flex-end', bottom: 10 }} />}
+                                        </View>
+                                    </View>
+                                </ScrollView>
                                 <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
                                     <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
                                         <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); onSave(true); dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
-                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>SAVE{/*SAVE */}</Text>
+                                    <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => onChangePassword()}>
+                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>SAVE</Text>
                                     </TouchableOpacity>
                                 </View>
                             </KeyboardAvoidingView>
                         </>
                         :
-                        <>
-                            <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
-                                <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.timePickMode)}</Text>
+                        state.mode === 'confirm' ?
+                            <>
+                                <KeyboardAvoidingView style={{ ...stylesHome.wrapperConfirmation }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>No Working Days Selected</Text>
+                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Are you sure?</Text>
+                                    <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
+                                            <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); onSave(true); dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>
+                                            <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>SAVE</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </KeyboardAvoidingView>
+                            </>
+                            :
+                            <>
+                                <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.timePickMode)}</Text>
 
-                                <View style={{ width: '100%', flexDirection: 'row' }}>
-                                    <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                    <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                                </View>
-                                <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                    <Picker
-                                        accessibilityLabel={"hours"}
-                                        style={{ zIndex: 500, width: 115 }}
-                                        mode="dialog" // "dialog" || "dropdown"
-                                        // prompt="Select Hours"
-                                        selectedValue={(state.selectedValue || "HH:MM").split(":")[0]}
-                                        onValueChange={(value, i) => onTimeChange(value, 0)}
-                                    >
-                                        {
-                                            Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                .map((item, i) => (
-                                                    <Picker.Item key={i} label={item} value={item} />
-                                                ))
-                                        }
-                                    </Picker>
+                                    <View style={{ width: '100%', flexDirection: 'row' }}>
+                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
+                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
+                                    </View>
+                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+                                        <Picker
+                                            accessibilityLabel={"hours"}
+                                            style={{ zIndex: 500, width: 115 }}
+                                            mode="dialog" // "dialog" || "dropdown"
+                                            // prompt="Select Hours"
+                                            selectedValue={(state.selectedValue || "HH:MM").split(":")[0]}
+                                            onValueChange={(value, i) => onTimeChange(value, 0)}
+                                        >
+                                            {
+                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                    .map((item, i) => (
+                                                        <Picker.Item key={i} label={item} value={item} />
+                                                    ))
+                                            }
+                                        </Picker>
 
-                                    <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
 
-                                    <Picker
-                                        accessibilityLabel={"minutes"}
-                                        style={{ zIndex: 500, width: 115 }}
-                                        mode="dialog" // "dialog" || "dropdown"
-                                        // prompt="Select Minutes"
-                                        selectedValue={(state.selectedValue || "HH:MM").split(":")[1]}
-                                        onValueChange={(value, i) => onTimeChange(value, 1)}
-                                    >
-                                        {
-                                            Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                .map((item, i) => (
-                                                    <Picker.Item key={i} label={item} value={item} />
-                                                ))
-                                        }
-                                    </Picker>
-                                </View>
-                                <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                                    <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: false })) }}>
-                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
-                                        <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </KeyboardAvoidingView>
-                        </>
+                                        <Picker
+                                            accessibilityLabel={"minutes"}
+                                            style={{ zIndex: 500, width: 115 }}
+                                            mode="dialog" // "dialog" || "dropdown"
+                                            // prompt="Select Minutes"
+                                            selectedValue={(state.selectedValue || "HH:MM").split(":")[1]}
+                                            onValueChange={(value, i) => onTimeChange(value, 1)}
+                                        >
+                                            {
+                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                                                    .map((item, i) => (
+                                                        <Picker.Item key={i} label={item} value={item} />
+                                                    ))
+                                            }
+                                        </Picker>
+                                    </View>
+                                    <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: false })) }}>
+                                            <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
+                                            <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </KeyboardAvoidingView>
+                            </>
             }
         </View>
     );

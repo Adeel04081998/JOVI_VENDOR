@@ -7,9 +7,9 @@ import disabledCorrectIcon from '../../assets/svgIcons/common/disabledTick.svg';
 import commonStyles from '../../styles/styles';
 
 export default {
-    passwordErrorMessageUi: (focusedField, fieldName, password, activeTheme, validationsArr, flex, maxHeight) => {
+    passwordErrorMessageUi: (focusedField, fieldName, password, activeTheme, validationsArr, flex, maxHeight,marginHorizontal) => {
         if (focusedField === fieldName) {
-            return <View style={{ flex: flex ? flex : 1, maxHeight: maxHeight ? maxHeight : undefined, flexDirection: 'column', marginVertical: 2, }}>
+            return <View style={{height:100, flex: flex ? flex : 1, maxHeight: maxHeight ? maxHeight : undefined,marginHorizontal:marginHorizontal?marginHorizontal:0, flexDirection: 'column', marginVertical: 0,marginTop:10 }}>
                 {
                     [{ "id0": 0, "msg1": '(min 8 - max 32) Characters', "id1": 1, "msg2": 'Capital letter (A-Z)' }, { "id0": 2, "msg1": 'Lowercase letter (a-z)', "id1": 3, "msg2": 'Number (0-9)' }].map((el, i) => (
 
