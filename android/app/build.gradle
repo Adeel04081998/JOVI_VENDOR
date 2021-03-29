@@ -122,7 +122,9 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
 def enableHermes = project.ext.react.get('enableHermes', false)
-
+// Always make sure to set the next available/suggested/required "versionCode" here!
+// It is neccessary for the AAB to be uploaded to Play Store and it should always be the very next available number which is not used yet!
+def versionCodeNumber_Vendor = 3
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -135,8 +137,8 @@ android {
         applicationId 'com.jovivendors'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName '1.0'
+        versionCode versionCodeNumber_Vendor
+        versionName ('1.0.' + versionCodeNumber_Vendor.toString())
         multiDexEnabled true
         manifestPlaceholders = [APP_MODE: project.env.get(android.defaultConfig.applicationId.replace(".", "_"))]
     }

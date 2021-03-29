@@ -13,6 +13,33 @@ import { getRequest } from '../services/api';
 import AsyncStorage from '@react-native-community/async-storage';
 import CustomToast from '../components/toast/CustomToast';
 import { closeModalAction } from '../redux/actions/modal';
+import commonStyles from '../styles/styles';
+import { TextInput } from 'react-native-gesture-handler';
+export const CustomInput = ({ label, value,svgIcon, onChangeText,rightIcon,inputProps,activeTheme }) => {
+    return <View style={{ width: '100%', paddingLeft: 10,position:'relative' }}>
+        <Text style={[commonStyles.fontStyles(14, activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
+            {label}
+        </Text>
+        {
+            rightIcon&& <SvgXml xml={svgIcon} height={18} width={18} style={{ alignSelf: 'flex-end',right:25,top:30 }} />
+        }
+        <View style={{
+            paddingHorizontal: 12,
+            borderWidth: 1,
+            borderRadius: 5,
+            borderColor: 'rgba(0,0,0,0.1)',
+            backgroundColor: 'transparent',
+            height: 40,
+            width: '96%',
+            justifyContent: "space-between",
+            alignItems: 'center',
+            flexDirection: 'row'
+        }}>
+            <TextInput value={value} placeholder={label} style={{ width: '100%' }} onChangeText={onChangeText} {...inputProps} />
+        </View>
+        
+    </View>
+}
 const CommonRiderAllocation = props => {
     console.log("[CommonRiderAllocation].Props :", props);
     // console.log("[CommonRiderAllocation].getHubConnectionInstance :", getHubConnectionInstance);

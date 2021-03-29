@@ -23,6 +23,7 @@ import { userAction } from '../../redux/actions/user';
 import { connect } from 'react-redux';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import errorsUI from '../validations';
+import { CustomInput } from '../SharedComponents';
 const ProfileModal = (props) => {
     console.log('USer:', props.user)
     const { dispatch } = props;
@@ -55,27 +56,27 @@ const ProfileModal = (props) => {
     }
     const showResetPasswordScreen = () => {
         setState(pre => ({ ...pre, mode: 'resetPassword' }));
-        dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.65 });
+        // dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.65 });
     }
     const onChangePassword = () => {
         if (state.oldPassword === '' || state.newPassword === '' || state.confirmPassword === '') {
             CustomToast.error('All Fields are Required');
         } else if (state.newPassword !== state.confirmPassword) {
             CustomToast.error('New Entered Passwords doesnt match');
-        } else if(state.validationsArr.includes(false)){
+        } else if (state.validationsArr.includes(false)) {
             CustomToast.error('Invalid Password');
-        } 
+        }
         else {
             postRequest('Api/Vendor/ResetPasswordVendor', {
                 "oldPassword": state.oldPassword,
                 "password": state.newPassword,
                 "confirmPassword": state.confirmPassword
-              }, {}, dispatch, (res) => {
+            }, {}, dispatch, (res) => {
                 CustomToast.success(res?.data?.message);
-                dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false });
-                setState(pre=>({...pre,mode:false}))
+                // dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false });
+                setState(pre => ({ ...pre, mode: false }))
             }, (err) => {
-                if(err){
+                if (err) {
                     CustomToast.error(err?.message)
                 }
             });
@@ -411,94 +412,61 @@ const ProfileModal = (props) => {
                             <KeyboardAvoidingView style={{ ...stylesHome.wrapperConfirmation, justifyContent: 'flex-start' }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
                                 <Text style={{ marginVertical: 10, marginHorizontal: 10, ...stylesHome.touchableText(props.activeTheme) }}>Reset Password</Text>
                                 <ScrollView style={{ flex: 1, marginBottom: 40 }}>
-                                    <View style={{ width: '100%', paddingLeft: 10 }}>
-                                        <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                            Old Password
-                                        </Text>
-                                        <View style={{
-                                            paddingHorizontal: 12,
-                                            borderWidth: 1,
-                                            borderRadius: 5,
-                                            borderColor: 'rgba(0,0,0,0.1)',
-                                            backgroundColor: 'transparent',
-                                            height: 40,
-                                            width: '96%',
-                                            justifyContent: "space-between",
-                                            alignItems: 'center',
-                                            flexDirection: 'row'
-                                        }}>
-                                            <TextInput value={state.oldPassword} placeholder={'Old Password'} onChangeText={(val) => setState(pre => ({ ...pre, oldPassword: val }))} />
-                                        </View>
-                                    </View>
-                                    <View style={{ width: '100%', paddingLeft: 10 }}>
-                                        <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                            New Password
-                                        </Text>
-                                        <View style={{
-                                            paddingHorizontal: 12,
-                                            borderWidth: 1,
-                                            borderRadius: 5,
-                                            borderColor: 'rgba(0,0,0,0.1)',
-                                            backgroundColor: 'transparent',
-                                            height: 40,
-                                            width: '96%',
-                                            justifyContent: "space-between",
-                                            alignItems: 'center',
-                                            flexDirection: 'row'
-                                        }}>
-                                            <TextInput value={state.newPassword} onBlur={() => setState(pre => ({ ...pre, focusedField: '' }))} onFocus={() => setState(pre => ({ ...pre, focusedField: 'newPassword' }))} placeholder={'New Password'} onChangeText={(val) => checkPasswordValidation(val)} />
-                                            {state.newPassword !== '' && <SvgXml xml={!state.validationsArr.includes(false) ? correctIcon : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                                <g id="error_Ico" transform="translate(-310 -214)">
-                                  <circle id="Ellipse_41" data-name="Ellipse 41" cx="10" cy="10" r="10" transform="translate(310 214)" fill="#fc3f93"/>
-                                  <g id="error" transform="translate(315 198.641)">
-                                    <path id="Path_208" data-name="Path 208" d="M10.292,28.361l-4.231-7.51a.985.985,0,0,0-1.705,0L.126,28.361a.991.991,0,0,0,.853,1.476H9.407A1,1,0,0,0,10.292,28.361Z" transform="translate(0)" fill="#beb5b5"/>
-                                    <path id="Path_209" data-name="Path 209" d="M46.644,63.025l4.231,7.51H42.413l4.231-7.51Z" transform="translate(-41.435 -41.682)" fill="#fff"/>
-                                    <g id="Group_209" data-name="Group 209" transform="translate(4.518 23.999)">
-                                      <path id="Path_210" data-name="Path 210" d="M195.908,179.013l.262,1.738a.427.427,0,0,0,.426.361h0a.454.454,0,0,0,.426-.361l.262-1.738a.682.682,0,0,0-.689-.787h0A.7.7,0,0,0,195.908,179.013Z" transform="translate(-195.905 -178.226)" fill="#3f4448"/>
-                                      <circle id="Ellipse_176" data-name="Ellipse 176" cx="0.394" cy="0.394" r="0.394" transform="translate(0.298 3.247)" fill="#3f4448"/>
-                                    </g>
-                                  </g>
-                                </g>
-                              </svg>
-                              `} height={18} width={18} style={{ alignSelf: 'flex-end', bottom: 10 }} />}
-                                        </View>
-                                    </View>
+                                    <CustomInput
+                                        value={state.oldPassword}
+                                        label={'Old Password'}
+                                        activeTheme={props.activeTheme}
+                                        onChangeText={(val) => setState(pre => ({ ...pre, oldPassword: val }))}
+                                    />
+                                    <CustomInput
+                                        value={state.newPassword}
+                                        label={'New Password'}
+                                        activeTheme={props.activeTheme}
+                                        onChangeText={(val) => checkPasswordValidation(val)}
+                                        inputProps={{
+                                            onBlur: () => setState(pre => ({ ...pre, focusedField: '' })),
+                                            onFocus: () => setState(pre => ({ ...pre, focusedField: 'newPassword' }))
+                                        }}
+                                        rightIcon={state.newPassword!==''}
+                                        svgIcon={!state.validationsArr.includes(false) ? correctIcon : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                                        <g id="error_Ico" transform="translate(-310 -214)">
+                                          <circle id="Ellipse_41" data-name="Ellipse 41" cx="10" cy="10" r="10" transform="translate(310 214)" fill="#fc3f93"/>
+                                          <g id="error" transform="translate(315 198.641)">
+                                            <path id="Path_208" data-name="Path 208" d="M10.292,28.361l-4.231-7.51a.985.985,0,0,0-1.705,0L.126,28.361a.991.991,0,0,0,.853,1.476H9.407A1,1,0,0,0,10.292,28.361Z" transform="translate(0)" fill="#beb5b5"/>
+                                            <path id="Path_209" data-name="Path 209" d="M46.644,63.025l4.231,7.51H42.413l4.231-7.51Z" transform="translate(-41.435 -41.682)" fill="#fff"/>
+                                            <g id="Group_209" data-name="Group 209" transform="translate(4.518 23.999)">
+                                              <path id="Path_210" data-name="Path 210" d="M195.908,179.013l.262,1.738a.427.427,0,0,0,.426.361h0a.454.454,0,0,0,.426-.361l.262-1.738a.682.682,0,0,0-.689-.787h0A.7.7,0,0,0,195.908,179.013Z" transform="translate(-195.905 -178.226)" fill="#3f4448"/>
+                                              <circle id="Ellipse_176" data-name="Ellipse 176" cx="0.394" cy="0.394" r="0.394" transform="translate(0.298 3.247)" fill="#3f4448"/>
+                                            </g>
+                                          </g>
+                                        </g>
+                                      </svg>
+                                      `}
+                                    />
                                     {
                                         errorsUI.passwordErrorMessageUi(state.focusedField, 'newPassword', state.newPassword, props.activeTheme, state.validationsArr, 1, 50, 10)
                                     }
-                                    <View style={{ width: '100%', paddingLeft: 10 }}>
-                                        <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                            Confirm Password
-                                        </Text>
-                                        <View style={{
-                                            paddingHorizontal: 12,
-                                            borderWidth: 1,
-                                            borderRadius: 5,
-                                            borderColor: 'rgba(0,0,0,0.1)',
-                                            backgroundColor: 'transparent',
-                                            height: 40,
-                                            width: '96%',
-                                            justifyContent: "space-between",
-                                            alignItems: 'center',
-                                            flexDirection: 'row'
-                                        }}>
-                                            <TextInput value={state.confirmPassword} placeholder={'Confirm Password'} onChangeText={(val) => setState(pre => ({ ...pre, confirmPassword: val }))} />
-                                            {state.confirmPassword !== '' && <SvgXml xml={state.newPassword===state.confirmPassword ? correctIcon : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                                <g id="error_Ico" transform="translate(-310 -214)">
-                                  <circle id="Ellipse_41" data-name="Ellipse 41" cx="10" cy="10" r="10" transform="translate(310 214)" fill="#fc3f93"/>
-                                  <g id="error" transform="translate(315 198.641)">
-                                    <path id="Path_208" data-name="Path 208" d="M10.292,28.361l-4.231-7.51a.985.985,0,0,0-1.705,0L.126,28.361a.991.991,0,0,0,.853,1.476H9.407A1,1,0,0,0,10.292,28.361Z" transform="translate(0)" fill="#beb5b5"/>
-                                    <path id="Path_209" data-name="Path 209" d="M46.644,63.025l4.231,7.51H42.413l4.231-7.51Z" transform="translate(-41.435 -41.682)" fill="#fff"/>
-                                    <g id="Group_209" data-name="Group 209" transform="translate(4.518 23.999)">
-                                      <path id="Path_210" data-name="Path 210" d="M195.908,179.013l.262,1.738a.427.427,0,0,0,.426.361h0a.454.454,0,0,0,.426-.361l.262-1.738a.682.682,0,0,0-.689-.787h0A.7.7,0,0,0,195.908,179.013Z" transform="translate(-195.905 -178.226)" fill="#3f4448"/>
-                                      <circle id="Ellipse_176" data-name="Ellipse 176" cx="0.394" cy="0.394" r="0.394" transform="translate(0.298 3.247)" fill="#3f4448"/>
-                                    </g>
-                                  </g>
-                                </g>
-                              </svg>
-                              `} height={18} width={18} style={{ alignSelf: 'flex-end', bottom: 10 }} />}
-                                        </View>
-                                    </View>
+                                     <CustomInput
+                                        value={state.newPassword}
+                                        label={'Confirm Password'}
+                                        activeTheme={props.activeTheme}
+                                        onChangeText={(val) => setState(pre => ({ ...pre, confirmPassword: val }))}
+                                        rightIcon={state.confirmPassword !== ''}
+                                        svgIcon={state.newPassword === state.confirmPassword  ? correctIcon : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                                        <g id="error_Ico" transform="translate(-310 -214)">
+                                          <circle id="Ellipse_41" data-name="Ellipse 41" cx="10" cy="10" r="10" transform="translate(310 214)" fill="#fc3f93"/>
+                                          <g id="error" transform="translate(315 198.641)">
+                                            <path id="Path_208" data-name="Path 208" d="M10.292,28.361l-4.231-7.51a.985.985,0,0,0-1.705,0L.126,28.361a.991.991,0,0,0,.853,1.476H9.407A1,1,0,0,0,10.292,28.361Z" transform="translate(0)" fill="#beb5b5"/>
+                                            <path id="Path_209" data-name="Path 209" d="M46.644,63.025l4.231,7.51H42.413l4.231-7.51Z" transform="translate(-41.435 -41.682)" fill="#fff"/>
+                                            <g id="Group_209" data-name="Group 209" transform="translate(4.518 23.999)">
+                                              <path id="Path_210" data-name="Path 210" d="M195.908,179.013l.262,1.738a.427.427,0,0,0,.426.361h0a.454.454,0,0,0,.426-.361l.262-1.738a.682.682,0,0,0-.689-.787h0A.7.7,0,0,0,195.908,179.013Z" transform="translate(-195.905 -178.226)" fill="#3f4448"/>
+                                              <circle id="Ellipse_176" data-name="Ellipse 176" cx="0.394" cy="0.394" r="0.394" transform="translate(0.298 3.247)" fill="#3f4448"/>
+                                            </g>
+                                          </g>
+                                        </g>
+                                      </svg>
+                                      `}
+                                    />
                                 </ScrollView>
                                 <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
                                     <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); }}>

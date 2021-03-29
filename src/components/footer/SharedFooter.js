@@ -25,8 +25,9 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
                     {
                         hideOptions&&hideOptions===true?<TouchableOpacity style={{ width: '25%',height:45, alignItems: 'center' }}></TouchableOpacity>:(BOTTOM_TABS || []).map((t, j) => (
                             <TouchableOpacity key={j} style={{ width: '25%', alignItems: 'center' }} onPress={() => bottomNavigationHandler(t, j)}>
-                                <SvgXml xml={t.icon(activeTab === j ? "#7359BE" : "#c1c0c6")} height={25} width={25} />
-                                <Text style={{ ...commonStyles.fontStyles(14, activeTab === j ? activeTheme.default : "#c1c0c6", activeTab === j ? 4 : 1), paddingTop: 10 }}>{t.title}</Text>
+                                <SvgXml xml={t.icon( "#7359BE")} height={25} width={25} />
+                                <Text style={{ ...commonStyles.fontStyles(14,activeTheme.default ,4), paddingTop: 10 }}>{t.title}</Text>
+                                {/* <Text style={{ ...commonStyles.fontStyles(14, activeTab === j ? activeTheme.default : "#c1c0c6", activeTab === j ? 4 : 1), paddingTop: 10 }}>{t.title}</Text> */}
                                 {
                                     (j === 1 &&mainDrawerComponentProps.user.noOfOpenOrders>0) ?
                                         <View style={{ position: 'absolute', right: 0, top: -7, zIndex: 999, left: 50, backgroundColor: "#FC3F93", alignItems: 'center', justifyContent: 'center', height: 15, width: 15, borderRadius: 10 }}>

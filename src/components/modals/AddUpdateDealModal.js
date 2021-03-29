@@ -366,7 +366,7 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.categoryName} placeholder={'Choose Deal Type'} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: 'deal_type', deal: { ...pre.deal, categoryName: val } }))} />
+                                        <TextInput value={state.deal.categoryName} style={{width:'100%'}} placeholder={'Choose Deal Type'} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: 'deal_type', deal: { ...pre.deal, categoryName: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     {state.showDropdown === 'deal_type' ? <ScrollView nestedScrollEnabled onScrollEndDrag={(e) => {
@@ -396,7 +396,7 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.title} placeholder={'Create a Deal'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, title: val } }))} />
+                                        <TextInput value={state.deal.title} style={{width:'100%'}} placeholder={'Create a Deal'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, title: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -414,7 +414,7 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput keyboardType={'numeric'} value={state.deal.price.toString()} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: val } }))} />
+                                        <TextInput keyboardType={'numeric'} style={{width:'100%'}} value={state.deal.price.toString()} placeholder={'Price'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -497,7 +497,7 @@ const AddUpdateDealModal = (props) => {
                                         flexDirection: 'row'
                                     }}>
                                         {/* <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}> */}
-                                        <TextInput value={state.deal.description} multiline={true} numberOfLines={5} placeholder={'Description'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, description: val } }))} />
+                                        <TextInput value={state.deal.description} style={{width:'100%'}} multiline={true} numberOfLines={5} placeholder={'Description'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, description: val } }))} />
                                         {/* </TouchableOpacity> */}
                                     </View>
                                     {/* <ImageBackground source={{ uri: 'file:///storage/emulated/0/Pictures/images/image-a93ff1b6-0a80-4474-b4b3-d924b6749f11.jpg' }} resizeMode='stretch' style={{ width: '100%', justifyContent: 'flex-start', borderRadius: 10, overflow: 'hidden', marginVertical: 10, height: 170 }}> */}
@@ -530,7 +530,7 @@ const AddUpdateDealModal = (props) => {
                                                     alignItems: 'center',
                                                     flexDirection: 'row'
                                                 }}>
-                                                    <TextInput placeholder={'Enter Category Name'} onChangeText={(val) => onChangeDealProduct(val, i, 'dealOptionDescription')} value={item.dealOptionDescription} />
+                                                    <TextInput placeholder={'Enter Category Name'} style={{width:'100%'}} onChangeText={(val) => onChangeDealProduct(val, i, 'dealOptionDescription')} value={item.dealOptionDescription} />
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -548,7 +548,7 @@ const AddUpdateDealModal = (props) => {
                                                     alignItems: 'center',
                                                     flexDirection: 'row'
                                                 }}>
-                                                    <TextInput keyboardType={'numeric'} placeholder={'Enter Quantity'} onChangeText={(val) => onChangeDealProduct(val, i, 'quantity')} value={item.quantity.toString()} />
+                                                    <TextInput keyboardType={'numeric'} style={{width:'100%'}} placeholder={'Enter Quantity'} onChangeText={(val) => onChangeDealProduct(val, i, 'quantity')} value={item.quantity.toString()} />
                                                     {/* <Text>{i}</Text> */}
                                                 </View>
                                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
@@ -566,7 +566,7 @@ const AddUpdateDealModal = (props) => {
                                                     flexDirection: 'row'
                                                 }}>
                                                     <TouchableOpacity onPress={() => onDropdownClick('product')} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                                        <TextInput value={state.filter} placeholder={'Choose Product'} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'product-' + i, filter: val }))} />
+                                                        <TextInput value={state.filter} style={{width:'100%'}} placeholder={'Choose Product'} onChangeText={(val) => setState(pre => ({ ...pre, showDropdown: val === '' ? '' : 'product-' + i, filter: val }))} />
                                                         {/* <Text>{state.brand.text ? state.brand.text : 'Choose Brand'}</Text> */}
                                                     </TouchableOpacity>
                                                 </View>
