@@ -11,6 +11,7 @@ import dummy from '../../assets/orderImage.png';
 import IncomingJobModal from './IncomingJobModal';
 import commonStyles from '../../styles/styles';
 import { getRequest } from '../../services/api';
+import { Player } from '@react-native-community/audio-toolkit';
 const FadeInView = (props) => {
     const fadeAnim = useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
     const [state, setState] = useState(0);
@@ -23,7 +24,7 @@ const FadeInView = (props) => {
                 duration: 1000,
             }
         ).start(({ finished }) => {
-            if(finished === true){
+            if (finished === true) {
                 infiniteLoop();
             }
         });
@@ -67,11 +68,20 @@ const NotificationModal = props => {
     useEffect(useCallback(() => {
         Keyboard.addListener('keyboardDidShow', _keyboardShowDetecter);
         Keyboard.addListener('keyboardDidHide', _keyboardHideDetecter);
+        const orderRingtonePlayer = new Player('order_ringtone.mp3', { autoDestroy: true, mixWithOthers: true, continuesToPlayInBackground: true });
+        orderRingtonePlayer.looping = true;
+        orderRingtonePlayer.volume = 1;
+        orderRingtonePlayer.prepare((error) => {
+            if (!error) {
+                orderRingtonePlayer.play();
+            }
+        });
         getApiDetails({ ...props, getRequest: getRequest });
         return () => {
             console.log('Notification Modal State Cleared-----');
             Keyboard.removeListener('keyboardDidShow', _keyboardShowDetecter);
             Keyboard.removeListener('keyboardDidHide', _keyboardHideDetecter);
+            orderRingtonePlayer.destroy();
             // BackHandler.removeEventListener('hardwareBackPress', bool => Alert.alert(bool));
         }
     }, []), []);
@@ -97,8 +107,8 @@ const NotificationModal = props => {
                                 <View style={{ height: '50%', overflow: 'hidden', borderRadius: 10, backgroundColor: '#fff', width: '80%' }}>
                                     <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 10, alignItems: 'center', alignContent: 'center' }}>
                                         <View style={{ width: '100%', padding: 20, height: '80%' }}>
-                                                <ImageBackground source={dummy} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='contain'  >
-                                                </ImageBackground>
+                                            <ImageBackground source={dummy} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='contain'  >
+                                            </ImageBackground>
                                             {/* <FadeInView style={{ width: '100%', height: '100%', }}> */}
                                             {/* </FadeInView> */}
                                         </View>

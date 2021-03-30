@@ -68,6 +68,10 @@
       <meta-data
      android:name="com.google.android.geo.API_KEY"
      android:value="AIzaSyBBQktq4PCNXWX5xNnIt8t4yRS2k4v6yGU"/>
+     <meta-data
+    android:name="com.google.firebase.messaging.default_notification_channel_id"
+     />
+    <!-- android:value="rn-push-notification-channel-id-default-4-300" -->
      <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
      <!-- For local push notification small icon -->

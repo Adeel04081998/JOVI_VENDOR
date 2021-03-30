@@ -447,7 +447,7 @@ const ProfileModal = (props) => {
                                         errorsUI.passwordErrorMessageUi(state.focusedField, 'newPassword', state.newPassword, props.activeTheme, state.validationsArr, 1, 50, 10)
                                     }
                                      <CustomInput
-                                        value={state.newPassword}
+                                        value={state.confirmPassword}
                                         label={'Confirm Password'}
                                         activeTheme={props.activeTheme}
                                         onChangeText={(val) => setState(pre => ({ ...pre, confirmPassword: val }))}

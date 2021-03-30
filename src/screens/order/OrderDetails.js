@@ -263,7 +263,7 @@ function OrderDetails(props) {
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Report</Text>
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity={state.orderObj.orderStatus === 1 ? 0 : 1} style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: state.orderObj.orderStatus === 1 ? props.activeTheme.default : props.activeTheme.grey }} onPress={state.orderObj.orderStatus === 1 ? () => confirmOrder(false, true) : () => { }}>
-                        <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Confirm</Text>
+                        <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Pass to Rider</Text>
                     </TouchableOpacity>
                 </View>
             </View>

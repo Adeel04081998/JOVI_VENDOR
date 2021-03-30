@@ -1,6 +1,7 @@
 
 import messaging from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
+// import notifee from '@notifee/react-native';
 
 class FCMService {
 
@@ -64,7 +65,7 @@ class FCMService {
     }
 
     createNoitificationListeners = (onRegister, onNotification, onOpenNotification) => {
-        
+
         // When app is in background state and user is idle
 
         // messaging().onDeletedMessages(async () => {
@@ -73,6 +74,11 @@ class FCMService {
         // })
 
         // When app is running but in background state
+        // notifee.createChannel({
+        //     id: 'custom-sound',
+        //     name: 'Channel with custom sound',
+        //     sound: 'my_sound.mp3',
+        // });
         messaging().onNotificationOpenedApp(remoteMessage => {
             console.log('[FCMService] onNotificationOpenedApp Notification caused app to open');
             if (remoteMessage) {

@@ -86,13 +86,41 @@ const VendorRoutes = (props) => {
             function onRegister(token) {
                 console.log('[navigations.js] onRegister token :', token);
                 sharedSendFCMTokenToServer(postRequest, token);
+                localNotificationService.createChannel();
             };
             function onNotification(notify) {
-                console.log("onNotification.notify -> ", notify)
+                // console.log("onNotification.notify -> ", notify)
                 console.log("MainDrawer.Props :", props);
-                localNotificationService.showNotification(0, notify.title, notify.body, notify, {
-                    // soundName: "my_sound.mp3",
-                    // playSound: true,
+                // debugger;
+                // notify?.android?.setsound('my_sound.mp3');
+
+                if(notify.notification){
+
+                }else{
+                    notify={
+                        ...notify,
+                        android:{
+                            ...notify.android,
+                            data: {
+                                sound: 'my_sound.mp3',
+                              },
+                              notification: {
+                                sound: 'my_sound.mp3',
+                              },
+                            sound: 'my_sound.mp3'
+                        },
+                        notification:{
+                            ...notify,
+                            sound:'android.resource://com.jovivendors/raw/my_sound.mp3',
+                            soundName:'android.resource://com.jovivendors/raw/my_sound.mp3'
+                        }
+                    }
+                }
+                console.log("onNotification.notify -> ", notify)
+                localNotificationService.showNotification(10, notify.notification.title, notify.notification.body, notify, {
+                    soundName: Platform.select({ android: "my_sound.mp3", ios: "default" }),
+                            sound:'android.resource://com.jovivendors/raw/my_sound.mp3',
+                            playSound: true,
                     userInteraction: true,
                 },
                     // actions array

@@ -16,7 +16,7 @@ class LocalNotificationService {
             onNotification: function (notification) {
                 console.log("[LocalNotificationService] NOTIFICATION:", notification);
                 if (!notification.data) return;
-                
+
                 notification.userInteraction = true;
                 onOpenNotification(Platform.OS === 'ios' ? notification.data.item : notification.data);
                 // process the notification
@@ -65,45 +65,73 @@ class LocalNotificationService {
     }
 
     unRegister = () => PushNotification.unregister();
-
+    createChannel = () => {
+        PushNotification.channelExists('channel-id', (check) => {
+            if (!check) {
+                PushNotification.createChannel({
+                    channelId: "channel-id", // (required)
+                    channelName: "My channel", // (required)
+                    channelDescription: "A channel to categorise your notifications", // (optional) default: undefined.
+                    sound: "my_sound.mp3", // (optional) See `soundName` parameter of `localNotification` function
+                    soundName: "my_sound.mp3", // (optional) See `soundName` parameter of `localNotification` function
+                    importance: 4, // (optional) default: 4. Int value of the Android notification importance
+                    vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+                },
+                    (created) => console.log(`createChannel returned '${created}'`));
+            }else{
+                PushNotification.deleteChannel('channel-id',(created) => console.log(`Channel Deleted: '${created}'`))
+            }
+        })
+        // PushNotification.deleteChannel('channel-id');
+    }
     showNotification = (id, title, message, data = {}, options = {}, actions = []) => {
-        console.log("showNotification called");
+        console.log("showNotification called", options);
+
         PushNotification.localNotification({
             ...this.buildAndroidNotification(id, title, message, data, options),
             ...this.buildIOSNotification(id, title, message, data, options),
             title: title || "",
             message: message || "",
-            playSound: options.playSound || false,
-            soundName: options.soundName || "default",
-            userInteraction: options.userInteraction || false,
+            playSound: options.playSound || true,
+            soundName: options.soundName,
+            sound: options.soundName,
+            userInteraction: options.userInteraction || true,
             invokeApp: options.invokeApp || true,
             actions,
             ignoreInForeground: false
         })
     };
-
     buildAndroidNotification = (id, title, message, data = {}, options = {}) => {
         console.log("buildAndroidNotification called");
         return {
             id,
             autoCancel: true,
-            largeIcon: options.largeIcon || "",
-            smallIcon: options.smallIcon || "",
             bigText: message,
             subText: title,
             vibrate: options.vibrate || true,
             vibration: options.vibration || 300,
             priority: options.priority || 'high',
             importance: options.importance || 'high',
+            allowWhileIdle: options.allowWhileIdle || true,
             data,
-
+            // invokeApp: true,
             // largeIcon: options.largeIcon || "ic_launcher",
             // smallIcon: options.smallIcon || "ic_notification",
-
             // largeIconUrl: "https://www.uk2.net/blog/wp-content/uploads/domain-suffixes.jpg", for icon in message
             // bigPictureUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Mnx8cGljfGVufDB8fDB8&ixlib=rb-1.2.1&w=1000&q=80", // (optional) default: undefined
             // bigLargeIcon: "ic_launcher", // (optional) default: undefined
             // bigLargeIconUrl: "https://www.uk2.net/blog/wp-content/uploads/domain-suffixes.jpg", // (optional) default: undefined
+        }
+    };
+    buildIOSNotification = (id, title, message, data = {}, options = {}) => {
+        console.log("buildIOSNotification called");
+        return {
+            alertAction: options.alertAction || "view",
+            category: options.category || "",
+            userInfo: {
+                id,
+                item: data
+            },
         }
     };
     buildIOSNotification = (id, title, message, data = {}, options = {}) => {
@@ -127,4 +155,4 @@ class LocalNotificationService {
     }
 };
 
-export const localNotificationService = new LocalNotificationService(); 
+export const localNotificationService = new LocalNotificationService();

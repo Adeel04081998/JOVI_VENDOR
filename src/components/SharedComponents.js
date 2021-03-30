@@ -21,7 +21,7 @@ export const CustomInput = ({ label, value,svgIcon, onChangeText,rightIcon,input
             {label}
         </Text>
         {
-            rightIcon&& <SvgXml xml={svgIcon} height={18} width={18} style={{ alignSelf: 'flex-end',right:25,top:30 }} />
+            rightIcon&& <SvgXml xml={svgIcon} height={18} width={18} style={{ alignSelf: 'flex-end',position:'absolute',right:25,top:50 }} />
         }
         <View style={{
             paddingHorizontal: 12,
