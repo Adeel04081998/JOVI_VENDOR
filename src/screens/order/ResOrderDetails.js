@@ -28,7 +28,7 @@ function ResOrderDetails(props) {
         focusedItem: null,
     });
     const changeStatusItem = (item) => {
-        if(item.pitstopDealID>0){
+        if (item.pitstopDealID > 0) {
             outOfStock(item);
             return;
         }
@@ -43,7 +43,7 @@ function ResOrderDetails(props) {
             "jobItemID": item.jobItemID,
             "jobItemStatus": item.jobItemStatus === 1 ? 2 : 1,
         }
-        postRequest('Api/Vendor/Restaurant/JobDeal/Update',payload, {}, props.dispatch, (res) => {
+        postRequest('Api/Vendor/Restaurant/JobDeal/Update', payload, {}, props.dispatch, (res) => {
             if (res.data.statusCode === 200) {
                 CustomToast.success('Order Updated');
                 getData();
@@ -219,12 +219,14 @@ function ResOrderDetails(props) {
                                                     <Text style={stylesOrder.label}>{itemOptions.productAttributeName}</Text>
                                                 </View>
                                             })}</>}
-                                        <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>
-                                            Special Description
-                                        </Text>
-                                        <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 3) }}>
-                                            {item.specialInstructions}
-                                        </Text>
+                                        {item.specialInstructions && item.specialInstructions !== '' ?<><Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Special Description</Text>
+Î                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 3) }}>
+                                                {item.specialInstructions}
+                                            </Text>
+                                        </>
+                                        :
+                                        <></>
+                                        }
                                     </ScrollView>
                                 }
                             </View>

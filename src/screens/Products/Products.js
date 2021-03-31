@@ -7,7 +7,7 @@ import { HeaderApp } from '../../components/header/CustomHeader';
 import commonStyles from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
 import SharedFooter from '../../components/footer/SharedFooter';
-import dummy from '../../assets/bike.png';
+import dummy from '../../assets/pictureNotAvailable.jpeg';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';

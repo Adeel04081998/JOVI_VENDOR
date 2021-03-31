@@ -7,7 +7,7 @@ import { navigateWithResetScreen, sharedTotalCartItems } from '../../utils/share
 import { BOTTOM_TABS } from '../../config/config';
 import { setFooterTabsAction } from '../../redux/actions/sharedReduxActions';
 
-export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDrawerComponentProps, onPress }) => {
+export default ({ activeTheme, onHome, activeTab, hideOptions, drawerProps, mainDrawerComponentProps, onPress }) => {
     // console.log("mainDrawerComponentProps :", mainDrawerComponentProps);
     // const bottomNavigationHandler = pressedTab => navigateWithResetScreen(null, [{ name: pressedTab.route.container, params: { screen: pressedTab.route.screen } }]);
     const bottomNavigationHandler = (pressedTab, index) => {
@@ -19,18 +19,20 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
 
     }
     return (
-        <View style={{zIndex:999},styles.mainView(activeTheme)}>
-            <View style={{zIndex:999}}>
+        <View style={{ zIndex: 999 }, styles.mainView(activeTheme)}>
+            <View style={{ zIndex: 999 }}>
                 <View style={styles.footerContainer()}>
                     {
-                        hideOptions&&hideOptions===true?<TouchableOpacity style={{ width: '25%',height:45, alignItems: 'center' }}></TouchableOpacity>:(BOTTOM_TABS || []).map((t, j) => (
+                        hideOptions && hideOptions === true ? <TouchableOpacity style={{ width: '25%', height: 45, alignItems: 'center' }}></TouchableOpacity> : (BOTTOM_TABS || []).map((t, j) => (
                             <TouchableOpacity key={j} style={{ width: '25%', alignItems: 'center' }} onPress={() => bottomNavigationHandler(t, j)}>
-                                <SvgXml xml={t.icon( "#7359BE")} height={25} width={25} />
-                                <Text style={{ ...commonStyles.fontStyles(14,activeTheme.default ,4), paddingTop: 10 }}>{t.title}</Text>
+                                <View style={{ height: 40, width: 40, borderWidth: 1, borderColor:activeTab===j?activeTheme.default:'#fff', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}>
+                                    <SvgXml xml={t.icon("#7359BE")} height={25} width={25} />
+                                </View>
+                                <Text style={{ ...commonStyles.fontStyles(14, activeTheme.default, 4), paddingTop: 4 }}>{t.title}</Text>
                                 {/* <Text style={{ ...commonStyles.fontStyles(14, activeTab === j ? activeTheme.default : "#c1c0c6", activeTab === j ? 4 : 1), paddingTop: 10 }}>{t.title}</Text> */}
                                 {
-                                    (j === 1 &&mainDrawerComponentProps.user.noOfOpenOrders>0) ?
-                                        <View style={{ position: 'absolute', right: 0, top: -7, zIndex: 999, left: 50, backgroundColor: "#FC3F93", alignItems: 'center', justifyContent: 'center', height: 15, width: 15, borderRadius: 10 }}>
+                                    (j === 1 && mainDrawerComponentProps.user.noOfOpenOrders > 0) ?
+                                        <View style={{ position: 'absolute', right: 0, top: 0, zIndex: 999, left: 52, backgroundColor: "#FC3F93", alignItems: 'center', justifyContent: 'center', height: 15, width: 15, borderRadius: 10 }}>
                                             <Text style={{ color: activeTheme.white, fontSize: 10 }}>{mainDrawerComponentProps.user.noOfOpenOrders}</Text>
                                         </View>
                                         :
@@ -40,7 +42,7 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
                         ))
                     }
                 </View>
-                <TouchableOpacity style={{width:30,zIndex:1500,height:30,...styles.absoluteTouchableOpacity(activeTheme)}} onPress={onHome&&onHome===true?()=>{}:() => navigateWithResetScreen(null, [{ name: mainDrawerComponentProps.user.pitstopType===4?'homeRes':'home', params: {} }])}>
+                <TouchableOpacity style={{ width: 30, zIndex: 1500, height: 30, ...styles.absoluteTouchableOpacity(activeTheme) }} onPress={onHome && onHome === true ? () => { } : () => navigateWithResetScreen(null, [{ name: mainDrawerComponentProps.user.pitstopType === 4 ? 'homeRes' : 'home', params: {} }])}>
                     <SvgXml xml={commonIcons.footerHome()} height={30} width={40} />
                 </TouchableOpacity>
             </View>
@@ -51,7 +53,7 @@ export default ({ activeTheme,onHome, activeTab,hideOptions, drawerProps, mainDr
 const styles = StyleSheet.create({
     "mainView": activeTheme => ({
         height: 80,
-        zIndex:1500,
+        zIndex: 1500,
         justifyContent: 'center',
         shadowColor: "#000",
         shadowOffset: {
