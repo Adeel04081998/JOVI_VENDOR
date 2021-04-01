@@ -99,20 +99,10 @@ const VendorRoutes = (props) => {
                 }else{
                     notify={
                         ...notify,
-                        android:{
-                            ...notify.android,
-                            data: {
-                                sound: 'my_sound.mp3',
-                              },
-                              notification: {
-                                sound: 'my_sound.mp3',
-                              },
-                            sound: 'my_sound.mp3'
-                        },
                         notification:{
                             ...notify,
-                            sound:'android.resource://com.jovivendors/raw/my_sound.mp3',
-                            soundName:'android.resource://com.jovivendors/raw/my_sound.mp3'
+                            // sound:'android.resource://com.jovivendors/raw/my_sound.mp3',
+                            // soundName:'android.resource://com.jovivendors/raw/my_sound.mp3'
                         }
                     }
                 }
@@ -131,7 +121,7 @@ const VendorRoutes = (props) => {
                 console.log("onOpenNotification.notify -> ", notify)
                 if(notify && notify.title){
                     if(notify.title.toString().toLowerCase().includes('recieved')){
-                        props.navigatorPros.navigation.navigate('Orders');
+                        props.navigatorPros.navigation?.navigate('Orders');
                     }
                 }
                 // if(notify.title && notify.title.toLowerCase().includes('recieved')){
