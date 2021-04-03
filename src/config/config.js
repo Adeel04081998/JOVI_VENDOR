@@ -40,8 +40,8 @@ export const GOOGLE_API_KEY = "AIzaSyBBQktq4PCNXWX5xNnIt8t4yRS2k4v6yGU";
 
 // export let BASE_URL = "https://jovi-api-qa.cibak.pk";
 // export let BASE_URL = "https://1db1b68e3559.ngrok.io";
-// export let BASE_URL = "https://live-api.jovi-app.com";
-export let BASE_URL = "https://jovi-api-dev.cibak.pk";
+export let BASE_URL = "https://live-api.jovi-app.com";
+// export let BASE_URL = "https://jovi-api-dev.cibak.pk";
 
 // export let BASE_URL = "https://192.168.100.28:5000";
 
@@ -50,7 +50,7 @@ export let BASE_URL = "https://jovi-api-dev.cibak.pk";
 // export let BASE_URL = "115.186.129.133";
 
 // export let isBaseURLReconfigured = false;
-
+export const SCROLL_DECLERATIONRATE = 0.7;
 export const EMPTY_PROFILE_URL = "https://www.pngfind.com/pngs/m/110-1102775_download-empty-profile-hd-png-download.png";
 export const IMAGE_NOT_AVAILABLE_URL = "https://www.dia.org/sites/default/files/No_Img_Avail.jpg";
 export const HAS_NOTCH = StatusBar.currentHeight > 24 ? true : false;

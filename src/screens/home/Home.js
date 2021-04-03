@@ -119,7 +119,7 @@ function Home(props) {
                                     <TouchableOpacity style={tabStyles.tabTextContainer} onPress={()=>onBrandPress(item)}>
                                         <View style={{ flex: 0.9 }}>
                                             <Text style={{...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{item.brandName}</Text>
-                                            <Text style={{...tabStyles.tabDescription(10, props.activeTheme.black, 1, '300')}}>{item.brandDescription.toLocaleUpperCase()}</Text>
+                                            <Text style={{...tabStyles.tabDescription(10, props.activeTheme.black, 1, '300'),maxHeight:70}}>{item.brandDescription.toLocaleUpperCase()}</Text>
                                         </View>
                                     </TouchableOpacity>
                                     <View style={{...tabStyles.tabCounter(props)}}>

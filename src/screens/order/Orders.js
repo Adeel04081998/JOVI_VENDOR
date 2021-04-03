@@ -12,6 +12,7 @@ import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
 import AddProductModalR from '../../components/modals/AddProductModalR';
 import plateformSpecific from '../../utils/plateformSpecific';
+import {SCROLL_DECLERATIONRATE} from '../../config/config';
 function Orders(props) {
     const { navigation, modalState, userObj, activeTheme } = props;
     const [state, setState] = useState({
@@ -43,12 +44,12 @@ function Orders(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-    const getData = (keywords = false, itemsPerPageNew = false,newTab = false) => {
+    const getData = (keywords = false, itemsPerPageNew = false, newTab = false) => {
         postRequest('/api/Vendor/OrdersSummary', {
             "pageNumber": 1,
             "itemsPerPage": itemsPerPageNew !== false ? itemsPerPageNew : state.itemsPerPage,
             'genericSearch': keywords !== false ? keywords : '',
-            'isLive':newTab!==false?(newTab === 'Active'?true:false):(state.activeTab==='Active'?true:false)
+            'isLive': newTab !== false ? (newTab === 'Active' ? true : false) : (state.activeTab === 'Active' ? true : false)
         }, {}
             , props.dispatch, (res) => {
                 console.log('Order Request:', res)
@@ -68,7 +69,7 @@ function Orders(props) {
                     }))
                 }
             }, (err) => {
-                if (err.statusCode === 404){ CustomToast.error("No Orders Found");setState(pre=>({...pre,itemsPerPage:10,orderList:[],orderListTemp:[],paginationInfo:{totalItems: 0}}))}
+                if (err.statusCode === 404) { CustomToast.error("No Orders Found"); setState(pre => ({ ...pre, itemsPerPage: 10, orderList: [], orderListTemp: [], paginationInfo: { totalItems: 0 } })) }
                 else if (err) CustomToast.error("Something went wrong");
             }, '');
     }
@@ -114,8 +115,8 @@ function Orders(props) {
                 <View style={{ width: '100%', flexDirection: 'row', height: 30, marginVertical: 10 }}>
                     {
                         ['Active', 'History'].map((item, i) => {
-                            return <TouchableOpacity onPress={()=>{getData(false,false,item);setState(pre=>({...pre,itemsPerPage:10, activeTab:item}))}} key={i} style={{ width: '50%', borderBottomColor:state.activeTab === item?props.activeTheme.default:props.activeTheme.grey, borderBottomWidth: 1, alignItems: 'center', height:state.activeTab === item?'90%':'100%' }}>
-                                <Text style={{fontWeight:'bold', color:state.activeTab === item?props.activeTheme.default:props.activeTheme.grey}}>{item}</Text>
+                            return <TouchableOpacity onPress={() => { getData(false, false, item); setState(pre => ({ ...pre, itemsPerPage: 10, activeTab: item })) }} key={i} style={{ width: '50%', borderBottomColor: state.activeTab === item ? props.activeTheme.default : props.activeTheme.grey, borderBottomWidth: 1, alignItems: 'center', height: state.activeTab === item ? '90%' : '100%' }}>
+                                <Text style={{ fontWeight: 'bold', color: state.activeTab === item ? props.activeTheme.default : props.activeTheme.grey }}>{item}</Text>
                             </TouchableOpacity>
                         })
                     }
@@ -127,6 +128,7 @@ function Orders(props) {
                     </View> */}
                 </View>
                 <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }}
+                    decelerationRate={SCROLL_DECLERATIONRATE}
                     onScroll={(e) => {
                         let paddingToBottom = 10;
                         paddingToBottom += e.nativeEvent.layoutMeasurement.height;
@@ -153,8 +155,15 @@ function Orders(props) {
                                             <Text style={{ ...commonStyles.fontStyles(22, item.orderStatus === 1 ? props.activeTheme.white : props.activeTheme.default, 10) }}>{item.orderNo}</Text>
                                         </View>
                                         <View style={{ ...stylesOrder.productName }}>
-                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Total Price: </Text><Text>{item.totalPrice}</Text>
-                                            <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>No of Items: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.noOfItems}</Text>
+                                            <View style={{ ...stylesOrder.orderDetails }}>
+                                                <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Total Price: </Text><Text>{item.totalPrice}</Text>
+                                            </View>
+                                            <View style={{ ...stylesOrder.orderDetails }}>
+                                                <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>No of Items: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.noOfItems}</Text>
+                                            </View>
+                                            {item.riderName && item.riderName !== '' ? <View style={{ ...stylesOrder.orderDetails }}>
+                                                <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 4) }}>Rider: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 3) }}>{item.riderName}</Text>
+                                            </View> : <></>}
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -184,6 +193,7 @@ const stylesOrder = StyleSheet.create({
         width: '90%',
         "height": "90%",
     },
+    orderDetails: { width: '100%', alignItems: 'center', height: 25, flexDirection: 'row' },
     homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName: { marginTop: 0 },
     homeTabDesc: (props) => { return { maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 } },
