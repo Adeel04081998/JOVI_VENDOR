@@ -161,9 +161,20 @@ function Orders(props) {
                                             <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>No of Items: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.noOfItems}</Text>
                                             </View>
-                                            {item.riderName && item.riderName !== '' ? <View style={{ ...stylesOrder.orderDetails }}>
+                                            {item.riderName && item.riderName !== '' ? 
+                                            <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 4) }}>Rider: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 3) }}>{item.riderName}</Text>
                                             </View> : <></>}
+                                            <View style={{position:'absolute',top:-5,right:10}}>
+                                                <Text style={{...commonStyles.fontStyles(14, props.activeTheme.default,4)}}>
+                                                    {item?.orderCreationTime}
+                                                </Text>
+                                            </View>
+                                            <View style={{position:'absolute',top:'30%',right:10}}>
+                                                <Text style={{...commonStyles.fontStyles(14, item.orderStatus === 3 ? props.activeTheme.grey : item.isVendorConfirmed === true && item.orderStatus === 1 ? '#ff8c00' : item.orderStatus === 1 ? props.activeTheme.defaultLight : props.activeTheme.black,4)}}>
+                                                    {item.orderStatusDesc}
+                                                </Text>
+                                            </View>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -208,7 +219,7 @@ const stylesOrder = StyleSheet.create({
         zIndex: 900,
         "height": "90%",
     },
-    productName: { flex: 4, justifyContent: 'space-between', paddingLeft: 8, paddingRight: 8, alignItems: 'flex-start', width: '100%', flexDirection: 'column', },
+    productName: { flex: 4,height:'80%', justifyContent: 'space-between', paddingLeft: 8, paddingRight: 8, alignItems: 'flex-start', width: '100%', flexDirection: 'column', },
     counter: (props) => { return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
 
 

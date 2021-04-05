@@ -700,17 +700,17 @@ export const attachOrderRecieveModal = () => {
 };
 export const error400 = (response) => {
     if( response && response.status===500){
-      CustomToast.error('Error 500:Something went wrong!')
-    }else if(response&&response.status){
-      if (response.errors && response.errors.length > 0) {
-        if (typeof response.data.errors[0] === 'object') {
-          CustomToast.error(response.errors[0].description)
-        }
-        else {
-          CustomToast.error(response.errors[0])
-        }
-    
-      } else if (!Array.isArray(response.errors) && response.errors) {
+        CustomToast.error('Error 500:Something went wrong!')
+    }else if(response&&(response.status||response.statusCode)){
+        if (response.errors && response.errors.length > 0) {
+            if (typeof response.data.errors[0] === 'object') {
+                CustomToast.error(response.errors[0].description)
+            }
+            else {
+                CustomToast.error(response.errors[0])
+            }
+            
+        } else if (!Array.isArray(response.errors) && response.errors) {
         Object.keys(response.errors).map((item, i) => {
           CustomToast.error(response.errors[item].length > 0 ? response.errors[item].toString() : "Something Went Wrong!")
           return () => { }

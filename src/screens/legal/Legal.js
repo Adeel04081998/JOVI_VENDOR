@@ -40,7 +40,7 @@ export default connect()(function Legal(props) {
         });
     };
     const onErrorHandler = error => {
-        console.log("Legal.onErrorHandler ----", error);
+        console.log("Legal.onErrorHandler ----", error.response);
         // if (error) CustomToast.error("Something went wrong!");
 
     };
@@ -55,7 +55,8 @@ export default connect()(function Legal(props) {
     };
     useEffect(useCallback(() => {
         // getRequest(isJoviCustomerApp ? `/api/Menu/ContentPages/List/${2}` : `/api/Menu/Legal/List`, {}, dispatch, onSuccessHandler, onErrorHandler);
-        getRequest(`/api/Menu/Legal/List`, {}, dispatch, onSuccessHandler, onErrorHandler);
+        // getRequest(`/api/Menu/Legal/List`, {}, dispatch, onSuccessHandler, onErrorHandler);
+        getRequest(`/api/Menu/Legal/ListByType/3`, {}, dispatch, onSuccessHandler, onErrorHandler);
         return () => {
             // console.log('Legal.State Cleared----');
             setState(initState);
