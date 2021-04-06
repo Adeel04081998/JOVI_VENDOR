@@ -44,7 +44,7 @@ const ProfileModal = (props) => {
         vendor: props?.user?.vendorPitstopDetailsList[0],
         wallet: { balance: 0 },
         walletTransactions: [],
-        walletPagination: { itemsPerPage: 10 },
+        walletPagination: { itemsPerPage: 50 },
         focusedField: '',
         oldPassword: '',
         newPassword: '',
@@ -180,9 +180,9 @@ const ProfileModal = (props) => {
     const getBalanceData = (itemPerPage = false) => {
 
         postRequest('Api/Vendor/WalletDetails', {
-            pitstopID: props?.user?.pitstopID
-            // "pageNumber": 1,
-            // "itemsPerPage":itemPerPage!==false?itemPerPage:state.walletPagination.itemsPerPage,
+            pitstopID: props?.user?.pitstopID,
+            "pageNumber": 1,
+            "itemsPerPage":itemPerPage!==false?itemPerPage:state.walletPagination.itemsPerPage,
         }, {}, props.dispatch, (res) => {
             console.log('Wallet Request ------->', res)
             setState(pre => ({
@@ -335,9 +335,9 @@ const ProfileModal = (props) => {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                                <TouchableOpacity onPress={showResetPasswordScreen} style={{ marginVertical: 5, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                {/* <TouchableOpacity onPress={showResetPasswordScreen} style={{ marginVertical: 5, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
                                     <Text style={stylesHome.touchableText(props.activeTheme)}>Reset Password</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <DefaultBtn
                                 title="Save"
@@ -362,7 +362,7 @@ const ProfileModal = (props) => {
                                         paddingToBottom += e.nativeEvent.layoutMeasurement.height;
                                         if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
                                             // make something...
-                                            if (state.walletPagination.itemsPerPage < state.walletPagination.totalItems) {
+                                            if (state.walletPagination?.itemsPerPage < state.walletPagination?.totalItems) {
                                                 getBalanceData(state.walletPagination.itemsPerPage + 10);
                                             }
                                         }

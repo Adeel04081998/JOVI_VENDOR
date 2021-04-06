@@ -91,7 +91,6 @@ const OtpCode = props => {
                                     if (err) CustomToast.error("Something went wrong!")
                                     dispatch(userAction({ ...props.user, daysOfTheWeek: [], openingTime: '', closingTime: '', userID:otpResult.token.id, tokenObj:otpResult }));
                                     navigateWithResetScreen(null, [{ name: 'Dashboard', params: { loginCheck: true, pitstopType: 1 } }])
-
                                     // Commented line were creating an ambigous behaviour when logged in user open app after a while 
                                     // if (err) setState({ ...state, loggedInUser: null, initRoute: "Login" });
                                 },
@@ -99,7 +98,7 @@ const OtpCode = props => {
                             );
                             await AsyncStorage.setItem('User', JSON.stringify(otpResult));
                         } else {
-                            CustomToast.success("User Not Found!", null, "long");
+                            CustomToast.success("Vendor Account not found! Please enter another number", null, "long");
                             return navigateWithResetScreen(0, [{ name:'Login', 'paramsData': {} }]);
                         }
                 } catch (error) {
@@ -327,10 +326,6 @@ const OtpCode = props => {
                                     <Text style={{ color: !intervalStoped ? activeTheme.grey : '#7359BE' }}>Resend OTP</Text>
                                 </TouchableOpacity>
                             </View>
-
-
-
-
                         </View>
                         <View style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end', }}>
                             <SubmitBtn

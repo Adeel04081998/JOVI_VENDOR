@@ -14,11 +14,12 @@ import { CommonActions } from '@react-navigation/native';
 import { GET_SET_ENUMS_ACTION, LOGOUT_ACTION, OPEN_MODAL } from '../redux/actions/types';
 import { HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import RNLocation from 'react-native-location';
-import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+// import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 import { cartAction, notifyAction, userAction } from '../redux/actions/user';
 import moment from 'moment';
 import store from '../redux/store';
 import DeviceInfo from 'react-native-device-info';
+import { showHideLoader } from '../redux/actions/loader';
 const { timing } = Animated;
 
 // <Apis Handlers>
@@ -290,6 +291,7 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
         } catch (err) {
             console.log("Error during signalR connectivity:", err);
             setTimeout(start, 2000);
+            setIsSignalRConnectionCreationInProgress(false);
         }
     };
     if (hubConnection) {
@@ -388,39 +390,39 @@ export const getLastRecordedLocation = () => {
 };
 
 
-const configureBackgroundLocation = () => {
-    BackgroundGeolocation.configure({
-        desiredAccuracy: BackgroundGeolocation.MEDIUM_ACCURACY,
-        // distanceFilter: 10, // Meters
-        // stationaryRadius: 10, // "DISTANCE_FILTER_PROVIDER"
-        notificationsEnabled: true,
-        notificationTitle: "Background Tracking",
-        notificationText: "Location tracking enabled in background",
-        notificationIconColor: "#7359be", // "#6a33ea",
-        debug: false,
-        startOnBoot: false,
-        stopOnTerminate: true,
-        locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
-        interval: 2000, // "DISTANCE_FILTER_PROVIDER" | "RAW_PROVIDER"
-        fastestInterval: 2500, // "ACTIVITY_PROVIDER"
-        activitiesInterval: 2500, // "ACTIVITY_PROVIDER"
-        stopOnStillActivity: false, // "ACTIVITY_PROVIDER"
-        startForeground: false,
-        // url: 'An API URL here gets hit with location data',
-        // httpHeaders: {
-        //     'X-FOO': 'bar',
-        //     'Authorization': "Bearer " + ""
-        // },
-        // postTemplate: {
-        //     lat: '@latitude',
-        //     lon: '@longitude',
-        //     foo: 'bar'
-        // }
-    });
-};
+// const configureBackgroundLocation = () => {
+//     BackgroundGeolocation.configure({
+//         desiredAccuracy: BackgroundGeolocation.MEDIUM_ACCURACY,
+//         // distanceFilter: 10, // Meters
+//         // stationaryRadius: 10, // "DISTANCE_FILTER_PROVIDER"
+//         notificationsEnabled: true,
+//         notificationTitle: "Background Tracking",
+//         notificationText: "Location tracking enabled in background",
+//         notificationIconColor: "#7359be", // "#6a33ea",
+//         debug: false,
+//         startOnBoot: false,
+//         stopOnTerminate: true,
+//         locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
+//         interval: 2000, // "DISTANCE_FILTER_PROVIDER" | "RAW_PROVIDER"
+//         fastestInterval: 2500, // "ACTIVITY_PROVIDER"
+//         activitiesInterval: 2500, // "ACTIVITY_PROVIDER"
+//         stopOnStillActivity: false, // "ACTIVITY_PROVIDER"
+//         startForeground: false,
+//         // url: 'An API URL here gets hit with location data',
+//         // httpHeaders: {
+//         //     'X-FOO': 'bar',
+//         //     'Authorization': "Bearer " + ""
+//         // },
+//         // postTemplate: {
+//         //     lat: '@latitude',
+//         //     lon: '@longitude',
+//         //     foo: 'bar'
+//         // }
+//     });
+// };
 
 export const handleBackgroundLocationForRider = (isActive, locationUpdateListener, attachLocationUpdateListener) => {
-    configureBackgroundLocation();
+    // configureBackgroundLocation();
 
     BackgroundGeolocation.checkStatus(status => {
 
@@ -1160,4 +1162,140 @@ export function calculateTimeDifference(timeStamp1, timeStamp2, output) {
     else if (output === "minutes") return minutesDifference;
     else if (output === "seconds") return secondsDifference;
     else return { daysDifference, hoursDifference, minutesDifference, secondsDifference };
+};
+export const waitForSignalRConnection = (successCb) => {
+    const waitInterval = setInterval(() => {
+        if (hubConnection?.state === HubConnectionState.Connected) {
+            clearInterval(waitInterval);
+            successCb && successCb();
+        }
+    }, 500);
+};
+
+
+const generateNewRefreshTokenIfExpired = (postRequest, accessToken, refreshToken, cb) => {
+    postRequest(
+        `/api/User/RefreshToken`,
+        {
+            "accessToken": accessToken,
+            "refreshToken": refreshToken
+        },
+        null,
+        store.dispatch,
+        async (response) => {
+            console.log(`-> Response from "RefreshToken" API:`, response);
+            if (response?.data?.statusCode === 202) {
+                cb && cb();
+            }
+            else if (response?.data?.statusCode === 403) {
+                CustomToast.error("Session Expired!");
+                clearEverythingInStorageAndLogoutUser();
+                store.dispatch(showHideLoader(false, ''));
+                return;
+            }
+            else {
+                await AsyncStorage.setItem('User', (response?.data ? JSON.stringify(response.data) : {}));
+                cb && cb();
+            }
+        },
+        (error) => {
+            setIsSignalRConnectionCreationInProgress(false);
+
+            console.log(((error?.response) ? error.response : {}), error);
+            // CustomToast.error('An Error Occurred!');
+        },
+        true,
+        true,
+        () => { },
+        false
+    );
+};
+
+const continueAfterCheckingListFromHubConnectionsAPI = (getRequest, cbConnectionLost, cbConnectionExists) => {
+    const isCustomerApp = isJoviCustomerApp;
+    getRequest("/api/Common/GetHubConnection/List?isAdmin=false",
+        {},
+        store.dispatch,
+        async (response) => {
+            console.log(`-> Response from "HubConnections" API:`, response);
+            const deviceMAC = await DeviceInfo.getMacAddress();
+            const connectionsList = ((response?.data?.hubConnectionList && Array.isArray(response.data.hubConnectionList) && response.data.hubConnectionList) || []);
+            const relevantFoundConnection = connectionsList.filter((item) => (item.deviceID === deviceMAC));
+            if (!(relevantFoundConnection?.[0])) {
+                cbConnectionLost && cbConnectionLost();
+            }
+            else {
+                cbConnectionExists && cbConnectionExists();
+            }
+        },
+        (error) => {
+            setIsSignalRConnectionCreationInProgress(false);
+
+            console.log(((error?.response) ? error.response : {}), error);
+            // CustomToast.error('An Error Occurred!');
+        },
+        "",
+        true,
+        true,
+        false
+    );
+};
+
+export const getBackgroundSignalRConnectivityDelay = () => {
+    return (store.getState()?.userReducer?.backgroundSignalRConnectivityDelay ?? 30) * 1000;
+}
+
+var isSignalRConnectionCreationInProgress = false;
+export const setIsSignalRConnectionCreationInProgress = (value) => {
+    isSignalRConnectionCreationInProgress = value;
+};
+
+export const getIsSignalRConnectionCreationInProgress = () => {
+    return isSignalRConnectionCreationInProgress;
+};
+
+export const handleSignalRConnectionCreationIfRequired = async (getRequest, postRequest, forceExecute = false, afterWaitForSignalRDone) => {
+    const user = await AsyncStorage.getItem("User");
+    if (forceExecute || ((hubConnection?.state !== HubConnectionState.Connected))) {
+        if (user && JSON.parse(user)?.token?.authToken) {
+            if (!getIsSignalRConnectionCreationInProgress()) {
+                console.log("-> Starting handling of SignalR Creation!");
+
+                store.dispatch(showHideLoader(true, ''));
+                setIsSignalRConnectionCreationInProgress(true);
+
+                generateNewRefreshTokenIfExpired(postRequest, JSON.parse(user)?.token?.authToken, JSON.parse(user)?.refreshToken, () => {
+
+                    continueAfterCheckingListFromHubConnectionsAPI(getRequest,
+                        () => {
+                            sharedHubConnectionInitiator(postRequest);
+
+                            signalRConnectionConfirmationAtTheEnd();
+                        },
+                        () => {
+                            signalRConnectionConfirmationAtTheEnd();
+                        }
+                    );
+                });
+
+                const signalRConnectionConfirmationAtTheEnd = () => {
+                    waitForSignalRConnection(() => {
+                        afterWaitForSignalRDone();
+
+                        store.dispatch(showHideLoader(false, ''));
+                        setIsSignalRConnectionCreationInProgress(false);
+                    });
+                }
+            }
+            else {
+                console.log("-> No handling of SignalR Creation required: Already In Progress!");
+            }
+        }
+        else {
+            console.log("-> No handling of SignalR Creation required: Not Logged In!");
+        }
+    }
+    else {
+        console.log("-> No handling of SignalR Creation required: Already Connected!");
+    }
 };
