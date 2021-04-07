@@ -13,7 +13,7 @@ const UpdateR_Product = (props) => {
     const { product } = props;
     const [state, setState] = useState({
         showDropdown: false,
-        product: product ? { ...product } : {},
+        product: product ? { endTime:'',startTime:'',estimateTime:'',...product } : {},
         // product: product ? { ...product,estimateTime:'00:00',startTime:'00:00',endTime:'00:00' } : {},
     })
     // const onDropdownClick = (dropdownTitle) => {
@@ -31,7 +31,7 @@ const UpdateR_Product = (props) => {
 
     }
     const onTimeChange = (val, index,key) => {
-        let selectedTime = state.product[key].split(':');
+        let selectedTime = state.product[key]?.split(':');
         selectedTime[index] = val;
         setState(pre => ({ ...pre, product: {...pre.product,[key]:selectedTime.join(':')}}));
     }
@@ -47,7 +47,7 @@ const UpdateR_Product = (props) => {
                 })
             })
         });
-        console.log('Update Product:', attributes)
+        console.log('Update Product:', state.product)
         postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
             "pitstopItemID": state.product.pitstopItemID,
             "price": state.product.basePrice,
@@ -61,7 +61,6 @@ const UpdateR_Product = (props) => {
             props.onSave();
             props.dispatch(closeModalAction());
         }, (err) => {
-            debugger;
             if (err) CustomToast.error('Something went wrong!');
         }, '');
     }

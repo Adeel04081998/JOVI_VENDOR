@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import EmailOtpVerify from '../screens/otpScreen/EmailOtpVerify';
 import ResetPassword from '../screens/userRegister/ResetPassword';
 import MainDrawer from './navigations';
-import { setIsForceTurnOnLocDialogVisible, setIsForcePermissionLocDialogVisible, sharedHubConnectionInitiator, sharedHubConnectionStopper, statusBarHandler, sharedGetNotificationsHandler, sharedSendFCMTokenToServer, getBackgroundSignalRConnectivityDelay, handleSignalRConnectionCreationIfRequired } from '../utils/sharedActions';
+import { setIsForceTurnOnLocDialogVisible, setIsForcePermissionLocDialogVisible, sharedHubConnectionInitiator, sharedHubConnectionStopper, statusBarHandler, sharedGetNotificationsHandler, sharedSendFCMTokenToServer, getBackgroundSignalRConnectivityDelay, handleSignalRConnectionCreationIfRequired, setIsSignalRConnectionCreationInProgress } from '../utils/sharedActions';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getRequest, postRequest } from '../services/api';
 import { userAction } from '../redux/actions/user';
@@ -95,7 +95,6 @@ const RootStack = (props) => {
     useEffect(() => {
         // console.log("[RootStack] Props :", props);
         // console.log("[_navigationStateObj] :", props);
-        AppState.addEventListener("change", rootStackAppStateListener);
         statusBarHandler();
         const getSetUserAsync = async () => {
             const User = JSON.parse(await AsyncStorage.getItem('User'));
@@ -114,6 +113,7 @@ const RootStack = (props) => {
                     // return setState({ ...state, loggedInUser: null, initRoute: checkIntroScreenView == 'true' ? "OTP" : "Introduction" });
                 }
             } else {
+                AppState.addEventListener("change", rootStackAppStateListener);
                 console.log("user token obj :", User)
                 getRequest(`/api/Vendor/Details`,
                     // getRequest(`/api/User/Details`,
@@ -146,7 +146,7 @@ const RootStack = (props) => {
             console.log('RootStack State Clearing...');
             dispatch(closeModalAction());
             AppState.removeEventListener("change", rootStackAppStateListener);
-            sharedHubConnectionStopper();
+            // sharedHubConnectionStopper();
             setIsSignalRConnectionCreationInProgress(false);
             setIsForcePermissionLocDialogVisible(false);
             setIsForceTurnOnLocDialogVisible(false);
@@ -156,7 +156,7 @@ const RootStack = (props) => {
             console.log('RootStack State Cleared!');
         }
     }, []);
-  
+
     // console.log("myhubConnection :", myhubConnection);
     // console.log('RootStack.state :', state);
     return state.initRoute && (
@@ -168,12 +168,12 @@ const RootStack = (props) => {
                 {/* <Stack.Screen name="Reset_Password" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ResetPassword {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
                 {/* <Stack.Screen name="Registration" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><UserRegister {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
                 {/* <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></View>} /> */}
-                {/* <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/signInRess.png')} style={{ flex: 1, paddingBottom: 30 }} resizeMode={'stretch'}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
+                <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/signInRess.png')} style={{ flex: 1, paddingBottom: 30 }} resizeMode={'stretch'}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
                 <Stack.Screen name="ExistLogin" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><SignIn {...state} {...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
-                <Stack.Screen name="Login" children={navigatorPros => <OtpScreen {...state}  {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} />
+                {/* <Stack.Screen name="Login" children={navigatorPros => <OtpScreen {...state}  {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} /> */}
                 {/* <Stack.Screen name="Dashboard" children={navigatorPros => <MainDrawer {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} /> */}
                 <Stack.Screen name="Legal_Login" children={navigatorPros => <Legal {...navigatorPros} onLogin={true} stackState={state} {...props} activeTheme={activeTheme} />} />
-                <Stack.Screen name="web_view_container_login" children={navigatorPros => <WebViewStack drawerProps={navigatorPros} activeTheme={activeTheme} {...props} stackState={state} />}  />
+                <Stack.Screen name="web_view_container_login" children={navigatorPros => <WebViewStack drawerProps={navigatorPros} activeTheme={activeTheme} {...props} stackState={state} />} />
                 <Stack.Screen name="Dashboard" children={navigatorPros => <VendorRoutes navigatorPros={navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} />
                 {/* <Stack.Screen name="Dashboard" children={navigatorPros => <Home {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} /> */}
                 {/* <Stack.Screen name="Products" children={navigatorPros => <Products {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} /> */}

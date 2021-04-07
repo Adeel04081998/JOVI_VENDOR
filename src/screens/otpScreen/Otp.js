@@ -103,8 +103,9 @@ const OTP = (props) => {
                 'userType': 4
             };
         }
-        // debugger;
+        debugger;
         // dispatch(userAction({ ...props.user,  phoneNumber, appHash }));
+        console.log('Data:',data)
         dispatch(userAction({ ...props.user, mobile: phoneNumber, phoneNumber, appHash }));
         postRequest('/api/User/OTP/Send', data, {}, dispatch, onSuccessHandler, onErrorHandler, '');
     };
