@@ -96,11 +96,17 @@ const ProfileModal = (props) => {
             dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.25 });
             return;
         }
+        console.log('Profile Update Req:',{
+            "openingTime": state.openingTime,
+            "closingTime": state.closingTime,
+            "daysOfWeek": state.workingDays.map((it, i) => { if (it === true) { return i } }).filter(it => it !== undefined),
+            "pitstopStatus": state.active === true ? 1 : 4,
+        });
         postRequest('Api/Vendor/Pitstop/Timings/Update', {
             "openingTime": state.openingTime,
             "closingTime": state.closingTime,
             "daysOfWeek": state.workingDays.map((it, i) => { if (it === true) { return i } }).filter(it => it !== undefined),
-            "pitstopStatus": state.active === true ? 1 : 2,
+            "pitstopStatus": state.active === true ? 1 : 4,
         }, {}, props.dispatch, (res) => {
             if (props.onSave) {
                 props.onSave();
