@@ -21,7 +21,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import CountryPicker, { getAllCountries, getCallingCode } from 'react-native-country-picker-modal';
 import CustomToast from '../../components/toast/CustomToast';
 import NetInfo from "@react-native-community/netinfo";
-const isJoviCustomerApp=1;
+const isJoviCustomerApp = 1;
 const OTP = (props) => {
     console.log("OTP.PROPS :", props);
     const { dispatch, activeTheme, navigation, behavior } = props;
@@ -92,20 +92,20 @@ const OTP = (props) => {
             data = {
                 'phoneNumber': phoneNumber,
                 'appHash': appHash[0],
-                'otpType':  1,
+                'otpType': 1,
                 'userType': 4
             };
             // console.log('appHash :', appHash)
         } else {
             data = {
                 'phoneNumber': phoneNumber,
-                'otpType':  1,
+                'otpType': 1,
                 'userType': 4
             };
         }
         debugger;
         // dispatch(userAction({ ...props.user,  phoneNumber, appHash }));
-        console.log('Data:',data)
+        console.log('Data:', data)
         dispatch(userAction({ ...props.user, mobile: phoneNumber, phoneNumber, appHash }));
         postRequest('/api/User/OTP/Send', data, {}, dispatch, onSuccessHandler, onErrorHandler, '');
     };
@@ -142,6 +142,9 @@ const OTP = (props) => {
     };
     const _gotoLegalsScreen = () => {
         navigation.navigate("Legal_Login")
+    }
+    const goToCallUsPage = () => {
+        navigation.navigate("Call_Us", { key: 'Call_Us', item: {loginPage:true} })
     }
     const clearState = () => setState(initState);
     // console.log('state :', state);
@@ -229,6 +232,7 @@ const OTP = (props) => {
                                 // paddingHorizontal: 20,
                                 marginVertical: 20
                             }}>A One Time Password (OTP) will be sent to your mobile number.</Text>
+                            <TouchableOpacity onPress={goToCallUsPage} style={{ paddingLeft: 5, paddingVertical: 3,marginBottom:10,alignSelf:'flex-start' }}><Text style={{ ...commonStyles.fontStyles(undefined, activeTheme.default, 1, 'bold') }}>{"Want to become a vendor?"}</Text></TouchableOpacity>
                             <View style={{ flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end', }}>
                                 <SubmitBtn
                                     title="Send OTP"

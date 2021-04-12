@@ -94,18 +94,18 @@ const VendorRoutes = (props) => {
                 // debugger;
                 // notify?.android?.setsound('my_sound.mp3');
 
-                if(notify.notification){
+                // if(notify.notification){
 
-                }else{
-                    notify={
-                        ...notify,
-                        notification:{
-                            ...notify,
-                            // sound:'android.resource://com.jovivendors/raw/my_sound.mp3',
-                            // soundName:'android.resource://com.jovivendors/raw/my_sound.mp3'
-                        }
-                    }
-                }
+                // }else{
+                //     notify={
+                //         ...notify,
+                //         notification:{
+                //             ...notify,
+                //             // sound:'android.resource://com.jovivendors/raw/my_sound.mp3',
+                //             // soundName:'android.resource://com.jovivendors/raw/my_sound.mp3'
+                //         }
+                //     }
+                // }
                 console.log("onNotification.notify -> ", notify)
                 localNotificationService.showNotification(10, notify.notification.title, notify.notification.body, notify, {
                     soundName: Platform.select({ android: "my_sound.mp3", ios: "default" }),

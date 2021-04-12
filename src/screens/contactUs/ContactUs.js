@@ -9,15 +9,9 @@ import commonStyles from '../../styles/styles';
 // import CustomToast from '../../components/toast/CustomToast';
 function ContactUs(props) {
     const { navigation } = props;
-    // console.log('Data:', data)
-    const [state, setState] = useState({
-    })
-    useEffect(useCallback(() => {
-        return () => {
-            setState({
-            })
-        };
-    }, []), []);
+    const data = navigation.dangerouslyGetState()?.routes?.filter(item => item?.name === 'Call_Us')[0]?.params?.item;
+    console.log('Data:', data,props)
+    
     return (
         <View style={{ flex: 1 }}>
             <View style={{ height: 30, width: 30, backgroundColor: 'white', borderColor: props.activeTheme.borderColor, borderWidth: 0.5, borderRadius: 8, top: 60, right: 20, position: 'absolute' }}>
