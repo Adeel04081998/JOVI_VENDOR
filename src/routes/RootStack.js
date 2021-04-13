@@ -2,33 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { ImageBackground, View, Platform, Keyboard, BackHandler, StatusBar, Text, Dimensions, AppState } from 'react-native';
 import OtpScreen from '../screens/otpScreen/Otp';
 import OtpCode from '../screens/otpScreen/OtpCode';
-import UserRegister from '../screens/userRegister/UserRegister';
+// import UserRegister from '../screens/userRegister/UserRegister';
 import SignIn from '../screens/userRegister/SignInContainer';
-import IntroScreen from '../screens/intro/Intro';
+// import IntroScreen from '../screens/intro/Intro';
 import { createStackNavigator } from '@react-navigation/stack';
 import { connect } from 'react-redux';
-import EmailOtpVerify from '../screens/otpScreen/EmailOtpVerify';
-import ResetPassword from '../screens/userRegister/ResetPassword';
-import MainDrawer from './navigations';
-import { setIsForceTurnOnLocDialogVisible, setIsForcePermissionLocDialogVisible, sharedHubConnectionInitiator, sharedHubConnectionStopper, statusBarHandler, sharedGetNotificationsHandler, sharedSendFCMTokenToServer, getBackgroundSignalRConnectivityDelay, handleSignalRConnectionCreationIfRequired, setIsSignalRConnectionCreationInProgress } from '../utils/sharedActions';
+// import EmailOtpVerify from '../screens/otpScreen/EmailOtpVerify';
+// import ResetPassword from '../screens/userRegister/ResetPassword';
+// import MainDrawer from './navigations';
+import { setIsForceTurnOnLocDialogVisible, setIsForcePermissionLocDialogVisible, sharedHubConnectionInitiator, sharedHubConnectionStopper, statusBarHandler, sharedGetNotificationsHandler, sharedSendFCMTokenToServer, getBackgroundSignalRConnectivityDelay, handleSignalRConnectionCreationIfRequired } from '../utils/sharedActions';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getRequest, postRequest } from '../services/api';
 import { userAction } from '../redux/actions/user';
-import { MODES, APP_MODE } from '../config/config';
+// import { MODES, APP_MODE } from '../config/config';
 import Config from 'react-native-config';
 import { sharedConfirmationAlert } from '../utils/sharedActions';
 import CustomToast from '../components/toast/CustomToast';
 import { closeModalAction } from '../redux/actions/modal';
-import Home from '../screens/home/Home';
-import Products from '../screens/Products/Products';
+// import Home from '../screens/home/Home';
+// import Products from '../screens/Products/Products';
 import crossIcon from "../assets/svgIcons/common/cross-new.svg";
 import CustomHeader from '../components/header/CustomHeader';
 import VendorRoutes from './VendorRoutes';
 import { UPDATE_MODAL_HEIGHT } from '../redux/actions/types';
 import CustomWebView from '../components/webView';
-import { fcmService } from '../services/FCMServices';
-import { localNotificationService } from '../services/LocalNotificationServices';
-import plateformSpecific from '../utils/plateformSpecific';
+// import { fcmService } from '../services/FCMServices';
+// import { localNotificationService } from '../services/LocalNotificationServices';
+// import plateformSpecific from '../utils/plateformSpecific';
 import Legal from '../screens/legal/Legal';
 import ContactUsPage from '../screens/contactUs/ContactUs';
 import BackgroundTimer from 'react-native-background-timer';
@@ -130,7 +130,9 @@ const RootStack = (props) => {
                     err => {
                         console.log("Problem is here--- :", JSON.stringify(err))
                         if (err) CustomToast.error("Something went wrong!")
-                        setState({ ...state, initRoute: "Exceptions", initRouteSub: 'home' })
+                        if(err?.response?.data&&err.response.data.StatusCode !== 401){
+                            setState({ ...state, initRoute: "Exceptions", initRouteSub: 'home' })
+                        }
                         // Commented line were creating an ambigous behaviour when logged in user open app after a while 
                         // if (err) setState({ ...state, loggedInUser: null, initRoute: "Login" });
                     },
@@ -148,7 +150,7 @@ const RootStack = (props) => {
             dispatch(closeModalAction());
             AppState.removeEventListener("change", rootStackAppStateListener);
             sharedHubConnectionStopper();
-            setIsSignalRConnectionCreationInProgress(false);
+             
             setIsForcePermissionLocDialogVisible(false);
             setIsForceTurnOnLocDialogVisible(false);
             // backHandler.remove();
@@ -169,11 +171,11 @@ const RootStack = (props) => {
             {/* <Stack.Screen name="Reset_Password" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ResetPassword {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
             {/* <Stack.Screen name="Registration" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><UserRegister {...state} {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
             {/* <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></View>} /> */}
-            <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/signInRess.png')} style={{ flex: 1, paddingBottom: 30 }} resizeMode={'stretch'}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
+            {/* <Stack.Screen name="Login" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/signInRess.png')} style={{ flex: 1, paddingBottom: 30 }} resizeMode={'stretch'}><SignIn {...state}  {...state}{...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} /> */}
             <Stack.Screen name="ExistLogin" children={navigatorPros => <View style={{ flex: 1 }}><ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><SignIn {...state} {...navigatorPros} activeTheme={activeTheme} {...props} behavior={Platform.OS === 'ios' ? 'padding' : null} /></ImageBackground></View>} />
-            {/* <Stack.Screen name="Login" children={navigatorPros => <OtpScreen {...state}  {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} /> */}
+            <Stack.Screen name="Login" children={navigatorPros => <OtpScreen {...state}  {...navigatorPros} {...props} activeTheme={activeTheme} behavior={Platform.OS === 'ios' ? 'padding' : null} />} />
             {/* <Stack.Screen name="Dashboard" children={navigatorPros => <MainDrawer {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} /> */}
-            <Stack.Screen name="Call_Us" children={navigatorPros => <ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ContactUsPage {...navigatorPros} stackState={state} {...props} activeTheme={activeTheme} /></ImageBackground>} />
+            <Stack.Screen name="Call_Us" children={navigatorPros => <ImageBackground source={require('../assets/doodle.png')} style={{ flex: 1 }}><ContactUsPage {...navigatorPros} otpScreen={true} stackState={state} {...props} activeTheme={activeTheme} /></ImageBackground>} />
             <Stack.Screen name="Legal_Login" children={navigatorPros => <Legal {...navigatorPros} onLogin={true} stackState={state} {...props} activeTheme={activeTheme} />} />
             <Stack.Screen name="web_view_container_login" children={navigatorPros => <WebViewStack drawerProps={navigatorPros} activeTheme={activeTheme} {...props} stackState={state} />} />
             <Stack.Screen name="Dashboard" children={navigatorPros => <VendorRoutes navigatorPros={navigatorPros} stackState={state} {...props} activeTheme={activeTheme} />} />

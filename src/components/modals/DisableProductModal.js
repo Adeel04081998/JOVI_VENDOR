@@ -74,6 +74,7 @@ const DisableProductModal = (props) => {
                             }
                         </View> */}
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
+                            <Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text>
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Brand Name
@@ -169,7 +170,8 @@ const DisableProductModal = (props) => {
                                     {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                     <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
                                 </TouchableOpacity> */}
-                                    <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.item.price.toString()} onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val.includes(' ') || val.includes('-') ? pre.item.price : val } }))} />
+                                <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.item.price.toString()}</Text>
+                                    {/* <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.item.price.toString()} onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val.includes(' ') || val.includes('-') ? pre.item.price : val } }))} /> */}
                                 </View>
                                 {state.item.attributes && state.item.attributes.length > 0 ?
                                     state.item.attributes.filter(it => it.attributeName !== 'Quantity').map((it, i) => {

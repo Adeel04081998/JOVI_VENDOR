@@ -23,7 +23,7 @@ export default ({ activeTheme, onHome, activeTab, hideOptions, drawerProps, main
             <View style={{ zIndex: 999 }}>
                 <View style={styles.footerContainer()}>
                     {
-                        hideOptions && hideOptions === true ? <TouchableOpacity style={{ width: '25%', height: 45, alignItems: 'center' }}></TouchableOpacity> : (BOTTOM_TABS || []).map((t, j) => (
+                        hideOptions && hideOptions === true ? <TouchableOpacity style={{ width: '25%', height: 45, alignItems: 'center' }}></TouchableOpacity> : (BOTTOM_TABS || []).filter(t=>t.isHide!==true).map((t, j) => (
                             <TouchableOpacity key={j} style={{ width: '25%', alignItems: 'center' }} onPress={() => bottomNavigationHandler(t, j)}>
                                 <View style={{ height: 40, width: 40, borderWidth: 1, borderColor:activeTab===j?activeTheme.default:'#fff', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}>
                                     <SvgXml xml={t.icon("#7359BE")} height={25} width={25} />

@@ -13,7 +13,7 @@ const UpdateR_Product = (props) => {
     const { product } = props;
     const [state, setState] = useState({
         showDropdown: false,
-        product: product ? { endTime:'',startTime:'',estimateTime:'',...product } : {},
+        product: product ? { endTime: '', startTime: '', estimateTime: '', ...product } : {},
         // product: product ? { ...product,estimateTime:'00:00',startTime:'00:00',endTime:'00:00' } : {},
     })
     // const onDropdownClick = (dropdownTitle) => {
@@ -30,10 +30,10 @@ const UpdateR_Product = (props) => {
         setState(pre => ({ ...pre, product: selectedP }));
 
     }
-    const onTimeChange = (val, index,key) => {
+    const onTimeChange = (val, index, key) => {
         let selectedTime = state.product[key]?.split(':');
         selectedTime[index] = val;
-        setState(pre => ({ ...pre, product: {...pre.product,[key]:selectedTime.join(':')}}));
+        setState(pre => ({ ...pre, product: { ...pre.product, [key]: selectedTime.join(':') } }));
     }
     const onSave = () => {
         let attributes = [];
@@ -51,9 +51,9 @@ const UpdateR_Product = (props) => {
         postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
             "pitstopItemID": state.product.pitstopItemID,
             "price": state.product.basePrice,
-            "estimateTime":state.product.estimateTime,
-            "startTime":state.product.startTime,
-            "endTime":state.product.endTime,
+            "estimateTime": state.product.estimateTime,
+            "startTime": state.product.startTime,
+            "endTime": state.product.endTime,
             "availablityStatus": state.product.availabilityStatusStr === 'Available' ? 1 : state.product.availabilityStatusStr === 'Out Of Stock' ? 2 : 3,
             "itemOptions": attributes
         }, {}, props.dispatch, (res) => {
@@ -97,6 +97,8 @@ const UpdateR_Product = (props) => {
                             }
                         </View> */}
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
+                            <Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}
+                            </Text>
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Product Name
@@ -139,8 +141,8 @@ const UpdateR_Product = (props) => {
                                     Status
                             </Text>
                                 {
-                                     ['Available', 'Out Of Stock', 'Discontinued'].map((item,i)=>{
-                                            return  <TouchableOpacity key={i} style={{ flexDirection: 'row' }} onPress={() => setState(pre => ({ ...pre, product: { ...pre.product, availabilityStatusStr: item } }))}>
+                                    ['Available', 'Out Of Stock', 'Discontinued'].map((item, i) => {
+                                        return <TouchableOpacity key={i} style={{ flexDirection: 'row' }} onPress={() => setState(pre => ({ ...pre, product: { ...pre.product, availabilityStatusStr: item } }))}>
                                             <CheckBox
                                                 checked={state.product.availabilityStatusStr === item}
                                                 onPress={() => setState(pre => ({ ...pre, product: { ...pre.product, availabilityStatusStr: item } }))}
@@ -154,7 +156,7 @@ const UpdateR_Product = (props) => {
                                             />
                                             <Text style={{ margin: 8 }}>{item}</Text>
                                         </TouchableOpacity>
-                                     })
+                                    })
                                 }
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Base Price
@@ -173,7 +175,8 @@ const UpdateR_Product = (props) => {
                                     {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
                                     <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
                                 </TouchableOpacity> */}
-                                    <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.product.basePrice?.toString()} onChangeText={(val) => setState(pre => ({ ...pre, product: { ...pre.product, basePrice: val.includes(' ') || val.includes('-') ? pre.product.basePrice : val } }))} />
+                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.product.basePrice?.toString()}</Text>
+                                    {/* <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.product.basePrice?.toString()} onChangeText={(val) => setState(pre => ({ ...pre, product: { ...pre.product, basePrice: val.includes(' ') || val.includes('-') ? pre.product.basePrice : val } }))} /> */}
                                 </View>
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Description
@@ -203,6 +206,7 @@ const UpdateR_Product = (props) => {
                                         <Picker
                                             accessibilityLabel={"hours"}
                                             style={{ zIndex: 500, width: 115 }}
+                                            enabled={false}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Hours"
                                             selectedValue={(state.product.estimateTime || "HH:MM").split(":")[0]}
@@ -220,6 +224,7 @@ const UpdateR_Product = (props) => {
 
                                         <Picker
                                             accessibilityLabel={"minutes"}
+                                            enabled={false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Minutes"
@@ -245,6 +250,7 @@ const UpdateR_Product = (props) => {
                                     <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
                                         <Picker
                                             accessibilityLabel={"hours"}
+                                            enabled={false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             selectedValue={(state.product.startTime || "HH:MM").split(":")[0]}
@@ -260,6 +266,7 @@ const UpdateR_Product = (props) => {
                                         <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
                                         <Picker
                                             accessibilityLabel={"minutes"}
+                                            enabled={false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             selectedValue={(state.product.startTime || "HH:MM").split(":")[1]}
@@ -283,6 +290,7 @@ const UpdateR_Product = (props) => {
                                     <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
                                         <Picker
                                             accessibilityLabel={"hours"}
+                                            enabled={false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Hours"
@@ -299,6 +307,7 @@ const UpdateR_Product = (props) => {
                                         <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
                                         <Picker
                                             accessibilityLabel={"minutes"}
+                                            enabled={false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Minutes"
@@ -326,7 +335,7 @@ const UpdateR_Product = (props) => {
                                                     <View style={{ flexDirection: 'row' }}>
                                                         <CheckBox
                                                             checked={itemOptions.isActive ? itemOptions.isActive : false}
-                                                            onPress={(e) => changeAttribute(e, i, j, 'isActive')}
+                                                            // onPress={(e) => changeAttribute(e, i, j, 'isActive')}
                                                             style={{
                                                                 alignSelf: "center",
                                                                 color: '#7359BE',
@@ -350,7 +359,8 @@ const UpdateR_Product = (props) => {
                                                         alignItems: 'center',
                                                         flexDirection: 'row'
                                                     }}>
-                                                        <TextInput keyboardType='numeric' style={{}} onChangeText={val => changeAttribute(val, i, j, 'price')} value={itemOptions.price?.toString()} />
+                                                        <Text>{itemOptions.price?.toString()}</Text>
+                                                        {/* <TextInput keyboardType='numeric' style={{}} onChangeText={val => changeAttribute(val, i, j, 'price')} value={itemOptions.price?.toString()} /> */}
                                                     </View>
                                                 </View>
                                             })}

@@ -259,13 +259,13 @@ var hubConnection = null;
 export const sharedHubConnectionInitiator = async (postRequest) => {
     // let reconnectArray = Array.from(Array(100), (item, j) => (j + 1) * 15000);
     const deviceMAC = await DeviceInfo.getMacAddress();
-    const User = JSON.parse(await AsyncStorage.getItem('User'));
 
 
     // hubConnection.keepAliveIntervalInMilliseconds = 1000;
     // hubConnection.serverTimeoutInMilliseconds = 100000;
     async function start() {
         try {
+            const User = JSON.parse(await AsyncStorage.getItem('User'));
             hubConnection = new HubConnectionBuilder()
                 .withUrl(`${BASE_URL}/notificationHub?access_token=${User.token.authToken}&hwi=${deviceMAC}`)
                 .configureLogging(LogLevel.None)
@@ -282,16 +282,17 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
                 attachVendorCompleteJobEvent();
                 attachVendorOrderCancelEvent();
             }
+            if (hubConnection) {
+                hubConnection.closedCallbacks = [];
+                hubConnection.onclose(start);
+            }
         } catch (err) {
             console.log("Error during signalR connectivity:", err);
             setTimeout(start, 2000);
-            setIsSignalRConnectionCreationInProgress(false);
+             
         }
     };
-    if (hubConnection) {
-        hubConnection.closedCallbacks = [];
-        hubConnection.onclose(start);
-    }
+
     start();
 
     // await hubConnection.start().then(() => console.log('SignalR Connection established!!!')).catch(err => console.log('Error during signalR connectivity :', err))
@@ -1193,7 +1194,7 @@ const generateNewRefreshTokenIfExpired = (postRequest, accessToken, refreshToken
             }
         },
         (error) => {
-            setIsSignalRConnectionCreationInProgress(false);
+             
 
             console.log(((error?.response) ? error.response : {}), error);
             // CustomToast.error('An Error Occurred!');
@@ -1223,7 +1224,7 @@ const continueAfterCheckingListFromHubConnectionsAPI = (getRequest, cbConnection
             }
         },
         (error) => {
-            setIsSignalRConnectionCreationInProgress(false);
+             
 
             console.log(((error?.response) ? error.response : {}), error);
             // CustomToast.error('An Error Occurred!');
@@ -1239,50 +1240,45 @@ export const getBackgroundSignalRConnectivityDelay = () => {
     return (store.getState()?.userReducer?.backgroundSignalRConnectivityDelay ?? 30) * 1000;
 }
 
-var isSignalRConnectionCreationInProgress = false;
-export const setIsSignalRConnectionCreationInProgress = (value) => {
-    isSignalRConnectionCreationInProgress = value;
-};
+// var isSignalRConnectionCreationInProgress = false;
+// export const setIsSignalRConnectionCreationInProgress = (value) => {
+//     isSignalRConnectionCreationInProgress = value;
+// };
 
-export const getIsSignalRConnectionCreationInProgress = () => {
-    return isSignalRConnectionCreationInProgress;
-};
+// export const getIsSignalRConnectionCreationInProgress = () => {
+//     return isSignalRConnectionCreationInProgress;
+// };
 
 export const handleSignalRConnectionCreationIfRequired = async (getRequest, postRequest, forceExecute = false, afterWaitForSignalRDone) => {
     const user = await AsyncStorage.getItem("User");
     if (forceExecute || ((hubConnection?.state !== HubConnectionState.Connected))) {
         if (user && JSON.parse(user)?.token?.authToken) {
-            if (!getIsSignalRConnectionCreationInProgress()) {
-                console.log("-> Starting handling of SignalR Creation!");
+            console.log("-> Starting handling of SignalR Creation!");
 
-                store.dispatch(showHideLoader(true, ''));
-                setIsSignalRConnectionCreationInProgress(true);
+            store.dispatch(showHideLoader(true, ''));
+             
 
-                generateNewRefreshTokenIfExpired(postRequest, JSON.parse(user)?.token?.authToken, JSON.parse(user)?.refreshToken, () => {
+            generateNewRefreshTokenIfExpired(postRequest, JSON.parse(user)?.token?.authToken, JSON.parse(user)?.refreshToken, () => {
 
-                    continueAfterCheckingListFromHubConnectionsAPI(getRequest,
-                        () => {
-                            sharedHubConnectionInitiator(postRequest);
+                continueAfterCheckingListFromHubConnectionsAPI(getRequest,
+                    () => {
+                        sharedHubConnectionInitiator(postRequest);
 
-                            signalRConnectionConfirmationAtTheEnd();
-                        },
-                        () => {
-                            signalRConnectionConfirmationAtTheEnd();
-                        }
-                    );
+                        signalRConnectionConfirmationAtTheEnd();
+                    },
+                    () => {
+                        signalRConnectionConfirmationAtTheEnd();
+                    }
+                );
+            });
+
+            const signalRConnectionConfirmationAtTheEnd = () => {
+                waitForSignalRConnection(() => {
+                    afterWaitForSignalRDone();
+
+                    store.dispatch(showHideLoader(false, ''));
+                     
                 });
-
-                const signalRConnectionConfirmationAtTheEnd = () => {
-                    waitForSignalRConnection(() => {
-                        afterWaitForSignalRDone();
-
-                        store.dispatch(showHideLoader(false, ''));
-                        setIsSignalRConnectionCreationInProgress(false);
-                    });
-                }
-            }
-            else {
-                console.log("-> No handling of SignalR Creation required: Already In Progress!");
             }
         }
         else {
