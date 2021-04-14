@@ -16,6 +16,7 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import { CheckBox } from 'native-base';
+import { OPEN_MODAL } from '../../redux/actions/types';
 function ResOrderDetails(props) {
     const { navigation, userObj, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'ResOrderDetails')[0]?.params?.item;
@@ -51,31 +52,57 @@ function ResOrderDetails(props) {
         }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
     }
     const confirmOrder = (latestArr = false, isConfirmed = false, replacedItem = false) => {
-        let payloadArr = latestArr !== false && isConfirmed === false ? {
-            "jobItemID": latestArr.jobItemID,
-            "name": latestArr.jobItemName,
-            "jobItemStatus": latestArr.jobItemStatus,
-            "quantity": latestArr.quantity,
-            "price": latestArr.price,
-            // "joviJobID": item.joviJobID,
-            "pitstopItemID": latestArr.pitstopItemID
-        }
-            :
-            null;
-        console.log('Order Request: ', { jobItemListViewModel: payloadArr, replaceJobItemID: replacedItem !== false ? replacedItem.id : 0, replaceJobItemName: replacedItem !== false ? replacedItem.name : null, joviJobID: state.joviJobID, isConfirmed })
-
-
-        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr, replacedJobItemID: isConfirmed === false && replacedItem !== false ? replacedItem.id : 0, replacedJobItemName: isConfirmed === false && replacedItem !== false ? replacedItem.name : null, joviJobID: state.joviJobID, isConfirmed }, {}, props.dispatch, (res) => {
-            if (res.data.statusCode === 200) {
-                if (isConfirmed === true) {
-                    navigation.goBack();
-                    CustomToast.success('Order Confirmed');
-                } else {
-                    CustomToast.success('Order Updated');
-                    getData();
-                }
+       if(isConfirmed ===true){
+        props.dispatch({
+            type: OPEN_MODAL,
+            payload: {
+                visible: false,
+                transparent: true,
+                okHandler: null,
+                onRequestCloseHandler: null,
+                ModalContent: null,
+                orderRecievedCheck: null,
+                notificationModalVisible: true,
+                notificationModalContent: {  },
+                vendorSkipped: true,
+                qrCodeFlag:true,
+                qrCodeValue:'Hello Rider',
+                modalContentNotification: null,
+                modalFlex: null,
+                modalHeightDefault: null,
+                modelViewPadding: 35,
+                fadeAreaViewFlex: 1,
+                fadeAreaViewStyle: {},
+                imageViewState: {},
             }
-        }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
+        });
+       }else{
+           let payloadArr = latestArr !== false && isConfirmed === false ? {
+               "jobItemID": latestArr.jobItemID,
+               "name": latestArr.jobItemName,
+               "jobItemStatus": latestArr.jobItemStatus,
+               "quantity": latestArr.quantity,
+               "price": latestArr.price,
+               // "joviJobID": item.joviJobID,
+               "pitstopItemID": latestArr.pitstopItemID
+           }
+               :
+               null;
+           console.log('Order Request: ', { jobItemListViewModel: payloadArr, replaceJobItemID: replacedItem !== false ? replacedItem.id : 0, replaceJobItemName: replacedItem !== false ? replacedItem.name : null, joviJobID: state.joviJobID, isConfirmed })
+   
+   
+           postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr, replacedJobItemID: isConfirmed === false && replacedItem !== false ? replacedItem.id : 0, replacedJobItemName: isConfirmed === false && replacedItem !== false ? replacedItem.name : null, joviJobID: state.joviJobID, isConfirmed }, {}, props.dispatch, (res) => {
+               if (res.data.statusCode === 200) {
+                   if (isConfirmed === true) {
+                       navigation.goBack();
+                       CustomToast.success('Order Confirmed');
+                   } else {
+                       CustomToast.success('Order Updated');
+                       getData();
+                   }
+               }
+           }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
+       }
     }
     const getData = (keywords = false) => {
         console.log('URL', `Api/Vendor/Order/Details/${state.orderObj.orderNo !== 0 ? state.orderObj.orderNo : data.item.orderNo}/${props.user.pitstopID}`)
@@ -219,13 +246,13 @@ function ResOrderDetails(props) {
                                                     <Text style={stylesOrder.label}>{itemOptions.productAttributeName}</Text>
                                                 </View>
                                             })}</>}
-                                        {item.specialInstructions && item.specialInstructions !== '' ?<><Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Special Description</Text>
+                                        {item.specialInstructions && item.specialInstructions !== '' ? <><Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Special Description</Text>
 Î                                            <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 3) }}>
                                                 {item.specialInstructions}
                                             </Text>
                                         </>
-                                        :
-                                        <></>
+                                            :
+                                            <></>
                                         }
                                     </ScrollView>
                                 }
@@ -242,7 +269,7 @@ function ResOrderDetails(props) {
                     <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => { navigation?.navigate('ContactUsPage') }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Report</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={state.orderObj.orderStatus === 1 ? 0 : 1} style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: state.orderObj.orderStatus === 1 ? props.activeTheme.default : props.activeTheme.grey }} onPress={state.orderObj.orderStatus === 1 ? () => confirmOrder(false, true) : () => { }}>
+                    <TouchableOpacity activeOpacity={state.orderObj.orderStatus === 1 ? 0 : 1} style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: state.orderObj.orderStatus === 1 ? props.activeTheme.default : props.activeTheme.grey }} onPress={state.orderObj.orderStatus !== 1 ? () => confirmOrder(false, true) : () => { }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Pass to Rider</Text>
                     </TouchableOpacity>
                 </View>

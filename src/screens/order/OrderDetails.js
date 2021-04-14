@@ -16,6 +16,7 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import ReplaceOrderItem from '../../components/modals/ReplaceOrderItem';
 import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
+import { OPEN_MODAL } from '../../redux/actions/types';
 function OrderDetails(props) {
     const { navigation, userObj, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'OrderDetails')[0]?.params?.item;
@@ -64,31 +65,57 @@ function OrderDetails(props) {
         confirmOrder(item);
     }
     const confirmOrder = (latestArr = false, isConfirmed = false, replacedItem = false) => {
-        let payloadArr = latestArr !== false && isConfirmed === false ? {
-            "jobItemID": latestArr.jobItemID,
-            "name": latestArr.jobItemName,
-            "jobItemStatus": latestArr.jobItemStatus,
-            "quantity": latestArr.quantity,
-            "price": latestArr.price,
-            // "joviJobID": item.joviJobID,
-            "pitstopItemID": latestArr.pitstopItemID
-        }
-            :
-            null;
-        console.log('Order Request: ', { jobItemListViewModel: payloadArr, replaceJobItemID: replacedItem !== false ? replacedItem.id : 0, replaceJobItemName: replacedItem !== false ? replacedItem.name : null, joviJobID: state.joviJobID, isConfirmed })
-
-
-        postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr, replacedJobItemID: isConfirmed === false && replacedItem !== false ? replacedItem.id : 0, replacedJobItemName: isConfirmed === false && replacedItem !== false ? replacedItem.name : null, joviJobID: state.joviJobID, isConfirmed }, {}, props.dispatch, (res) => {
-            if (res.data.statusCode === 200) {
-                if (isConfirmed === true) {
-                    navigation.goBack();
-                    CustomToast.success('Order Confirmed');
-                } else {
-                    CustomToast.success('Order Updated');
-                    getData();
+        if (isConfirmed === true) {
+            props.dispatch({
+                type: OPEN_MODAL,
+                payload: {
+                    visible: false,
+                    transparent: true,
+                    okHandler: null,
+                    onRequestCloseHandler: null,
+                    ModalContent: null,
+                    orderRecievedCheck: null,
+                    notificationModalVisible: true,
+                    notificationModalContent: {},
+                    vendorSkipped: true,
+                    qrCodeFlag: true,
+                    qrCodeValue: 'Hello Rider',
+                    modalContentNotification: null,
+                    modalFlex: null,
+                    modalHeightDefault: null,
+                    modelViewPadding: 35,
+                    fadeAreaViewFlex: 1,
+                    fadeAreaViewStyle: {},
+                    imageViewState: {},
                 }
+            });
+        } else {
+            let payloadArr = latestArr !== false && isConfirmed === false ? {
+                "jobItemID": latestArr.jobItemID,
+                "name": latestArr.jobItemName,
+                "jobItemStatus": latestArr.jobItemStatus,
+                "quantity": latestArr.quantity,
+                "price": latestArr.price,
+                // "joviJobID": item.joviJobID,
+                "pitstopItemID": latestArr.pitstopItemID
             }
-        }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
+                :
+                null;
+            console.log('Order Request: ', { jobItemListViewModel: payloadArr, replaceJobItemID: replacedItem !== false ? replacedItem.id : 0, replaceJobItemName: replacedItem !== false ? replacedItem.name : null, joviJobID: state.joviJobID, isConfirmed })
+
+
+            postRequest('Api/Vendor/Pitstop/JobItemsList/Update', { jobItemListViewModel: payloadArr, replacedJobItemID: isConfirmed === false && replacedItem !== false ? replacedItem.id : 0, replacedJobItemName: isConfirmed === false && replacedItem !== false ? replacedItem.name : null, joviJobID: state.joviJobID, isConfirmed }, {}, props.dispatch, (res) => {
+                if (res.data.statusCode === 200) {
+                    if (isConfirmed === true) {
+                        navigation.goBack();
+                        CustomToast.success('Order Confirmed');
+                    } else {
+                        CustomToast.success('Order Updated');
+                        getData();
+                    }
+                }
+            }, (err) => { if (err) { console.log(err); CustomToast.error('Something went wrong!') } }, '');
+        }
     }
     const itemReplaceSuccess = (prevItem, replacedItem) => {
         // let newArr = state.orderList.map(it => {
@@ -127,8 +154,8 @@ function OrderDetails(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-    const disableQuantityCounter = (item,idx) => {
-        let color =  item.quantity===(item.actualQuantity)&&idx===2?props.activeTheme.gray:(item.quantity-1 === 0&&idx === 0)?props.activeTheme.gray:'#fff';
+    const disableQuantityCounter = (item, idx) => {
+        let color = item.quantity === (item.actualQuantity) && idx === 2 ? props.activeTheme.gray : (item.quantity - 1 === 0 && idx === 0) ? props.activeTheme.gray : '#fff';
         return color;
     }
     const getData = (keywords = false) => {
@@ -210,7 +237,7 @@ function OrderDetails(props) {
                                 );
                             }}
                         >
-                            <View style={{ ...tabStyles.tabContainer(props.activeTheme,null,null,null,null,0.3), margin: 5 }}>
+                            <View style={{ ...tabStyles.tabContainer(props.activeTheme, null, null, null, null, 0.3), margin: 5 }}>
                                 {item.jobItemStatusStr === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ ...commonStyles.fontStyles(22, props.activeTheme.white, 4) }}>Out Of Stock</Text>
                                 </View>}
@@ -238,7 +265,7 @@ function OrderDetails(props) {
                                 </View>
                                 {state.orderObj.orderStatus === 1 ? <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
                                     {
-                                        ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor:disableQuantityCounter(item,idx), height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item, idx)}>
+                                        ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: disableQuantityCounter(item, idx), height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item, idx)}>
                                             <Text style={{}}>{btn}</Text>
                                         </TouchableOpacity>)
                                     }

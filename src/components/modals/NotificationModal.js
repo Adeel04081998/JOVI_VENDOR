@@ -7,11 +7,12 @@ import { getApiDetails, sharedAnimationHandler } from '../../utils/sharedActions
 import store from '../../redux/store';
 import RatingsModal from './RatingsModal';
 import dummy from '../../assets/orderImage.png';
-// import dummy from '../../assets/card-image.png';
+import qrCodeLogo from '../../assets/Common/jovi_admin.png';
 import IncomingJobModal from './IncomingJobModal';
 import commonStyles from '../../styles/styles';
 import { getRequest } from '../../services/api';
 import { Player } from '@react-native-community/audio-toolkit';
+import QRCode from 'react-native-qrcode-svg';
 const FadeInView = (props) => {
     const fadeAnim = useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
     const [state, setState] = useState(0);
@@ -50,7 +51,7 @@ const NotificationModal = props => {
     const { height, width } = Dimensions.get('window');
     const { theme } = props;
     let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
-    const { transparent, notificationModalVisible, vendorSkipped, notificationModalContent, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
+    const { transparent, qrCodeFlag, qrCodeValue, notificationModalVisible, vendorSkipped, notificationModalContent, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
     const [state, setState] = useState({
         isKeyboardOpen: false,
         keyboardHeight: 0,
@@ -69,14 +70,16 @@ const NotificationModal = props => {
         Keyboard.addListener('keyboardDidShow', _keyboardShowDetecter);
         Keyboard.addListener('keyboardDidHide', _keyboardHideDetecter);
         const orderRingtonePlayer = new Player('order_ringtone.mp3', { autoDestroy: true, mixWithOthers: true, continuesToPlayInBackground: true });
-        orderRingtonePlayer.looping = true;
-        orderRingtonePlayer.volume = 1;
-        orderRingtonePlayer.prepare((error) => {
-            if (!error) {
-                orderRingtonePlayer.play();
-            }
-        });
-        getApiDetails({ ...props, getRequest: getRequest });
+        if (qrCodeFlag !== true) {
+            orderRingtonePlayer.looping = true;
+            orderRingtonePlayer.volume = 1;
+            orderRingtonePlayer.prepare((error) => {
+                if (!error) {
+                    orderRingtonePlayer.play();
+                }
+            });
+            getApiDetails({ ...props, getRequest: getRequest });
+        }
         return () => {
             console.log('Notification Modal State Cleared-----');
             Keyboard.removeListener('keyboardDidShow', _keyboardShowDetecter);
@@ -104,20 +107,36 @@ const NotificationModal = props => {
                                 {/* {
                                     modalContentToRender
                                 } */}
-                                <View style={{ height: '50%', overflow: 'hidden', borderRadius: 10, backgroundColor: '#fff', width: '80%' }}>
-                                    <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 10, alignItems: 'center', alignContent: 'center' }}>
-                                        <View style={{ width: '100%', padding: 20, height: '80%' }}>
-                                            <ImageBackground source={dummy} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='contain'  >
-                                            </ImageBackground>
-                                            {/* <FadeInView style={{ width: '100%', height: '100%', }}> */}
-                                            {/* </FadeInView> */}
-                                        </View>
-                                        <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>{notificationModalContent?.orderMsg}</Text>
-                                        <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>Order No: {notificationModalContent?.orderId}</Text>
-                                    </View>
-                                    {vendorSkipped !== true && <TouchableOpacity onPress={() => { dispatch(closeModalAction()); props.navigation.navigate('Orders') }} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default }}>
-                                        <Text style={{ ...commonStyles.fontStyles(16, activeTheme.white, 3) }}>View Details</Text>
-                                    </TouchableOpacity>}
+                                <View style={{ height: qrCodeFlag !== true ? '50%' : null, overflow: 'hidden', borderRadius: 10, backgroundColor: '#fff', width: '80%' }}>
+                                    {
+                                        qrCodeFlag === true ?
+                                            <View style={{ height: '55%', paddingHorizontal: 10, width: '100%' }}>
+                                                <Text style={{ ...commonStyles.fontStyles(15, activeTheme.default, 4), marginVertical: 10 }}>*Please scan this QR Code to Proceed</Text>
+                                                <QRCode
+                                                    value={qrCodeValue}
+                                                    size={250}
+                                                    // logo={qrCodeLogo}
+                                                    // logoSize={40}
+                                                    logoBackgroundColor='transparent'
+                                                />
+                                            </View>
+                                            :
+                                            <>
+                                                <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 10, alignItems: 'center', alignContent: 'center' }}>
+                                                    <View style={{ width: '100%', padding: 20, height: '80%' }}>
+                                                        <ImageBackground source={dummy} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='contain'  >
+                                                        </ImageBackground>
+                                                        {/* <FadeInView style={{ width: '100%', height: '100%', }}> */}
+                                                        {/* </FadeInView> */}
+                                                    </View>
+                                                    <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>{notificationModalContent?.orderMsg}</Text>
+                                                    <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>Order No: {notificationModalContent?.orderId}</Text>
+                                                </View>
+                                                {vendorSkipped !== true && <TouchableOpacity onPress={() => { dispatch(closeModalAction()); props.navigation.navigate('Orders') }} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: activeTheme.default }}>
+                                                    <Text style={{ ...commonStyles.fontStyles(16, activeTheme.white, 3) }}>View Details</Text>
+                                                </TouchableOpacity>}
+                                            </>
+                                    }
                                 </View>
                             </TouchableOpacity>
                         </View>

@@ -6,6 +6,7 @@ let initState = {
     okHandler: null,
     onRequestCloseHandler: null,
     ModalContent: null,
+    qrCodeFlag:true,
     notificationModalVisible:false,
     notificationModalContent:null,
     modalContentNotification:null,
