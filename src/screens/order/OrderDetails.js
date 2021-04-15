@@ -9,7 +9,7 @@ import reAssign from '../../assets/svgIcons/common/reAssign.svg';
 import commonIcons from '../../assets/svgIcons/common/common';
 import { getRequest, postRequest } from '../../services/api';
 import SharedFooter from '../../components/footer/SharedFooter';
-import { renderPictureResizeable } from '../../utils/sharedActions';
+import { getHubConnectionInstance, renderPictureResizeable } from '../../utils/sharedActions';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { SvgXml } from 'react-native-svg';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
@@ -79,7 +79,7 @@ function OrderDetails(props) {
                     notificationModalContent: {},
                     vendorSkipped: true,
                     qrCodeFlag: true,
-                    qrCodeValue: 'Hello Rider',
+                    qrCodeValue: state.joviJobID.toString() ?? '0000',
                     modalContentNotification: null,
                     modalFlex: null,
                     modalHeightDefault: null,
@@ -146,7 +146,6 @@ function OrderDetails(props) {
             ModalContent: (
                 <ReplaceOrderItem itemReplace={item} {...props} onSave={(replacedItem) => itemReplaceSuccess(item, replacedItem)} />
             ),
-            // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.65,
             modelViewPadding: 0,
             fadeAreaViewFlex: plateformSpecific(1, 0.6),
@@ -190,7 +189,30 @@ function OrderDetails(props) {
     }
     useEffect(useCallback(() => {
         getData();
-
+        getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
+            console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
+            props.dispatch({
+                type: OPEN_MODAL,
+                payload: {
+                    visible: false,
+                    transparent: true,
+                    okHandler: null,
+                    onRequestCloseHandler: null,
+                    ModalContent: null,
+                    orderRecievedCheck: new Date().getTime(),
+                    notificationModalVisible: true,
+                    notificationModalContent: { orderId, orderMsg },
+                    vendorSkipped: true,
+                    modalContentNotification: null,
+                    modalFlex: null,
+                    modalHeightDefault: null,
+                    modelViewPadding: 35,
+                    fadeAreaViewFlex: 1,
+                    fadeAreaViewStyle: {},
+                    imageViewState: {},
+                }
+            })
+        });
         return () => {
             setState({
                 ...state,
@@ -203,7 +225,6 @@ function OrderDetails(props) {
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
             <HeaderApp
                 caption={'Order No: ' + state.orderObj.orderNo}
-                // caption={props.user?.vendorPitstopDetailsList?.companyName}
                 commonStyles={commonStyles}
                 state={state}
                 screenProps={{ ...props }}
@@ -289,7 +310,7 @@ function OrderDetails(props) {
                     <TouchableOpacity style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fc3f93' }} onPress={() => { navigation?.navigate('ContactUsPage') }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Report</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={state.orderObj.orderStatus === 1 ? 0 : 1} style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: state.orderObj.orderStatus === 1 ? props.activeTheme.default : props.activeTheme.grey }} onPress={state.orderObj.orderStatus === 1 ? () => confirmOrder(false, true) : () => { }}>
+                    <TouchableOpacity activeOpacity={state.orderObj.orderStatus === 1 ? 0 : 1} style={{ width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: state.orderObj.orderStatus === 1 ? props.activeTheme.default : props.activeTheme.grey }} onPress={state.orderObj.orderStatus !== 1 ? () => confirmOrder(false, true) : () => { }}>
                         <Text style={{ ...commonStyles.fontStyles(17, props.activeTheme.white, 3) }}>Pass to Rider</Text>
                     </TouchableOpacity>
                 </View>

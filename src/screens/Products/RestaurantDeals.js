@@ -33,10 +33,7 @@ function RestaurantDeals(props) {
             onRequestCloseHandler: null,
             ModalContent: (
                 <AddUpdateDealModal updateDeal={deal}  {...props} onSave={()=>{getData()}} />
-                // <AddProductModalR {...props} onSave={()=>{getData()}} />
             ),
-            // modalFlex: 0,
-            // modalHeight: Dimensions.get('window').height * 0.85,
             modalHeight: Dimensions.get('window').height * 0.85,
             modelViewPadding: 0,
             fadeAreaViewFlex: plateformSpecific(1, 0.6),
@@ -100,8 +97,6 @@ function RestaurantDeals(props) {
     }; 
     return (
         <View style={{ flex: 1, backgroundColor: '#F5F6FA' }}>
-
-
             <HeaderApp
                 caption={'Deals'}
                 commonStyles={commonStyles}
@@ -111,7 +106,6 @@ function RestaurantDeals(props) {
                 activeTheme={activeTheme}
                 screenProps={{...props}}
             />
-
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} >{state.subCategoryObj.name}</Text>

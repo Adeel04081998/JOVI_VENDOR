@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
-import { renderPicture, renderPictureResizeable } from "../../utils/sharedActions";
+import { renderPicture } from "../../utils/sharedActions";
 import AsyncStorage from '@react-native-community/async-storage';
 import { getRequest, postRequest } from '../../services/api';
 import { HeaderApp } from '../../components/header/CustomHeader';
@@ -155,7 +155,7 @@ function Items(props) {
                                         <View style={{ backgroundColor: 'white', borderColor: '#929293', overflow: 'hidden',justifyContent: 'center', alignItems: "center", borderRadius: 15,height:'100%' }}>
                                             <ImageBackground
                                                 resizeMode="center"
-                                                source={item.productImages && item.productImages.length > 0 ? { uri: renderPictureResizeable(item.productImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                                source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImageThumbnail,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{
                                                     // flex: 1,
                                                     // top: 1,
@@ -189,7 +189,7 @@ function Items(props) {
                                         <View style={{ height:'75%' ,width: '100%',borderRadius:15,overflow:'hidden' }}>
                                             <ImageBackground
                                                 resizeMode="center"
-                                                source={item.itemImages && item.itemImages.length > 0 ? { uri: renderPictureResizeable(item.itemImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                                source={item.itemImages && item.itemImages.length > 0 ? { uri: renderPicture(item.itemImages[0].joviImageThumbnail,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{ width: '100%',
                                                 // marginLeft: 17,
                                                 // zIndex: 900,

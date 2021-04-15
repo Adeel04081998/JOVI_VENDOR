@@ -1,21 +1,21 @@
-import { CheckBox, Picker, Text, View } from 'native-base';
-import colors from "../../styles/colors";
+import {  Picker, Text, View } from 'native-base';
+// import colors from "../../styles/colors";
 import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Keyboard, Dimensions, ImageBackground } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
-import LinearGradient from 'react-native-linear-gradient';
+// import LinearGradient from 'react-native-linear-gradient';
 import Animated, { set } from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
-import { renderPictureResizeable, sharedKeyboardDismissHandler, camelToTitleCase, sharedlogoutUser, error400 } from '../../utils/sharedActions';
-import CustomAndroidPickerItem from '../dropdowns/picker.android';
-import { favHomeIcon } from '../../assets/svgIcons/customerorder/customerorder'
+import {camelToTitleCase, sharedlogoutUser, error400 } from '../../utils/sharedActions';
+// import CustomAndroidPickerItem from '../dropdowns/picker.android';
+// import { favHomeIcon } from '../../assets/svgIcons/customerorder/customerorder'
 import { SvgXml } from 'react-native-svg';
 import commonStyles from '../../styles/styles';
-import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+// import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
 import { postRequest } from '../../services/api';
 import CustomToast from '../../components/toast/CustomToast';
-import dummy from '../../assets/bike.png';
+// import dummy from '../../assets/bike.png';
 import dropdownIcon from '../../assets/dropdownIcn.svg';
 import correctIcon from '../../assets/svgIcons/common/correct_icon.svg';
 import common from '../../assets/svgIcons/common/common';
@@ -25,7 +25,7 @@ import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import errorsUI from '../validations';
 import { CustomInput } from '../SharedComponents';
 const ProfileModal = (props) => {
-    console.log('USer:', props.user)
+    console.log('User:', props.user)
     const { dispatch } = props;
     let weekArr = [false, false, false, false, false, false, false];
     props.user?.daysOfTheWeek?.map(it => {
@@ -268,19 +268,7 @@ const ProfileModal = (props) => {
                                     borderBottomLeftRadius: 10,
                                     borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                                 }} keyboardShouldPersistTaps="always">
-                                    {/* <View style={{
-                                        // marginHorizontal: 5,
-                                        // marginBottom: 210,
-                                        // width: '83%',
-                                        // elevation: 0.5,
-                                        borderColor: props.activeTheme.lightGrey,
-                                        borderWidth: 1,
-                                        borderBottomLeftRadius: 10,
-                                        borderBottomRightRadius: 10
-                                    }} > */}
                                     {renderSelectionList(state.vendorList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, vendor: e })); })}
-
-                                    {/* </View> */}
                                 </ScrollView>
                                     :
                                     null
@@ -297,12 +285,6 @@ const ProfileModal = (props) => {
                                         <TouchableOpacity style={{ flex: 0.38 }} onPress={() => setState(pre => ({ ...pre, active: !pre.active }))}>
                                             <View style={{ flex: 1, ...stylesHome.homeTabView, backgroundColor: state.active ? props.activeTheme.default : props.activeTheme.warning, marginVertical: 1, marginHorizontal: 15 }}>
                                                 <SvgXml xml={common.open_close(state.active === true ? 'Opened' : 'Closed')} height={'100%'} width={'100%'} viewBox="0 0 41 41" />
-                                                {/* <ImageBackground
-                                            resizeMode='stretch'
-                                            source={ {uri:common.open_close()}}
-                                            // source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImage, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{ ...stylesHome.homeTabImage }}
-                                        /> */}
                                             </View>
                                         </TouchableOpacity>
                                     </View>
@@ -367,7 +349,6 @@ const ProfileModal = (props) => {
                                         let paddingToBottom = 10;
                                         paddingToBottom += e.nativeEvent.layoutMeasurement.height;
                                         if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
-                                            // make something...
                                             if (state.walletPagination?.itemsPerPage < state.walletPagination?.totalItems) {
                                                 getBalanceData(state.walletPagination.itemsPerPage + 10);
                                             }
@@ -391,14 +372,6 @@ const ProfileModal = (props) => {
                                                         <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Earning</Text>
                                                         <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
                                                     </View>
-                                                    {/* <View style={{ height: 40 }}>
-                                                        <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Vendor</Text>
-                                                        <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
-                                                    </View>
-                                                    <View style={{ height: 40 }}>
-                                                        <Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.defaultLight, 4) }}>Jovi</Text>
-                                                        <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.black, 1) }}>Rs.{item.amount}</Text>
-                                                    </View> */}
                                                 </View>
                                             </View>
                                         })

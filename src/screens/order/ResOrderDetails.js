@@ -66,7 +66,7 @@ function ResOrderDetails(props) {
                 notificationModalContent: {  },
                 vendorSkipped: true,
                 qrCodeFlag:true,
-                qrCodeValue:'Hello Rider',
+                qrCodeValue:state.joviJobID.toString()??'0000',
                 modalContentNotification: null,
                 modalFlex: null,
                 modalHeightDefault: null,

@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Text, ImageBackground, View, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
-import {  renderPictureResizeable } from "../../utils/sharedActions";
-import { getRequest, postRequest } from '../../services/api';
+import {  error400, renderPictureResizeable } from "../../utils/sharedActions";
+import { postRequest } from '../../services/api';
 import  { HeaderApp } from '../../components/header/CustomHeader';
 import commonStyles, { tabStyles } from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
@@ -16,7 +16,6 @@ import AddBrandModal from '../../components/modals/AddBrandModal';
 import { debounce } from 'debounce';
 function Home(props) {
     const { navigation, activeTheme } = props;
-    // console.log(navigation)
     const [state, setState] = useState({
         brandData: [],
         paginationInfo:{totalItems:0},
@@ -37,10 +36,6 @@ function Home(props) {
         };
         props.dispatch(openModalAction(ModalComponent));
     }
-    // const handleBackButtonPressed = bool => {
-    //     sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
-    //     return true;
-    // };
     const getData = (keywords=false) => {
         postRequest('Api/Vendor/Pitstop/BrandsList', {
             "itemsPerPage": 50,
@@ -64,8 +59,7 @@ function Home(props) {
                 }));
             }
         }, (err) => {
-            // if(err.statusCode === 404) CustomToast.error(err.message)
-            if (err) CustomToast.error("Something went wrong");
+            if (err) error400(err.response);
         }, '');
     }
     const searchBrand = debounce((val) => {
@@ -112,7 +106,7 @@ function Home(props) {
                                     <View style={{...tabStyles.imageTabContainer}}>
                                         <ImageBackground
                                             resizeMode='stretch'
-                                            source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                            source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImageThumbnail,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                             style={{...tabStyles.imageTab}}
                                         />
                                     </View>

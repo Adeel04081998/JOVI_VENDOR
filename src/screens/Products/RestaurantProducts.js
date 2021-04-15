@@ -95,8 +95,6 @@ function RestaurantProducts(props) {
                 productList: [],
                 subCatObj: {}
             })
-            // backHandler.remove();
-
         };
     }, []), []);
     const onFooterItemPressed = async (pressedTab, index) => {
@@ -127,7 +125,6 @@ function RestaurantProducts(props) {
                     <Text style={{ marginRight: 14 }}>Total: {state.productList.length < 1 ? '0' : state.productList.length < 10 ? '0' + state.productList.length : state.productList.length}</Text>
                 </View>
                 <ScrollView style={{ flex: 1, marginHorizontal: 8 }} >
-                    {/* <View style={{ flex: 1, marginHorizontal: 12, marginBottom: 35 }}> */}
                     {state.productList.length > 0 ?
                         state.productList.map((item, i) => {
                             return <View key={i} style={{ ...tabStyles.tabContainer(props.activeTheme,null,null,null,null,0.3) }} >
@@ -143,8 +140,8 @@ function RestaurantProducts(props) {
                                     />
                                 </View>
                                 <TouchableOpacity style={tabStyles.tabText} onPress={() => updateRestaurantProduct(item)}>
-                                    <View style={{ flex: 0.9 }}>
-                                        <Text style={{...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{item?.productName}</Text>
+                                    <View style={{ flex: 0.9,paddingTop:5 }}>
+                                        <Text style={{...tabStyles.tabTitle(15, props.activeTheme.black, 1, '300')}}>{item?.productName}</Text>
                                         <Text style={{ ...tabStyles.tabDescription(10, props.activeTheme.black, 1, '300') }}>{item?.description?.toLocaleUpperCase()}</Text>
                                         <Text style={{ ...tabStyles.tabDescription(12, props.activeTheme.black, 4) }}>Rs.{item?.basePrice}</Text>
                                     </View>

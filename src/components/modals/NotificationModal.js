@@ -4,11 +4,11 @@ import fontFamilyStyles from '../../styles/styles';
 import { connect } from 'react-redux';
 import { closeModalAction } from '../../redux/actions/modal';
 import { getApiDetails, sharedAnimationHandler } from '../../utils/sharedActions';
-import store from '../../redux/store';
-import RatingsModal from './RatingsModal';
-import dummy from '../../assets/orderImage.png';
+// import store from '../../redux/store';
+// import RatingsModal from './RatingsModal';
+import orderImage from '../../assets/orderImage.png';
 import qrCodeLogo from '../../assets/Common/jovi_admin.png';
-import IncomingJobModal from './IncomingJobModal';
+// import IncomingJobModal from './IncomingJobModal';
 import commonStyles from '../../styles/styles';
 import { getRequest } from '../../services/api';
 import { Player } from '@react-native-community/audio-toolkit';
@@ -104,13 +104,10 @@ const NotificationModal = props => {
                     <View style={{ flex: 1 }}>
                         <View style={styles.centeredView(centeredViewFlex)}>
                             <TouchableOpacity onPress={() => dispatch(closeModalAction())} style={styles.modalView(modelViewPadding, Dimensions.get('window').height, "center")}>
-                                {/* {
-                                    modalContentToRender
-                                } */}
                                 <View style={{ height: qrCodeFlag !== true ? '50%' : null, overflow: 'hidden', borderRadius: 10, backgroundColor: '#fff', width: '80%' }}>
                                     {
                                         qrCodeFlag === true ?
-                                            <View style={{ height: '55%', paddingHorizontal: 10, width: '100%' }}>
+                                            <View style={{ paddingVertical:15, paddingHorizontal: 10, width: '100%' }}>
                                                 <Text style={{ ...commonStyles.fontStyles(15, activeTheme.default, 4), marginVertical: 10 }}>*Please scan this QR Code to Proceed</Text>
                                                 <QRCode
                                                     value={qrCodeValue}
@@ -124,10 +121,8 @@ const NotificationModal = props => {
                                             <>
                                                 <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 10, alignItems: 'center', alignContent: 'center' }}>
                                                     <View style={{ width: '100%', padding: 20, height: '80%' }}>
-                                                        <ImageBackground source={dummy} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='contain'  >
+                                                        <ImageBackground source={orderImage} style={{ height: '100%', width: '100%', alignSelf: 'center', overflow: 'hidden' }} resizeMode='contain'  >
                                                         </ImageBackground>
-                                                        {/* <FadeInView style={{ width: '100%', height: '100%', }}> */}
-                                                        {/* </FadeInView> */}
                                                     </View>
                                                     <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>{notificationModalContent?.orderMsg}</Text>
                                                     <Text style={{ width: '90%', textAlign: 'center', ...commonStyles.fontStyles(16, activeTheme.black, 4) }}>Order No: {notificationModalContent?.orderId}</Text>

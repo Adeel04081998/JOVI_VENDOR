@@ -120,12 +120,6 @@ function Orders(props) {
                             </TouchableOpacity>
                         })
                     }
-                    {/* <View style={{ width: '50%', borderBottomColor: 'red', borderBottomWidth: 1, alignItems: 'center', height: '100%' }}>
-                        <Text>Active</Text>
-                    </View>
-                    <View style={{ width: '50%', alignItems: 'center', borderBottomWidth: 1, height: '100%' }}>
-                        <Text>Recent</Text>
-                    </View> */}
                 </View>
                 <ScrollView contentContainerStyle={{ ...stylesOrder.productListContainer, marginLeft: 10, marginRight: 10 }}
                     decelerationRate={SCROLL_DECLERATIONRATE}
@@ -133,7 +127,6 @@ function Orders(props) {
                         let paddingToBottom = 10;
                         paddingToBottom += e.nativeEvent.layoutMeasurement.height;
                         if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
-                            // make something...
                             if (state.itemsPerPage < state.paginationInfo.totalItems) {
                                 getData(false, state.itemsPerPage + 10);
                             }
@@ -150,7 +143,6 @@ function Orders(props) {
                             state.orderList.map((item, i) => {
                                 return <View key={i} style={{ ...stylesOrder.productTab, borderWidth: item.orderStatus === 1 ? 2 : 0.5, borderColor: item.orderStatus === 1 ? props.activeTheme.default : '#929293' }}>
                                     <TouchableOpacity style={{ width: '100%', flexDirection: 'row', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={props.user.pitstopType === 4 ? () => navigation.navigate('ResOrderDetails', { key: 'resOrderDetails', item: { item } }) : () => navigation.navigate('OrderDetails', { key: 'orderDetails', item: { item } })}>
-                                        {/* {item.active === true && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>} */}
                                         <View style={{ ...stylesOrder.productImageContainer, backgroundColor: item.orderStatus === 3 ? props.activeTheme.lightGrey : item.isVendorConfirmed === true && item.orderStatus === 1 ? '#ff8c00' : item.orderStatus === 1 ? props.activeTheme.defaultLight : 'white', borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 200, width: 70, height: 75 }}>
                                             <Text style={{ ...commonStyles.fontStyles(22, item.orderStatus === 1 ? props.activeTheme.white : props.activeTheme.default, 10) }}>{item.orderNo}</Text>
                                         </View>
@@ -183,7 +175,7 @@ function Orders(props) {
 
                 </ScrollView>
             </View>
-            {props.stackState.keypaidOpen === false && <SharedFooter activeTheme={activeTheme} activeTab={1} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
+            {props.stackState.keypaidOpen === false && <SharedFooter activeTheme={activeTheme} activeTab={0} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }
@@ -210,7 +202,6 @@ const stylesOrder = StyleSheet.create({
     homeTabDesc: (props) => { return { maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 } },
     homeTabCounter: (props) => { return { flex: 0.1, width: 5, height: 27, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } },
     productListContainer: { paddingBottom: 20, justifyContent: 'space-between', flexDirection: 'row', flexWrap: 'wrap' },
-    // productTab: { height: 180, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
     productTab: { height: 100, marginVertical: 5, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '100%' },
     productImageContainer: { flex: 1, marginHorizontal: 5, width: '100%', height: 20, justifyContent: 'center', alignItems: 'center' },
     productImage: {

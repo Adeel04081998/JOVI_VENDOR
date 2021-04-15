@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { connect } from 'react-redux';
 import Home from '../screens/home/Home';
 import Products from '../screens/Products/Products';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+// import { createDrawerNavigator } from '@react-navigation/drawer';
 import Items from '../screens/Items/Items';
 import Orders from '../screens/order/Orders';
 import OrderDetails from '../screens/order/OrderDetails';
@@ -22,17 +22,13 @@ import Legal from '../screens/legal/Legal';
 import { sharedSendFCMTokenToServer } from '../utils/sharedActions';
 import { postRequest } from '../services/api';
 
-// import jwt_decode from 'jwt-decode';
 // const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 const VendorRoutes = (props) => {
     console.log("[RootStack] Props :", props.stackState.initRouteSub);
     console.log(props.navigatorPros.navigation.dangerouslyGetState());
     let state = props.navigatorPros.navigation.dangerouslyGetState();
-
     let routeBase = state.routes[0]?.params?.loginCheck === true ? (state.routes[0]?.params?.pitstopType === 4 ? 'homeRes' : 'home') : props.stackState.initRouteSub === null ? props.user.pitstopType === 4 ? 'homeRes' : 'home' : props.stackState.initRouteSub;
-    // const _navigationStateObj = NavigationService._navigatorRef;
-
     const { theme, dispatch } = props;
     let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
     const WebViewStack = props => {
@@ -65,20 +61,7 @@ const VendorRoutes = (props) => {
         // sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
         return true;
     };
-    // this._unsubscribeSiFocus = props.navigatorPros.navigation.addListener('focus', e => {
-    //     console.warn('focus signIn');
-    //     BackHandler.addEventListener('hardwareBackPress', handleBackButtonPressed);
-    // });
-    // this._unsubscribeSiBlur = props.navigatorPros.navigation.addListener('blur', e => {
-    //     console.warn('blur signIn');
-    //     BackHandler.removeEventListener(
-    //         'hardwareBackPress',
-    //         handleBackButtonPressed,
-    //     );
-    // });
     useEffect(() => {
-        // console.log("MainDrawer.useEffect -> push notification effect ran---");
-        // console.log("MainDrawer.Props :", props);
         if (Platform.OS === 'android') {
             fcmService.registerAppWithFCM();
             fcmService.register(onRegister, onNotification, onOpenNotification)
@@ -89,7 +72,6 @@ const VendorRoutes = (props) => {
                 localNotificationService.createChannel();
             };
             function onNotification(notify) {
-                // console.log("onNotification.notify -> ", notify)
                 console.log("MainDrawer.Props :", props);
                 // debugger;
                 // notify?.android?.setsound('my_sound.mp3');

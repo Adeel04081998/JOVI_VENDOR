@@ -36,8 +36,6 @@ import BackgroundTimer from 'react-native-background-timer';
 // import jwt_decode from 'jwt-decode';
 const Stack = createStackNavigator();
 const RootStack = (props) => {
-    // console.log("[RootStack] Props :", props);
-    // const _navigationStateObj = NavigationService._navigatorRef;
     let backgroundIntervalIdArray = [];
     const { theme, dispatch } = props;
     let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
@@ -46,7 +44,6 @@ const RootStack = (props) => {
     const _keyboardShowDetecter = (keyboardState) => setState(prevState => ({ ...prevState, keypaidOpen: true }));
     const _keyboardHideDetecter = (keyboardState) => setState(prevState => ({ ...prevState, keypaidOpen: false }));
     const _keyboardShowHideDetecter = boolean => { setState(prevState => ({ ...prevState, keypaidOpen: boolean })); if (boolean === true) { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: Dimensions.get('window').height * 0.5 }); } else { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); } }
-
     const handleBackButtonPressed = bool => {
         sharedConfirmationAlert("Confirm!", "Do you want to exit the app?", () => BackHandler.exitApp(), () => console.log('Cancel Pressed'));
         return true;
@@ -94,8 +91,6 @@ const RootStack = (props) => {
         handleBackgroundSignalRConnectivity(appStateNow);
     };
     useEffect(() => {
-        // console.log("[RootStack] Props :", props);
-        // console.log("[_navigationStateObj] :", props);
         statusBarHandler();
         const getSetUserAsync = async () => {
             const User = JSON.parse(await AsyncStorage.getItem('User'));
@@ -105,7 +100,6 @@ const RootStack = (props) => {
             if (!User) {
                 // For Demo
                 // return setState({ ...state, loggedInUser: null, initRoute: checkIntroScreenView == 'true' ? "OTP" : "Introduction" });
-
                 // For Dev and release
                 if (Config.BUILD_TYPE === "debug" || Platform.OS === 'ios') {
                     return setState({ ...state, loggedInUser: null, initRoute: "Login" });
@@ -159,9 +153,6 @@ const RootStack = (props) => {
             console.log('RootStack State Cleared!');
         }
     }, []);
-
-    // console.log("myhubConnection :", myhubConnection);
-    // console.log('RootStack.state :', state);
     return state.initRoute && (
         // (APP_MODE === MODES.CUSTOMER) ?
         <Stack.Navigator initialRouteName={state.initRoute} mode="card" screenOptions={{ headerShown: false }}>

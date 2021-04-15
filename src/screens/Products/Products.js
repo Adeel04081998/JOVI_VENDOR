@@ -127,7 +127,7 @@ function Products(props) {
                                         <View style={{...styleProduct.brandImageContainerView}}>
                                             <ImageBackground
                                                 resizeMode="stretch"
-                                                source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPictureResizeable(item.brandImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
+                                                source={item.brandImages && item.brandImages.length > 0 ? { uri: renderPicture(item.brandImages[0].joviImageThumbnail,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : ''}
                                                 style={{...styleProduct.brandImage}}
                                             />
                                         </View>
@@ -150,7 +150,7 @@ function Products(props) {
                                         <View style={{...styleProduct.productImageContainer}}>
                                             <ImageBackground
                                                 resizeMode="stretch"
-                                                source={item.productImages && item.productImages.length > 0 ? { uri: renderPictureResizeable(item.productImages[0].joviImage,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                                source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImageThumbnail,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{...styleProduct.productImage}}
                                             />
                                         </View>
