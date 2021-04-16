@@ -104,7 +104,7 @@ const NotificationModal = props => {
                     <View style={{ flex: 1 }}>
                         <View style={styles.centeredView(centeredViewFlex)}>
                             <TouchableOpacity onPress={() => dispatch(closeModalAction())} style={styles.modalView(modelViewPadding, Dimensions.get('window').height, "center")}>
-                                <View style={{ height: qrCodeFlag !== true ? '50%' : null, overflow: 'hidden', borderRadius: 10, backgroundColor: '#fff', width: '80%' }}>
+                                <View style={{ height: qrCodeFlag !== true ? '50%' : null, overflow: 'hidden', borderRadius: 10, backgroundColor: '#fff', width:qrCodeFlag!==true? '80%':null }}>
                                     {
                                         qrCodeFlag === true ?
                                             <View style={{ paddingVertical:15, paddingHorizontal: 10, width: '100%' }}>
