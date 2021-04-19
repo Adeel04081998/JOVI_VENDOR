@@ -190,6 +190,7 @@ function OrderDetails(props) {
     useEffect(useCallback(() => {
         getData();
         getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
+            navigation.goBack();
             console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
             props.dispatch({
                 type: OPEN_MODAL,
@@ -212,7 +213,6 @@ function OrderDetails(props) {
                     imageViewState: {},
                 }
             });
-            navigation.goBack();
         });
         return () => {
             setState({
