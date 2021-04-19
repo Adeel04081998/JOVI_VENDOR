@@ -128,9 +128,15 @@ const OtpCode = props => {
         // debugger;
         // clearInterval(intervalIDRef.current);
         // setState(prevState => ({ ...prevState, intervalStoped: true }));
-        postRequest('/api/User/OTP/Verify', {
+        // debugger;
+        postRequest(
+            // '/api/User/OTP/Verify' // old Link
+            '/api/User/OTP/VerifyNLogin'
+        , {
             "code": otpCode,
-            "phoneNumber": phoneNumber
+            "phoneNumber": phoneNumber,
+            'userType': 4,
+            "isNewVersion": true
         }, {}, dispatch, onSuccessHandler, onErrorHandler, '')
     };
     const otpHandler = (message) => {
@@ -165,7 +171,8 @@ const OtpCode = props => {
     const resendOtp = () => {
         BackgroundTimer.clearInterval(intervalIDRef.current);
         setState(prevState => ({ ...prevState, intervalStoped: true, otpVerified: false, '0': '', '1': '', '2': '', '3': '', focusedIndex: initState.focusedIndex, refsArr: initState.refsArr }));
-        postRequest('/api/User/OTP/Send', { "phoneNumber": phoneNumber, "appHash": appHash[0], "isResend": true, 'otpType': 1 }, {}, dispatch, onResendSuccess, onResendError, '');
+        postRequest('/api/User/OTP/Send', { "phoneNumber": phoneNumber, "appHash": appHash[0], 'userType': 4,
+        "isNewVersion": true, "isResend": true, 'otpType': 1 }, {}, dispatch, onResendSuccess, onResendError, '');
         // startListeningForOtp();
     };
     const countDownInterval = (duration) => {

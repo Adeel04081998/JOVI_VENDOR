@@ -93,17 +93,19 @@ const OTP = (props) => {
                 'phoneNumber': phoneNumber,
                 'appHash': appHash[0],
                 'otpType': 1,
-                'userType': 4
+                'userType': 4,
+                "isNewVersion": true
             };
             // console.log('appHash :', appHash)
         } else {
             data = {
                 'phoneNumber': phoneNumber,
                 'otpType': 1,
-                'userType': 4
+                'userType': 4,
+                "isNewVersion": true
             };
         }
-        debugger;
+        // debugger;
         // dispatch(userAction({ ...props.user,  phoneNumber, appHash }));
         console.log('Data:', data)
         dispatch(userAction({ ...props.user, mobile: phoneNumber, phoneNumber, appHash }));
