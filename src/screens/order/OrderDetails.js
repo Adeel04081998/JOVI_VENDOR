@@ -220,6 +220,30 @@ function OrderDetails(props) {
                 orderList: [],
                 paginationInfo: {}
             });
+            getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
+                console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
+                props.dispatch({
+                    type: OPEN_MODAL,
+                    payload: {
+                        visible: false,
+                        transparent: true,
+                        okHandler: null,
+                        onRequestCloseHandler: null,
+                        ModalContent: null,
+                        orderRecievedCheck: new Date().getTime(),
+                        notificationModalVisible: true,
+                        notificationModalContent: { orderId, orderMsg },
+                        vendorSkipped: true,
+                        modalContentNotification: null,
+                        modalFlex: null,
+                        modalHeightDefault: null,
+                        modelViewPadding: 35,
+                        fadeAreaViewFlex: 1,
+                        fadeAreaViewStyle: {},
+                        imageViewState: {},
+                    }
+                });
+            });
         };
     }, []), []);
     return (

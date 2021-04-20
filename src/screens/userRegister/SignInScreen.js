@@ -27,7 +27,7 @@ export default function SignInScreen(props) {
         // 'email':'tabishAdmin@gmail.com',
         // 'password':'Kaplan224400',
         'email': 'secret.sky@gmail.com',
-        'password': 'Abc12345',
+        'password': 'ucany8oc',
         // 'password': "",
         // 'email': isJoviCustomerApp ? "malikjrw147@gmail.com" : "connor@gmail.com",
         // 'password': isJoviCustomerApp ? 'Abc12345' : "Abc12345",

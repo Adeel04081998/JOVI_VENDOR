@@ -89,6 +89,15 @@ const VendorRoutes = (props) => {
                 //     }
                 // }
                 console.log("onNotification.notify -> ", notify)
+                if(!notify.notification){
+                    notify={
+                        ...notify,
+                        notification:{
+                            title:notify.title,
+                            body:notify.body
+                        }
+                    }
+                }
                 localNotificationService.showNotification(10, notify.notification.title, notify.notification.body, notify, {
                     soundName: Platform.select({ android: "my_sound.mp3", ios: "default" }),
                             sound:'android.resource://com.jovivendors/raw/my_sound.mp3',
