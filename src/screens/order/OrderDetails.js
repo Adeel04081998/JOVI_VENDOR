@@ -19,7 +19,6 @@ import { openModalAction } from '../../redux/actions/modal';
 import { OPEN_MODAL } from '../../redux/actions/types';
 function OrderDetails(props) {
     const { navigation, userObj, activeTheme } = props;
-    console.log('Details:', props.user.scanningQRRequired)
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'OrderDetails')[0]?.params?.item;
     const [state, setState] = useState({
         "loader": false,
@@ -215,8 +214,10 @@ function OrderDetails(props) {
     }
     useEffect(useCallback(() => {
         getData();
-        if(props?.user?.scanningQRRequired===true){getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
-            navigation.goBack();
+        getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
+            if(data?.item?.orderNo === orderId){
+                navigation.goBack();
+            }
             console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
             props.dispatch({
                 type: OPEN_MODAL,
@@ -239,14 +240,14 @@ function OrderDetails(props) {
                     imageViewState: {},
                 }
             });
-        });}
+        });
         return () => {
             setState({
                 ...state,
                 orderList: [],
                 paginationInfo: {}
             });
-            if(props?.user?.scanningQRRequired===true){getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
+            getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
                 console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
                 props.dispatch({
                     type: OPEN_MODAL,
@@ -269,7 +270,7 @@ function OrderDetails(props) {
                         imageViewState: {},
                     }
                 });
-            });}
+            });
         };
     }, []), []);
     return (

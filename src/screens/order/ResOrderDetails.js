@@ -140,7 +140,9 @@ function ResOrderDetails(props) {
         getData();
         console.log('UseEffect OrderDEtails:',getHubConnectionInstance('VendorJobCompleted'))
         getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
-            navigation.goBack();
+            if(data?.item?.orderNo === orderId){
+                navigation.goBack();
+            }
             console.log('---------------------------> On Vendor Job Complete Signal R in OrderPage: ', orderId, orderMsg);
             props.dispatch({
                 type: OPEN_MODAL,
