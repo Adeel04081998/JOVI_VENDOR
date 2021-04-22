@@ -124,7 +124,7 @@ def jscFlavor = 'org.webkit:android-jsc:+'
 def enableHermes = project.ext.react.get('enableHermes', false)
 // Always make sure to set the next available/suggested/required "versionCode" here!
 // It is neccessary for the AAB to be uploaded to Play Store and it should always be the very next available number which is not used yet!
-def versionCodeNumber_Vendor = 10
+def versionCodeNumber_Vendor = 11
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 

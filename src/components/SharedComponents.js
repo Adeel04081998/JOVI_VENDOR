@@ -15,8 +15,8 @@ import CustomToast from '../components/toast/CustomToast';
 import { closeModalAction } from '../redux/actions/modal';
 import commonStyles from '../styles/styles';
 import { TextInput } from 'react-native-gesture-handler';
-export const CustomInput = ({ label, value,svgIcon, onChangeText,rightIcon,inputProps,activeTheme }) => {
-    return <View style={{ width: '100%', paddingLeft: 10,position:'relative' }}>
+export const CustomInput = ({ label,textStyle,textProps,parentViewStyle,inputViewStyle, value,svgIcon, onChangeText,rightIcon,inputProps,activeTheme,onlyText }) => {
+    return <View style={{ width: '100%', paddingLeft: 10,position:'relative',...parentViewStyle }}>
         <Text style={[commonStyles.fontStyles(14, activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
             {label}
         </Text>
@@ -33,9 +33,16 @@ export const CustomInput = ({ label, value,svgIcon, onChangeText,rightIcon,input
             width: '96%',
             justifyContent: "space-between",
             alignItems: 'center',
-            flexDirection: 'row'
+            flexDirection: 'row',
+            ...inputViewStyle,
         }}>
-            <TextInput value={value} placeholder={label} style={{ width: '100%' }} onChangeText={onChangeText} {...inputProps} />
+            {
+                onlyText===true?
+                <Text {...textProps} style={{...textStyle, maxWidth: '95%', minWidth: '90%' }}>{value?.toString()}</Text>
+                :
+                <TextInput value={value} placeholder={label} style={{ width: '100%' }} onChangeText={onChangeText} {...inputProps} />
+
+            }
         </View>
         
     </View>

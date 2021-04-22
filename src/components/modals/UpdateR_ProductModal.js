@@ -9,6 +9,7 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { closeModalAction } from '../../redux/actions/modal';
+import { CustomInput } from '../SharedComponents';
 const UpdateR_Product = (props) => {
     const { product } = props;
     const [state, setState] = useState({
@@ -100,43 +101,22 @@ const UpdateR_Product = (props) => {
                             <Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}
                             </Text>
                             <ScrollView style={{ marginBottom: 15 }}>
-                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Product Name
-                                </Text>
-                                <View style={{
-                                    paddingHorizontal: 12,
-                                    borderWidth: 1,
-                                    borderRadius: 5,
-                                    borderColor: 'rgba(0,0,0,0.1)',
-                                    backgroundColor: 'transparent',
-                                    height: 40,
-                                    justifyContent: "space-between",
-                                    alignItems: 'center',
-                                    flexDirection: 'row'
-                                }}>
-                                    {/* <TouchableOpacity > */}
-                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.product.productName}</Text>
-                                    {/* </TouchableOpacity> */}
-                                </View>
-                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Category
-                            </Text>
-                                <View style={{
-                                    paddingHorizontal: 12,
-                                    borderWidth: 1,
-                                    borderRadius: 5,
-                                    borderColor: 'rgba(0,0,0,0.1)',
-                                    backgroundColor: 'transparent',
-                                    height: 40,
-                                    justifyContent: "space-between",
-                                    alignItems: 'center',
-                                    flexDirection: 'row'
-                                }}>
-                                    {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                    <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
-                                </TouchableOpacity> */}
-                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.product.categoryName}</Text>
-                                </View>
+                                <CustomInput
+                                    value={state.product.productName}
+                                    label={'Product Name'}
+                                    activeTheme={props.activeTheme}
+                                    onlyText={true}
+                                    parentViewStyle={{ paddingLeft: 0 }}
+                                    inputViewStyle={{ width: '100%' }}
+                                />
+                                <CustomInput
+                                    value={state.product.categoryName}
+                                    label={'Category'}
+                                    activeTheme={props.activeTheme}
+                                    onlyText={true}
+                                    parentViewStyle={{ paddingLeft: 0 }}
+                                    inputViewStyle={{ width: '100%' }}
+                                />
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Status
                             </Text>
@@ -158,26 +138,16 @@ const UpdateR_Product = (props) => {
                                         </TouchableOpacity>
                                     })
                                 }
-                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Base Price
-                            </Text>
-                                <View style={{
-                                    paddingHorizontal: 12,
-                                    borderWidth: 1,
-                                    borderRadius: 5,
-                                    borderColor: 'rgba(0,0,0,0.1)',
-                                    backgroundColor: 'transparent',
-                                    height: 40,
-                                    justifyContent: "space-between",
-                                    alignItems: 'center',
-                                    flexDirection: 'row'
-                                }}>
-                                    {/* <TouchableOpacity onPress={() => onDropdownClick()} style={{ maxWidth: '95%', minWidth: '90%' }}>
-                                    <Text>{state.selectedDropdown !== '' ? state.selectedDropdown : 'Choose Status'}</Text>
-                                </TouchableOpacity> */}
-                                    <Text style={{ maxWidth: '95%', minWidth: '90%' }}>{state.product.basePrice?.toString()}</Text>
-                                    {/* <TextInput keyboardType='numeric' style={{ maxWidth: '95%', minWidth: '90%' }} value={state.product.basePrice?.toString()} onChangeText={(val) => setState(pre => ({ ...pre, product: { ...pre.product, basePrice: val.includes(' ') || val.includes('-') ? pre.product.basePrice : val } }))} /> */}
-                                </View>
+                                <CustomInput
+                                    value={state.product.basePrice}
+                                    label={'Base Price'}
+                                    activeTheme={props.activeTheme}
+                                    onlyText={props?.user?.canUpdatePrices === true ? false : true}
+                                    parentViewStyle={{ paddingLeft: 0 }}
+                                    inputViewStyle={{ width: '100%' }}
+                                    inputProps={{ keyboardType: 'numeric' }}
+                                    onChangeText={(val) => setState(pre => ({ ...pre, product: { ...pre.product, basePrice: val.includes(',') || val.includes(' ') || val.includes('-') ? pre.product.basePrice : val } }))}
+                                />
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Description
                                 </Text>
@@ -206,7 +176,7 @@ const UpdateR_Product = (props) => {
                                         <Picker
                                             accessibilityLabel={"hours"}
                                             style={{ zIndex: 500, width: 115 }}
-                                            enabled={false}
+                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Hours"
                                             selectedValue={(state.product.estimateTime || "HH:MM").split(":")[0]}
@@ -224,7 +194,7 @@ const UpdateR_Product = (props) => {
 
                                         <Picker
                                             accessibilityLabel={"minutes"}
-                                            enabled={false}
+                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Minutes"
@@ -250,7 +220,7 @@ const UpdateR_Product = (props) => {
                                     <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
                                         <Picker
                                             accessibilityLabel={"hours"}
-                                            enabled={false}
+                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             selectedValue={(state.product.startTime || "HH:MM").split(":")[0]}
@@ -266,7 +236,7 @@ const UpdateR_Product = (props) => {
                                         <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
                                         <Picker
                                             accessibilityLabel={"minutes"}
-                                            enabled={false}
+                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             selectedValue={(state.product.startTime || "HH:MM").split(":")[1]}
@@ -290,7 +260,7 @@ const UpdateR_Product = (props) => {
                                     <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
                                         <Picker
                                             accessibilityLabel={"hours"}
-                                            enabled={false}
+                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Hours"
@@ -307,7 +277,7 @@ const UpdateR_Product = (props) => {
                                         <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
                                         <Picker
                                             accessibilityLabel={"minutes"}
-                                            enabled={false}
+                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
                                             style={{ zIndex: 500, width: 115 }}
                                             mode="dialog" // "dialog" || "dropdown"
                                             // prompt="Select Minutes"
@@ -335,7 +305,7 @@ const UpdateR_Product = (props) => {
                                                     <View style={{ flexDirection: 'row' }}>
                                                         <CheckBox
                                                             checked={itemOptions.isActive ? itemOptions.isActive : false}
-                                                            // onPress={(e) => changeAttribute(e, i, j, 'isActive')}
+                                                            onPress={props?.user?.canUpdatePrices === true ?(e) => changeAttribute(e, i, j, 'isActive'):()=>{}}
                                                             style={{
                                                                 alignSelf: "center",
                                                                 color: '#7359BE',
@@ -359,8 +329,11 @@ const UpdateR_Product = (props) => {
                                                         alignItems: 'center',
                                                         flexDirection: 'row'
                                                     }}>
-                                                        <Text>{itemOptions.price?.toString()}</Text>
-                                                        {/* <TextInput keyboardType='numeric' style={{}} onChangeText={val => changeAttribute(val, i, j, 'price')} value={itemOptions.price?.toString()} /> */}
+                                                        {props?.user?.canUpdatePrices === true ?
+                                                            <TextInput keyboardType='numeric' style={{}} onChangeText={val => changeAttribute(val, i, j, 'price')} value={itemOptions.price?.toString()} />
+                                                            :
+                                                            <Text>{itemOptions.price?.toString()}</Text>
+                                                        }
                                                     </View>
                                                 </View>
                                             })}

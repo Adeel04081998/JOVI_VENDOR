@@ -144,7 +144,7 @@ function Orders(props) {
                                 return <View key={i} style={{ ...stylesOrder.productTab, borderWidth: item.orderStatus === 1 ? 2 : 0.5, borderColor: item.orderStatus === 1 ? props.activeTheme.default : '#929293' }}>
                                     <TouchableOpacity style={{ width: '100%', flexDirection: 'row', height: '100%', justifyContent: 'center', alignItems: 'center' }} onPress={props.user.pitstopType === 4 ? () => navigation.navigate('ResOrderDetails', { key: 'resOrderDetails', item: { item } }) : () => navigation.navigate('OrderDetails', { key: 'orderDetails', item: { item } })}>
                                         <View style={{ ...stylesOrder.productImageContainer, backgroundColor: item.orderStatus === 3 ? props.activeTheme.lightGrey : item.isVendorConfirmed === true && item.orderStatus === 1 ? '#ff8c00' : item.orderStatus === 1 ? props.activeTheme.defaultLight : 'white', borderColor: props.activeTheme.default, borderWidth: 2, borderRadius: 200, width: 70, height: 75 }}>
-                                            <Text style={{ ...commonStyles.fontStyles(22, item.orderStatus === 1 ? props.activeTheme.white : props.activeTheme.default, 10) }}>{item.orderNo}</Text>
+                                            <Text style={{ ...commonStyles.fontStyles(16, item.orderStatus === 1 ? props.activeTheme.white : props.activeTheme.default, 10) }}>{item.orderNo}</Text>
                                         </View>
                                         <View style={{ ...stylesOrder.productName }}>
                                             <View style={{ ...stylesOrder.orderDetails }}>
@@ -175,7 +175,7 @@ function Orders(props) {
 
                 </ScrollView>
             </View>
-            {props.stackState.keypaidOpen === false && <SharedFooter activeTheme={activeTheme} activeTab={0} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
+            {props.stackState.keypaidOpen === false && <SharedFooter activeTheme={activeTheme} activeTab={props?.user?.canAddUpdateProduct===true&&props?.user?.canUpdatePrices===true?1:0} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }

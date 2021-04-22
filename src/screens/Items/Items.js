@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
+import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView,StyleSheet, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 import { renderPicture } from "../../utils/sharedActions";
@@ -46,7 +46,7 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <DisableProductModal onSave={()=>{getData();props.dispatch(closeModalAction())}} dispatch={props.dispatch} brandObj={state.brandData} productObj={state.selectedProduct} item={item} {...props} />
+                <DisableProductModal onSave={() => { getData(); props.dispatch(closeModalAction()) }} dispatch={props.dispatch} brandObj={state.brandData} productObj={state.selectedProduct} item={item} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -63,7 +63,7 @@ function Items(props) {
             okHandler: () => { },
             onRequestCloseHandler: null,
             ModalContent: (
-                <AddBrandModal type={3} onSave={()=>getData()} productObj={{...state.selectedProduct,productID:state.selectedProduct.genricProductID}} brandObj={state.brandData} {...props} />
+                <AddBrandModal type={3} onSave={() => getData()} productObj={{ ...state.selectedProduct, productID: state.selectedProduct.genricProductID }} brandObj={state.brandData} {...props} />
             ),
             // modalFlex: 0,
             modalHeight: Dimensions.get('window').height * 0.85,
@@ -120,8 +120,8 @@ function Items(props) {
         if (pressedTab.title === 'Add') {
             addBrandModal();
             // navigateWithResetScreen(null,[{name:'homee', params: {}}]);
-        }else if(pressedTab.title === 'Orders'){
-            navigation.navigate("Orders",{});
+        } else if (pressedTab.title === 'Orders') {
+            navigation.navigate("Orders", {});
 
         }
     };
@@ -137,25 +137,25 @@ function Items(props) {
                 state={state}
                 onChangeText={onItemSearch}
                 activeTheme={activeTheme}
-                screenProps={{...props}}
+                screenProps={{ ...props }}
             />
 
             <View style={{ flex: 1, marginTop: 30 }}>
                 {/* <Text style={{ ...commonStyles.fontStyles(20, props.activeTheme.background, 4), marginLeft: 20}}>{data.brandName}</Text> */}
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Items List</Text>
-                    <Text style={{ marginRight: 14 }}>Total: {state.itemsData.length<1?'0':state.itemsData.length<10?'0'+state.itemsData.length :state.itemsData.length}</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.itemsData.length < 1 ? '0' : state.itemsData.length < 10 ? '0' + state.itemsData.length : state.itemsData.length}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                     <ScrollView horizontal contentContainerStyle={{ height: 160, paddingLeft: 10, flexDirection: 'row' }}>
                         {
                             state.productData.map((item, i) => {
                                 return <View key={i} style={{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' }} >
-                                    <TouchableOpacity style={{ width: '100%', height: '70%',paddingHorizontal:10, }} onPress={() => onSelectProduct(item)}>
-                                        <View style={{ backgroundColor: 'white', borderColor: '#929293', overflow: 'hidden',justifyContent: 'center', alignItems: "center", borderRadius: 15,height:'100%' }}>
+                                    <TouchableOpacity style={{ width: '100%', height: '70%', paddingHorizontal: 10, }} onPress={() => onSelectProduct(item)}>
+                                        <View style={{ backgroundColor: 'white', borderColor: '#929293', overflow: 'hidden', justifyContent: 'center', alignItems: "center", borderRadius: 15, height: '100%' }}>
                                             <ImageBackground
                                                 resizeMode="center"
-                                                source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImageThumbnail,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                                source={item.productImages && item.productImages.length > 0 ? { uri: renderPicture(item.productImages[0].joviImageThumbnail, 190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
                                                 style={{
                                                     // flex: 1,
                                                     // top: 1,
@@ -180,36 +180,28 @@ function Items(props) {
                             </View>
                             :
                             state.itemsData.map((item, i) => {
-                                return <View key={i} style={{ height: 200, borderColor: '#929293', backgroundColor: 'white', justifyContent: 'center', alignItems: "center", borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 }}>
-                                    <TouchableOpacity style={{ height: '100%', width: '100%', }} onPress={() => disableEnableProduct(item)}>
-                                        {item.availabilityStatus === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
-                                        {item.availabilityStatus === 'Discontinued' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901,justifyContent:'center',alignItems:'center' }}>
+                                return <View key={i} style={{...styleProduct.productTab}}>
+                                <TouchableOpacity style={{ width: '100%',padding:10, height: '100%' }} onPress={() => disableEnableProduct(item)}>
+                                {item.availabilityStatus === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
+                                        {item.availabilityStatus === 'Discontinued' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
                                             <SvgXml xml={blockSvg} height={'60%'} width={'60%'} />
                                         </View>}
-                                        <View style={{ height:'75%' ,width: '100%',borderRadius:15,overflow:'hidden' }}>
-                                            <ImageBackground
-                                                resizeMode="center"
-                                                source={item.itemImages && item.itemImages.length > 0 ? { uri: renderPicture(item.itemImages[0].joviImageThumbnail,190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                                style={{ width: '100%',
-                                                // marginLeft: 17,
-                                                // zIndex: 900,
-                                                borderRadius:15,
-                                                "height": "100%",}}
-                                            />
-                                            {/* <CheckBox checked={item.active} color={activeTheme.background} onPress={()=>disableEnableProduct(item)} style={{ position: 'absolute', borderColor: '#929293', borderRadius: 5, zIndex: 999, top: 5, left: 10 }} /> */}
-                                            {/* <View style={{ position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: activeTheme.background }}>
-                                                <Text style={{ color: 'white' }}>{i + 1}</Text>
-                                            </View> */}
-                                        </View>
-                                        <View style={{ paddingHorizontal:5 }}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.itemName}</Text></View>
-                                    </TouchableOpacity>
-                                </View>
+                                    <View style={{...styleProduct.productImageContainer}}>
+                                        <ImageBackground
+                                                resizeMode="stretch"
+                                                source={item.itemImages && item.itemImages.length > 0 ? { uri: renderPicture(item.itemImages[0].joviImageThumbnail, 190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
+                                            style={{...styleProduct.productImage}}
+                                        />
+                                    </View>
+                                    <View style={{...styleProduct.productName}}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.itemName}</Text></View>
+                                </TouchableOpacity>
+                            </View>
                             })
                         }
                     </ScrollView>
                 </View>
             </View>
-            {props.stackState.keypaidOpen===false&&<SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
+            {props.stackState.keypaidOpen === false && <SharedFooter activeTheme={activeTheme} activeTab={null} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }
@@ -218,4 +210,29 @@ const mapStateToProps = (store) => {
         userObj: store.userReducer
     }
 };
+const styleProduct = StyleSheet.create({
+    brandContainer:{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' },
+    brandImageContainer:{ width: '100%', height: '70%',paddingHorizontal:10, },
+    brandImageContainerView:{ backgroundColor: 'white', borderColor: '#929293', overflow: 'hidden',justifyContent: 'center', alignItems: "center", borderRadius: 15,height:'100%' },
+    brandImage:{
+        // flex: 1,
+        // top: 1,
+        // borderRadius:15,
+        width: '100%',
+        "height": "100%",
+    },
+    productListContainer:{ paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' },
+    productTab:{ height: 200, borderColor: '#929293', backgroundColor: 'white', borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
+    productImageContainer:{ height:'60%' ,width: '100%',borderRadius:15,overflow:'hidden'},
+    productImage:{
+        width: '100%',
+        // marginLeft: 17,
+        // zIndex: 900,
+        borderRadius:15,
+        "height": "100%",
+    },
+    productName:{ flex: 2,maxWidth:'100%',paddingHorizontal:5, justifyContent: 'center', alignItems: 'center' },
+    counter:(props) =>{return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
+
+})
 export default connect(mapStateToProps)(Items);

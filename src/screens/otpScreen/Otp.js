@@ -232,7 +232,7 @@ const OTP = (props) => {
                                 ...commonStyles.fontStyles(14, activeTheme.grey, 1, undefined, "none"),
                                 textAlign: 'justify',
                                 // paddingHorizontal: 20,
-                                marginVertical: 20
+                                // marginVertical: 0
                             }}>A One Time Password (OTP) will be sent to your mobile number.</Text>
                             <TouchableOpacity onPress={goToCallUsPage} style={{ paddingLeft: 5, paddingVertical: 3,marginBottom:10,alignSelf:'flex-start' }}><Text style={{ ...commonStyles.fontStyles(undefined, activeTheme.default, 1, 'bold') }}>{"Want to become a vendor?"}</Text></TouchableOpacity>
                             <View style={{ flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end', }}>

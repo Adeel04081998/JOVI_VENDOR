@@ -6,9 +6,11 @@ let initState = {
     "changeMobileNumber": false,
     "isLocalChange": false,
     "appTutorialsEnabled": true,
-    pitstopType:0,
-    pitstopID:0,
-    noOfOpenOrders:0,
+    canAddUpdateProduct: false,
+    canUpdatePrices: false,
+    pitstopType: 0,
+    pitstopID: 0,
+    noOfOpenOrders: 0,
     "isUserOnline": false,
     "appNotifications": {
         "getNotificationLogViewModel": {
