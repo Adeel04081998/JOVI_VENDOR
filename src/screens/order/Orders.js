@@ -151,6 +151,9 @@ function Orders(props) {
                                                 <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Total Price: </Text><Text>{item.totalPrice}</Text>
                                             </View>
                                             <View style={{ ...stylesOrder.orderDetails }}>
+                                                <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.totalPrice}</Text>
+                                            </View>
+                                            <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>No of Items: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.noOfItems}</Text>
                                             </View>
                                             {item.riderName && item.riderName !== '' ? 
@@ -158,7 +161,7 @@ function Orders(props) {
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 4) }}>Rider: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 3) }}>{item.riderName}</Text>
                                             </View> : <></>}
                                             <View style={{position:'absolute',top:-5,right:10}}>
-                                                <Text style={{...commonStyles.fontStyles(14, props.activeTheme.default,4)}}>
+                                                <Text style={{...commonStyles.fontStyles(12, props.activeTheme.default,4)}}>
                                                     {item?.orderCreationTime}
                                                 </Text>
                                             </View>
@@ -196,7 +199,7 @@ const stylesOrder = StyleSheet.create({
         width: '90%',
         "height": "90%",
     },
-    orderDetails: { width: '100%', alignItems: 'center', height: 25, flexDirection: 'row' },
+    orderDetails: { width: '100%', alignItems: 'center', height: 10, flexDirection: 'row' },
     homeTabText: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
     homeTabBrandName: { marginTop: 0 },
     homeTabDesc: (props) => { return { maxWidth: '90%', ...commonStyles.fontStyles(10, props.activeTheme.black, 1, '300'), padding: 2 } },

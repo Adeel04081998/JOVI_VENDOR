@@ -1,7 +1,8 @@
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Platform } from 'react-native';
-
+import DeviceInfo from 'react-native-device-info';
+const joviIcon = "https://jovipublic.s3.me-south-1.amazonaws.com/600x600.png";
 class LocalNotificationService {
     configure = (onOpenNotification, onAction, onRegistrationError) => {
         // Must be outside of any component LifeCycle (such as `componentDidMount`).
@@ -86,7 +87,18 @@ class LocalNotificationService {
     }
     showNotification = (id, title, message, data = {}, options = {}, actions = []) => {
         console.log("showNotification called", options);
-
+        PushNotification.createChannel(
+            {
+                channelId: "fcm_channel_id", // (required)
+                channelName: "fcm_channel_name", // (required)
+                channelDescription: "A channel to categorise your notifications", // (optional) default: undefined.
+                soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
+                importance: 4, // (optional) default: 4. Int value of the Android notification importance
+                vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+                playSound: true
+            },
+            (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+        );
         PushNotification.localNotification({
             ...this.buildAndroidNotification(id, title, message, data, options),
             ...this.buildIOSNotification(id, title, message, data, options),
@@ -103,25 +115,61 @@ class LocalNotificationService {
     };
     buildAndroidNotification = (id, title, message, data = {}, options = {}) => {
         console.log("buildAndroidNotification called");
-        return {
+        let initNotifyObj = {
             id,
+            channelId: "fcm_channel_id", // (required)
+            channelName: "fcm_channel_name", // (required)
+            showWhen: true,
             autoCancel: true,
             bigText: message,
             subText: title,
+            // visibility: "public",
+            // importance: "high",
             vibrate: options.vibrate || true,
             vibration: options.vibration || 300,
             priority: options.priority || 'high',
             importance: options.importance || 'high',
             allowWhileIdle: options.allowWhileIdle || true,
             data,
+            // Right side image
+            largeIconUrl: joviIcon,
+            smallIcon: "customer",
+            soundName: "default",
+            // largeIcon: joviIcon,
             // invokeApp: true,
-            // largeIcon: options.largeIcon || "ic_launcher",
-            // smallIcon: options.smallIcon || "ic_notification",
+            // imageUrl: "https://jovipublic.s3.me-south-1.amazonaws.com/600x600.png",
             // largeIconUrl: "https://www.uk2.net/blog/wp-content/uploads/domain-suffixes.jpg", for icon in message
             // bigPictureUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Mnx8cGljfGVufDB8fDB8&ixlib=rb-1.2.1&w=1000&q=80", // (optional) default: undefined
             // bigLargeIcon: "ic_launcher", // (optional) default: undefined
             // bigLargeIconUrl: "https://www.uk2.net/blog/wp-content/uploads/domain-suffixes.jpg", // (optional) default: undefined
         }
+        if (Platform.OS === "android" && parseInt(DeviceInfo.getSystemVersion()) >= 10) {
+            initNotifyObj = {
+                ...initNotifyObj,
+                data: {
+                    ...initNotifyObj.data,
+                    data: {
+                        ...initNotifyObj.data?.data,
+                        smallicon: "firebase",
+                        color: "#7359BE",
+                        soundName: "default",
+                    },
+                    notification: {
+                        ...initNotifyObj.data.notification,
+                        android: {
+                            ...initNotifyObj.data.notification.android,
+                            smallIcon: "firebase",
+                            color: "#7359BE",
+                            soundName: "default",
+                        }
+                    }
+                },
+                smallIcon: "firebase",
+                color: "#7359BE"
+            }
+        }
+        console.log("initNotifyObj", initNotifyObj);
+        return initNotifyObj;
     };
     buildIOSNotification = (id, title, message, data = {}, options = {}) => {
         console.log("buildIOSNotification called");

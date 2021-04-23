@@ -31,7 +31,7 @@ export default ({ activeTheme, onHome, activeTab, hideOptions, drawerProps, main
                                 <Text style={{ ...commonStyles.fontStyles(14, activeTheme.default, 4), paddingTop: 4 }}>{t.title}</Text>
                                 {/* <Text style={{ ...commonStyles.fontStyles(14, activeTab === j ? activeTheme.default : "#c1c0c6", activeTab === j ? 4 : 1), paddingTop: 10 }}>{t.title}</Text> */}
                                 {
-                                    (j === 1 && mainDrawerComponentProps.user.noOfOpenOrders > 0) ?
+                                    (t.title === 'Orders' && mainDrawerComponentProps.user.noOfOpenOrders > 0) ?
                                         <View style={{ position: 'absolute', right: 0, top: 0, zIndex: 999, left: 52, backgroundColor: "#FC3F93", alignItems: 'center', justifyContent: 'center', height: 15, width: 15, borderRadius: 10 }}>
                                             <Text style={{ color: activeTheme.white, fontSize: 10 }}>{mainDrawerComponentProps.user.noOfOpenOrders}</Text>
                                         </View>

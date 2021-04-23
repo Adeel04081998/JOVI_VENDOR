@@ -288,7 +288,7 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
             }
         } catch (err) {
             console.log("Error during signalR connectivity:", err);
-            setTimeout(start, 2000);
+            setTimeout(start, 10000);
              
         }
     };

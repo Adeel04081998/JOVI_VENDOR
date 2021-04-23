@@ -75,7 +75,7 @@ const DisableProductModal = (props) => {
                             }
                         </View> */}
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
-                            <Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text>
+                            {props?.user?.canUpdatePrices !== true?<Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text>:<></>}
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <CustomInput
                                     value={state?.brand?.brandName}
@@ -123,7 +123,7 @@ const DisableProductModal = (props) => {
                                     })
                                 }
                                 <CustomInput
-                                    value={state?.item?.price}
+                                    value={state?.item?.price?.toString()}
                                     label={'Price'}
                                     activeTheme={props.activeTheme}
                                     onlyText={props?.user?.canUpdatePrices === true ? false : true}

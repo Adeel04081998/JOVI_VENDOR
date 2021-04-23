@@ -338,7 +338,7 @@ const AddUpdateDealModal = (props) => {
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
-                            <Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text>
+                            {props?.user?.canUpdatePrices !== true?<Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text>:<></>}
                             {/* <Text style={{ margin: 15, ...commonStyles.fontStyles(18, props.activeTheme.black, 5), alignSelf: 'flex-start' }, styles.catpion(props.activeTheme)}>Create a Deal</Text> */}
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
@@ -377,7 +377,7 @@ const AddUpdateDealModal = (props) => {
                                     />
                                     {/* <TextInput value={state.deal.title} style={{ width: '100%' }} placeholder={'Create a Deal'} onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, title: val } }))} /> */}
                                     <CustomInput
-                                        value={state?.deal?.price.toString()}
+                                        value={state?.deal?.price?.toString()}
                                         label={'Price'}
                                         activeTheme={props.activeTheme}
                                         onlyText={props?.user?.canUpdatePrices === true ? false : true}
