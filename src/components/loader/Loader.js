@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
 import commonStyles from '../../styles/styles';
-import loaderSVG from './loader.svg';
-import { SvgXml } from 'react-native-svg';
-import loaderGif from './833.gif';
-import Spinner from 'react-native-spinkit';
+// import loaderSVG from './loader.svg';
+// import { SvgXml } from 'react-native-svg';
+import loaderGif from './loader.gif';
+// import Spinner from 'react-native-spinkit';
 
 
 function Loader({ loaderState, theme }) {
@@ -14,8 +14,8 @@ function Loader({ loaderState, theme }) {
     return (
         <View style={styles.container}>
             {/* <SvgXml xml={loaderSVG} height={100} width={100} /> */}
-            {/* <ImageBackground source={loaderGif} style={{ width: 70, height: 70 }} /> */}
-            <Spinner style={styles.spinner} isVisible={isVisible} size={size} type="WanderingCubes" color={color} />
+            <ImageBackground source={loaderGif} style={{ width: 300, height: 300 }} />
+            {/* <Spinner style={styles.spinner} isVisible={isVisible} size={size} type="WanderingCubes" color={color} /> */}
             {/* <Text style={styles.messageText(activeTheme)}>{message}</Text> */}
         </View>
     )
