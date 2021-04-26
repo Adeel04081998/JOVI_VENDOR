@@ -141,7 +141,7 @@ const AddBrandModal = (props) => {
                 }
             }, (err) => {
                 if (err) CustomToast.error("Something went wrong");
-            }, '',false);
+            }, '',false,true);
     }
     const getProductAgainstBrand = (brand) => {
         postRequest('Api/Vendor/Pitstop/ProductGeneric/List', {
@@ -166,7 +166,7 @@ const AddBrandModal = (props) => {
                 }
             }, (err) => {
                 if (err) CustomToast.error("Something went wrong");
-            }, '',false);
+            }, '',false,true);
     }
     const getData = () => {
         postRequest('Api/Vendor/Pitstop/BrandGeneric/List', {

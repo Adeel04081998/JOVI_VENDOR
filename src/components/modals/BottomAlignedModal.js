@@ -8,11 +8,12 @@ import { sharedAnimationHandler } from '../../utils/sharedActions';
 import store from '../../redux/store';
 import RatingsModal from './RatingsModal';
 import IncomingJobModal from './IncomingJobModal';
+import Loader from '../loader/Loader';
 
 const BottomAlignedModal = props => {
     // console.log("BottomAlignedModal.Props :", props);
     const { height, width } = Dimensions.get('window');
-    const { transparent, visible, ModalContent, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
+    const { transparent, visible, ModalContent,modalLoader, okHandler, onRequestCloseHandler, dispatch, modalFlex, centeredViewFlex = 1, modelViewPadding, modalHeight, androidKeyboardExtraOffset = 0 } = props;
     const [state, setState] = useState({
         isKeyboardOpen: false,
         keyboardHeight: 0,
@@ -81,6 +82,7 @@ const BottomAlignedModal = props => {
                                 {
                                     modalContentToRender
                                 }
+                                {modalLoader === true?<Loader />:null}
                             </View>
                         </View>
                     </View>

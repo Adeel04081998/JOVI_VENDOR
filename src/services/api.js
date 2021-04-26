@@ -1,4 +1,4 @@
-import { showHideLoader } from "../redux/actions/loader";
+import { showHideLoader, showHideModalLoader } from "../redux/actions/loader";
 import Axios from '../config/axios';
 import CustomToast from "../components/toast/CustomToast";
 import NetInfo from "@react-native-community/netinfo";
@@ -35,7 +35,7 @@ export const refreshTokenMiddleware = async (requestCallback, params, dispatch) 
 
 
 };
-export const postRequest = async (url, data, headers, dispatch, onSuccess, onError, loaderMsg, loaderBool, middleWareCallback = () => { }) => {
+export const postRequest = async (url, data, headers, dispatch, onSuccess, onError, loaderMsg, loaderBool, modalLoader = false, middleWareCallback = () => { }) => {
     // console.log(data)
     // debugger;
     let internetConnectivity = await NetInfo.fetch();
@@ -44,13 +44,22 @@ export const postRequest = async (url, data, headers, dispatch, onSuccess, onErr
         return CustomToast.error('No internet connection');
     };
     middleWareCallback(true);
-    dispatch(showHideLoader(loaderBool !== undefined ? loaderBool : true, loaderMsg && loaderMsg.length ? loaderMsg : 'Please wait...'));
+    if (modalLoader !== false) {
+        dispatch(showHideModalLoader(true));
+    } else {
+        dispatch(showHideLoader(loaderBool !== undefined ? loaderBool : true, loaderMsg && loaderMsg.length ? loaderMsg : 'Please wait...'));
+    }
     try {
         let res = await Axios.post(url, data, headers);
         // console.log('postRequest Response===----> :', res);
         // debugger;
         if (res.status === 200) {
-            dispatch(showHideLoader(false, ''));
+            debugger;
+            if (modalLoader !== false) {
+                dispatch(showHideModalLoader(false));
+            } else {
+                dispatch(showHideLoader(false, ''));
+            }
             onSuccess(res);
             middleWareCallback(false);
         }
@@ -62,7 +71,9 @@ export const postRequest = async (url, data, headers, dispatch, onSuccess, onErr
             if (error.response.data.StatusCode === 401) refreshTokenMiddleware(postRequest, [url, data, headers, dispatch, onSuccess, onError, loaderMsg, loaderBool], dispatch);
             // else if (error.response.data.statusCode === 404) CustomToast.error('Something Went Wrong!!');
             else if (error.response.data.statusCode === 500) CustomToast.error('Something Went Wrong!!');
-            dispatch(showHideLoader(false, ''));
+            if (modalLoader !== false) {
+                dispatch(showHideModalLoader(false));
+            } else { dispatch(showHideLoader(false, '')); }
             onError(error.response.data);
         }
         else if (error?.response?.status) {
@@ -72,7 +83,7 @@ export const postRequest = async (url, data, headers, dispatch, onSuccess, onErr
         }
     }
 };
-export const getRequest = async (url, customHeaders, dispatch, onSuccess, onError, loaderMsg, hideLoaderAfterCall = true, loaderBool = true) => {
+export const getRequest = async (url, customHeaders, dispatch, onSuccess, onError, loaderMsg, modalLoader = false, hideLoaderAfterCall = true, loaderBool = true) => {
     // debugger;
     let internetConnectivity = await NetInfo.fetch();
     if (!internetConnectivity.isConnected) {
@@ -81,12 +92,16 @@ export const getRequest = async (url, customHeaders, dispatch, onSuccess, onErro
     }
     // console.log('Get Request Called and data is---- :', data);
     // console.log('Get Request headers----', customHeaders);
-    dispatch(showHideLoader(loaderBool, loaderMsg && loaderMsg.length ? loaderMsg : 'Please wait...'));
+    if (modalLoader !== false) {
+        dispatch(showHideModalLoader(true));
+    } else {
+        dispatch(showHideLoader(loaderBool, loaderMsg && loaderMsg.length ? loaderMsg : 'Please wait...'));
+    }
     try {
         let res = await Axios.get(url, "Authorization" in customHeaders && { headers: customHeaders });
         // debugger;
         if (res.status === 200) {
-            hideLoaderAfterCall && dispatch(showHideLoader(false, ''));
+            hideLoaderAfterCall && (modalLoader === true ? dispatch(showHideModalLoader(false)) : dispatch(showHideLoader(false, '')));
             onSuccess(res);
         }
     } catch (error) {
@@ -101,7 +116,7 @@ export const getRequest = async (url, customHeaders, dispatch, onSuccess, onErro
             else if (error.response.status === 404) CustomToast.error('Something Went Wrong ddd!!');
             else if (error.response.status === 500) CustomToast.error('Something Went Wrong!!');
         }
-        hideLoaderAfterCall && dispatch(showHideLoader(false, ''));
+        hideLoaderAfterCall && (modalLoader === true ? dispatch(showHideModalLoader(false)) : dispatch(showHideLoader(false, '')));
         onError(error);
     }
 };

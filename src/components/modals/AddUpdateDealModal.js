@@ -285,7 +285,7 @@ const AddUpdateDealModal = (props) => {
                 props.onSave();
             }, (err) => {
                 if (err) CustomToast.error('Something went wrong!');
-            }, '');
+            }, '',false,true);
 
         }
     }

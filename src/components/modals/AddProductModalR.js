@@ -83,7 +83,7 @@ const AddProductModalR = (props) => {
         }, (err) => {
             if (err.statusCode === 404) CustomToast.error(err.message);
             else if (err) CustomToast.error("Something went wrong!");
-        }, '');
+        }, '',false,true);
     }
     const renderSelectionList = (options, onChange, filter = false) => {
         // let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
@@ -158,7 +158,7 @@ const AddProductModalR = (props) => {
                 }
             }, (err) => {
                 if (err) CustomToast.error("Something went wrong");
-            }, '', false);
+            }, '', false,true);
     }
     useEffect(useCallback(() => {
         getData();

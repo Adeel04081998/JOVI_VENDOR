@@ -39,7 +39,7 @@ const DisableProductModal = (props) => {
         }, (err) => {
             debugger;
             if (err) CustomToast.error('Something went wrong!');
-        }, '');
+        }, '',false,true);
     }
     // const renderSelectionList = () => {
     //     let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];

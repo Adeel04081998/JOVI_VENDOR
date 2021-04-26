@@ -118,7 +118,7 @@ const ProfileModal = (props) => {
             console.log(err)
             if (err.status === 400) error400(err)
             else CustomToast.error('Something went wrong!');
-        }, '');
+        }, '',false,true);
     }
     const onTimeChange = (val, index) => {
         let selectedVal = state.selectedValue.split(':');

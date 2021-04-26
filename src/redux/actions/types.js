@@ -4,6 +4,7 @@ export const DARK_MODE = "DARK_MODE";
 export const OPEN_MODAL = "OPEN_MODAL";
 export const UPDATE_MODAL_HEIGHT = "UPDATE_MODAL_HEIGHT";
 export const CLOSE_MODAL = "CLOSE_MODAL";
+export const SHOW_HIDE_MODAL_LOADER = "SHOW_HIDE_MODAL_LOADER";
 export const SHOW_HIDE_IMAGE_VIEW = "SHOW_HIDE_IMAGE_VIEW";
 // Loader
 export const SHOW_HIDE_LOADER = "SHOW_HIDE_LOADER";

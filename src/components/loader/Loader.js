@@ -8,13 +8,13 @@ import loaderGif from './loader.gif';
 
 
 function Loader({ loaderState, theme }) {
-    const { isVisible, message, color, type, size } = loaderState;
-    let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
+    // const { isVisible, message, color, type, size } = loaderState;
+    // let activeTheme = theme.lightMode ? theme.lightTheme : theme.darkTheme;
 
     return (
         <View style={styles.container}>
             {/* <SvgXml xml={loaderSVG} height={100} width={100} /> */}
-            <ImageBackground source={loaderGif} style={{ width: 300, height: 300 }} />
+            <ImageBackground source={loaderGif} style={{opacity:10, width: 300, height: 300 }} />
             {/* <Spinner style={styles.spinner} isVisible={isVisible} size={size} type="WanderingCubes" color={color} /> */}
             {/* <Text style={styles.messageText(activeTheme)}>{message}</Text> */}
         </View>
@@ -27,9 +27,9 @@ var styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'grey',
+        // backgroundColor: 'grey',
         position: 'absolute',
-        opacity: 0.7
+        opacity: 1
     },
     messageText: activetheme => ({
         ...commonStyles.fontStyles(20, activetheme.white, 4),
