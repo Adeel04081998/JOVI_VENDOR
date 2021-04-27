@@ -228,7 +228,7 @@ const AddUpdateDealModal = (props) => {
         formData.append('StartDate', state.deal.pitstopDealID === 0 ? state.deal.startDate + ' 00:10' : state.deal.startDate);
         formData.append('EndDate', state.deal.pitstopDealID === 0 ? state.deal.endDate + ' 23:50' : state.deal.endDate);
         formData.append('Description', state.deal.description);
-        formData.append('DealPrice', state.deal.price);
+        formData.append('DealPrice', state.deal.price === ''?0:state.deal.price);
         formData.append('IsActive', state.deal.inActiveIndex === 0 ? true : false);
         formData.append(
             'DealImageList[0].joviImageID',
