@@ -9,6 +9,7 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { CustomInput } from '../SharedComponents';
+import { error400 } from '../../utils/sharedActions';
 const DisableProductModal = (props) => {
     const { brandObj, productObj, item } = props;
     console.log(item)
@@ -29,17 +30,21 @@ const DisableProductModal = (props) => {
     //     }))
     // }
     const onSave = () => {
-        postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
-            "pitstopItemID": state.item.itemID,
-            "price": state.item.price,
-            "availablityStatus": state.item.availabilityStatus === 'Available' ? 1 : state.item.availabilityStatus === 'Out Of Stock' ? 2 : 3
-        }, {}, props.dispatch, (res) => {
-            // props.dispatch(closeModalAction());
-            props.onSave();
-        }, (err) => {
-            debugger;
-            if (err) CustomToast.error('Something went wrong!');
-        }, '',false,true);
+        if(state.item.price === null || state.item.price === undefined || state.item.price ===''){
+            CustomToast.error('Price cant be empty');
+        }else{
+            postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
+                "pitstopItemID": state.item.itemID,
+                "price": state.item.price,
+                "availablityStatus": state.item.availabilityStatus === 'Available' ? 1 : state.item.availabilityStatus === 'Out Of Stock' ? 2 : 3
+            }, {}, props.dispatch, (res) => {
+                // props.dispatch(closeModalAction());
+                props.onSave();
+            }, (err) => {
+                if (err.status === 400) error400(err)
+                else CustomToast.error('Something went wrong!');
+            }, '',false,true);
+        }
     }
     // const renderSelectionList = () => {
     //     let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
