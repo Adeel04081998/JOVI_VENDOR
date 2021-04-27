@@ -10,6 +10,7 @@ import { postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { closeModalAction } from '../../redux/actions/modal';
 import { CustomInput } from '../SharedComponents';
+import { error400 } from '../../utils/sharedActions';
 const UpdateR_Product = (props) => {
     const { product } = props;
     const [state, setState] = useState({
@@ -43,7 +44,7 @@ const UpdateR_Product = (props) => {
                 attributes.push({
                     "itemOptionID": attr.itemOptionID,
                     "productAttributeID": attr.attributeID,
-                    "addOnPrice": attr.price,
+                    "addOnPrice": attr.price??0,
                     "isActive": attr.isActive
                 })
             })
@@ -51,7 +52,7 @@ const UpdateR_Product = (props) => {
         console.log('Update Product:', state.product)
         postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
             "pitstopItemID": state.product.pitstopItemID,
-            "price": state.product.basePrice,
+            "price": state.product.basePrice??0,
             "estimateTime": state.product.estimateTime,
             "startTime": state.product.startTime,
             "endTime": state.product.endTime,
@@ -62,7 +63,8 @@ const UpdateR_Product = (props) => {
             props.onSave();
             props.dispatch(closeModalAction());
         }, (err) => {
-            if (err) CustomToast.error('Something went wrong!');
+            if (err.status === 400) error400(err)
+            else CustomToast.error('Something went wrong!');
         }, '',false,true);
     }
     // const renderSelectionList = () => {
