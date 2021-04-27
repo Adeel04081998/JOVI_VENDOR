@@ -44,7 +44,7 @@ const UpdateR_Product = (props) => {
                 attributes.push({
                     "itemOptionID": attr.itemOptionID,
                     "productAttributeID": attr.attributeID,
-                    "addOnPrice": attr.price??0,
+                    "addOnPrice": attr.price===''?0:attr.price,
                     "isActive": attr.isActive
                 })
             })
@@ -52,7 +52,7 @@ const UpdateR_Product = (props) => {
         console.log('Update Product:', state.product)
         postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
             "pitstopItemID": state.product.pitstopItemID,
-            "price": state.product.basePrice??0,
+            "price": state.product.basePrice===''?0:state.product.basePrice,
             "estimateTime": state.product.estimateTime,
             "startTime": state.product.startTime,
             "endTime": state.product.endTime,
