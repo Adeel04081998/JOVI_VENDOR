@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import errorsUI from '../validations';
 import { CustomInput } from '../SharedComponents';
+import { APP_VERSION } from '../../config/config';
 const ProfileModal = (props) => {
     console.log('User:', props.user)
     const { dispatch } = props;
@@ -314,7 +315,7 @@ const ProfileModal = (props) => {
                                         })
                                     }
                                 </View>
-                                <View style={{ marginVertical: 13, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                <View style={{ marginVertical: 5, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
                                     <TouchableOpacity activeOpacity={1}  >
                                         <Text style={{ color: props.activeTheme.grey, fontSize: 14 }}>
                                             <Text onPress={navigateToLegalScreen} style={stylesHome.touchableText(props.activeTheme)}> Terms & conditions </Text>
@@ -323,6 +324,7 @@ const ProfileModal = (props) => {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
+                                <Text style={{marginHorizontal:5,...commonStyles.fontStyles(13,props.activeTheme.grey,4)}}>Version: {APP_VERSION}</Text>
                                 {/* <TouchableOpacity onPress={showResetPasswordScreen} style={{ marginVertical: 5, justifyContent: 'center', flexDirection: 'column', alignItems: 'flex-start' }}>
                                     <Text style={stylesHome.touchableText(props.activeTheme)}>Reset Password</Text>
                                 </TouchableOpacity> */}

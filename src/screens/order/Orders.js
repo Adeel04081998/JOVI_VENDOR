@@ -150,9 +150,9 @@ function Orders(props) {
                                             <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Total Price: </Text><Text>{item.totalPrice}</Text>
                                             </View>
-                                            <View style={{ ...stylesOrder.orderDetails }}>
-                                                <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Total Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.totalPrice}</Text>
-                                            </View>
+                                           {item.actualPrice? <View style={{ ...stylesOrder.orderDetails }}>
+                                                <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Actual Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.actualPrice}</Text>
+                                            </View>:null}
                                             <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>No of Items: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.noOfItems}</Text>
                                             </View>
@@ -161,7 +161,7 @@ function Orders(props) {
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 4) }}>Rider: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 3) }}>{item.riderName}</Text>
                                             </View> : <></>}
                                             <View style={{position:'absolute',top:-5,right:10}}>
-                                                <Text style={{...commonStyles.fontStyles(12, props.activeTheme.default,4)}}>
+                                                <Text style={{...commonStyles.fontStyles(13, props.activeTheme.default,4)}}>
                                                     {item?.orderCreationTime}
                                                 </Text>
                                             </View>

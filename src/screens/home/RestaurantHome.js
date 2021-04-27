@@ -164,7 +164,7 @@ function RestaurantHome(props) {
                                 <Text style={{ ...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{state.dealObj?.name}</Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={{...tabStyles.tabCounter(props)}}>
+                        <View style={{...tabStyles.tabCounter(props,state.dealObj?.subCategoryCount)}}>
                             <Text style={{ color: 'white' }}>{state.dealObj?.subCategoryCount}</Text>
                         </View>
                     </View>
@@ -203,7 +203,7 @@ function RestaurantHome(props) {
                                             <Text style={{ ...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{item.name}</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    <View style={{ ...tabStyles.tabCounter(props) }}>
+                                    <View style={{ ...tabStyles.tabCounter(props,item.subCategoryCount) }}>
                                         <Text style={{ color: 'white' }}>{item.subCategoryCount}</Text>
                                     </View>
                                 </View>

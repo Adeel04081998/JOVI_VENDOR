@@ -116,7 +116,7 @@ function Home(props) {
                                             <Text style={{...tabStyles.tabDescription(10, props.activeTheme.black, 1, '300'),maxHeight:70}}>{item.brandDescription.toLocaleUpperCase()}</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    <View style={{...tabStyles.tabCounter(props)}}>
+                                    <View style={{...tabStyles.tabCounter(props,item.noOfProducts)}}>
                                         <Text style={{ color: 'white' }}>{item.noOfProducts}</Text>
                                     </View>
                                 </View>

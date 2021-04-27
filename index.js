@@ -2,7 +2,7 @@
  * @format
  */
 
-import {AppRegistry, ImageBackground} from 'react-native';
+import {AppRegistry, ImageBackground, Text, TextInput } from 'react-native';
 import React from 'react';
 import App from './App';
 import {name as appName} from './app.json';
@@ -33,7 +33,10 @@ const HeadlessCheck = ({isHeadless}) => {
   }
   return <RNRedux />;
 };
-
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
+TextInput.defaultProps = TextInput.defaultProps || {};
+TextInput.defaultProps.allowFontScaling = false;
 // AppRegistry.registerHeadlessTask('RNPushNotificationActionHandlerTask', () => {
 //     messaging().setBackgroundMessageHandler(async remoteMessage => {
 //         // For background job

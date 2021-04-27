@@ -154,7 +154,7 @@ function Products(props) {
                                                 style={{...styleProduct.productImage}}
                                             />
                                         </View>
-                                            <View style={{...styleProduct.counter(props)}}>
+                                            <View style={{...styleProduct.counter(props,item.noOfItems)}}>
                                                 <Text style={{ color: 'white' }}>{item.noOfItems}</Text>
                                             </View>
                                         <View style={{...styleProduct.productName}}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.productName}</Text></View>
@@ -196,7 +196,7 @@ const styleProduct = StyleSheet.create({
         "height": "100%",
     },
     productName:{ flex: 2,maxWidth:'100%',paddingHorizontal:5, justifyContent: 'center', alignItems: 'center' },
-    counter:(props) =>{return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
+    counter:(props,noOfItems) =>{return { position: 'absolute', top: 5, right: 10, zIndex: 999, width:noOfItems>99?40:20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
 
 })
 export default connect(mapStateToProps)(Products);

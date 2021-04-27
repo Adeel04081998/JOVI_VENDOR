@@ -225,7 +225,34 @@ export const getScreenNavState = navigation => {
 };
 
 export const sharedTimeStampsHandler = (dateTime, dateFormate) => moment(moment(dateTime, dateFormate).toDate()).fromNow();
-
+export const handleForcingVersionUpdate = (postRequest, currentVersion, cbAllow, cbForce) => {
+    postRequest(
+        `/api/Common/CheckAppVersion`,
+        {
+            "appType": 3,
+            "version": currentVersion,
+            "os": Platform.OS
+        },
+        null,
+        store.dispatch,
+        (response) => {
+            console.log(`--> Response from "CheckAppVersion" API:`, response);
+            cbAllow && cbAllow();
+        },
+        (error) => {
+    console.log(`--> Error from "CheckAppVersion" API:`, ((error?.response) ? error.response : {}), error);
+            if (error?.statusCode === 417) {
+                const versionUpdateURL = (`market://details?id=com.jovivendors`);
+                cbForce && cbForce(versionUpdateURL);
+            }
+            else {
+                cbAllow && cbAllow();
+            }
+        },
+        '',
+        false,
+    );
+};
 export const sharedGetNotificationsHandler = (postRequest, pageNumber, itemsPerPage, isAscending, dispatch, onSuccess, onError) => {
     postRequest(
         `/api/Notification/AlertNotificationLog/List`,
@@ -289,7 +316,7 @@ export const sharedHubConnectionInitiator = async (postRequest) => {
         } catch (err) {
             console.log("Error during signalR connectivity:", err);
             setTimeout(start, 10000);
-             
+
         }
     };
 
@@ -1194,7 +1221,7 @@ const generateNewRefreshTokenIfExpired = (postRequest, accessToken, refreshToken
             }
         },
         (error) => {
-             
+
 
             console.log(((error?.response) ? error.response : {}), error);
             // CustomToast.error('An Error Occurred!');
@@ -1224,7 +1251,7 @@ const continueAfterCheckingListFromHubConnectionsAPI = (getRequest, cbConnection
             }
         },
         (error) => {
-             
+
 
             console.log(((error?.response) ? error.response : {}), error);
             // CustomToast.error('An Error Occurred!');
@@ -1256,7 +1283,7 @@ export const handleSignalRConnectionCreationIfRequired = async (getRequest, post
             console.log("-> Starting handling of SignalR Creation!");
 
             store.dispatch(showHideLoader(true, ''));
-             
+
 
             generateNewRefreshTokenIfExpired(postRequest, JSON.parse(user)?.token?.authToken, JSON.parse(user)?.refreshToken, () => {
 
@@ -1277,7 +1304,7 @@ export const handleSignalRConnectionCreationIfRequired = async (getRequest, post
                     afterWaitForSignalRDone();
 
                     store.dispatch(showHideLoader(false, ''));
-                     
+
                 });
             }
         }

@@ -326,7 +326,7 @@ function OrderDetails(props) {
                                 </View>
                                 <View style={tabStyles.tabTextContainer}>
                                     <View style={{ flex: 0.9 }}>
-                                        <Text style={{ flex: 2, ...tabStyles.tabTitle(14, props.activeTheme.black, 3, '300'), maxWidth: 255 }}>{item.jobItemName}</Text>
+                                        <Text style={{ flex: 2, ...tabStyles.tabTitle(14, props.activeTheme.black, 3, '300'), maxWidth: 255 }}>{item.brandName+' '+item.jobItemName}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, ...tabStyles.tabDescription(12, props.activeTheme.black, 1, '300') }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it, j) => {
                                             if (it.attributeTypeName === 'Color') {
                                                 return <View key={j + state.orderList.length} style={{ backgroundColor: it.productAttrName.toLowerCase(), height: 13, width: 13, borderRadius: 10, marginRight: 5 }}></View>

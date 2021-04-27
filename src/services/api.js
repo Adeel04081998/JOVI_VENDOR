@@ -54,7 +54,6 @@ export const postRequest = async (url, data, headers, dispatch, onSuccess, onErr
         // console.log('postRequest Response===----> :', res);
         // debugger;
         if (res.status === 200) {
-            debugger;
             if (modalLoader !== false) {
                 dispatch(showHideModalLoader(false));
             } else {
