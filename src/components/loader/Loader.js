@@ -29,7 +29,8 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         // backgroundColor: 'grey',
         position: 'absolute',
-        opacity: 1
+        opacity: 1,
+        zIndex:999
     },
     messageText: activetheme => ({
         ...commonStyles.fontStyles(20, activetheme.white, 4),

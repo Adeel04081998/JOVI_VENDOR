@@ -55,7 +55,7 @@ const AddProductModalR = (props) => {
                 it.attributeTypeGroupedList?.map(itt => {
                     itt.productAttributeList.map(attr => {
                         attrList.push({
-                            addOnPrice: attr.price,
+                            addOnPrice: attr.price === ''?0:attr.price,
                             isActive: attr.isActive,
                             productAttributeID: attr.attributeID
                         })
@@ -63,7 +63,7 @@ const AddProductModalR = (props) => {
                 });
                 return {
                     "genericProductID": it.genericProductID,
-                    "baseprice": it.basePrice,
+                    "baseprice": it.basePrice===''?0:it.basePrice,
                     "estimateTime": it.estimateTime,
                     "startTime": it.startTime,
                     "endTime": it.endTime,

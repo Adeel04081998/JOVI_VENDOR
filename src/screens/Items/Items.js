@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView,StyleSheet, Dimensions, BackHandler } from 'react-native';
+import { Text, ImageBackground, View, Alert, TouchableOpacity, ScrollView, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 import { renderPicture } from "../../utils/sharedActions";
@@ -180,22 +180,22 @@ function Items(props) {
                             </View>
                             :
                             state.itemsData.map((item, i) => {
-                                return <View key={i} style={{...styleProduct.productTab}}>
-                                <TouchableOpacity style={{ width: '100%',padding:10, height: '100%' }} onPress={() => disableEnableProduct(item)}>
-                                {item.availabilityStatus === 'Out Of Stock' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901 }}></View>}
-                                        {item.availabilityStatus === 'Discontinued' && <View style={{ height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, position: 'absolute', backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901, justifyContent: 'center', alignItems: 'center' }}>
-                                            <SvgXml xml={blockSvg} height={'60%'} width={'60%'} />
-                                        </View>}
-                                    <View style={{...styleProduct.productImageContainer}}>
-                                        <ImageBackground
+                                return <View key={i} style={{ ...styleProduct.productTab }}>
+                                    {item.availabilityStatus === 'Out Of Stock' ? <TouchableOpacity onPress={() => disableEnableProduct(item)} style={{ ...styleProduct.itemStatusCover }}></TouchableOpacity> : null}
+                                    {item.availabilityStatus === 'Discontinued' ? <TouchableOpacity onPress={() => disableEnableProduct(item)} style={{ ...styleProduct.itemStatusCover }}>
+                                        <SvgXml xml={blockSvg} height={'60%'} width={'60%'} />
+                                    </TouchableOpacity> : null}
+                                    <TouchableOpacity style={{ width: '100%', padding: 10, height: '100%' }} onPress={() => disableEnableProduct(item)}>
+                                        <View style={{ ...styleProduct.productImageContainer }}>
+                                            <ImageBackground
                                                 resizeMode="stretch"
                                                 source={item.itemImages && item.itemImages.length > 0 ? { uri: renderPicture(item.itemImages[0].joviImageThumbnail, 190, props.user.tokenObj && props.user.tokenObj.token.authToken) } : dummy}
-                                            style={{...styleProduct.productImage}}
-                                        />
-                                    </View>
-                                    <View style={{...styleProduct.productName}}><Text style={{...commonStyles.fontStyles(12,props.activeTheme.black,3)}}>{item.itemName}</Text></View>
-                                </TouchableOpacity>
-                            </View>
+                                                style={{ ...styleProduct.productImage }}
+                                            />
+                                        </View>
+                                        <View style={{ ...styleProduct.productName }}><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.itemName}</Text></View>
+                                    </TouchableOpacity>
+                                </View>
                             })
                         }
                     </ScrollView>
@@ -211,28 +211,29 @@ const mapStateToProps = (store) => {
     }
 };
 const styleProduct = StyleSheet.create({
-    brandContainer:{ width: 150, height: 120, justifyContent: 'center', alignItems: 'center' },
-    brandImageContainer:{ width: '100%', height: '70%',paddingHorizontal:10, },
-    brandImageContainerView:{ backgroundColor: 'white', borderColor: '#929293', overflow: 'hidden',justifyContent: 'center', alignItems: "center", borderRadius: 15,height:'100%' },
-    brandImage:{
+    brandContainer: { width: 150, height: 120, justifyContent: 'center', alignItems: 'center' },
+    brandImageContainer: { width: '100%', height: '70%', paddingHorizontal: 10, },
+    brandImageContainerView: { backgroundColor: 'white', borderColor: '#929293', overflow: 'hidden', justifyContent: 'center', alignItems: "center", borderRadius: 15, height: '100%' },
+    brandImage: {
         // flex: 1,
         // top: 1,
         // borderRadius:15,
         width: '100%',
         "height": "100%",
     },
-    productListContainer:{ paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' },
-    productTab:{ height: 200, borderColor: '#929293', backgroundColor: 'white', borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
-    productImageContainer:{ height:'60%' ,width: '100%',borderRadius:15,overflow:'hidden'},
-    productImage:{
+    productListContainer: { paddingBottom: 20, justifyContent: 'flex-start', flexDirection: 'row', flexWrap: 'wrap' },
+    productTab: { height: 200, borderColor: '#929293', backgroundColor: 'white', borderWidth: 0.5, borderRadius: 15, width: '40%', margin: 15 },
+    itemStatusCover: { position: 'absolute', height: '100%', width: '100%', borderWidth: 0.1, borderRadius: 15, backgroundColor: 'rgba(0,0,0,0.2)', zIndex: 901, justifyContent: 'center', alignItems: 'center' },
+    productImageContainer: { height: '60%', width: '100%', borderRadius: 15, overflow: 'hidden' },
+    productImage: {
         width: '100%',
         // marginLeft: 17,
         // zIndex: 900,
-        borderRadius:15,
+        borderRadius: 15,
         "height": "100%",
     },
-    productName:{ flex: 2,maxWidth:'100%',paddingHorizontal:5, justifyContent: 'center', alignItems: 'center' },
-    counter:(props) =>{return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background }}
+    productName: { flex: 2, maxWidth: '100%', paddingHorizontal: 5, justifyContent: 'center', alignItems: 'center' },
+    counter: (props) => { return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
 
 })
 export default connect(mapStateToProps)(Items);
