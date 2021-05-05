@@ -96,9 +96,17 @@ function Items(props) {
                         itemsData: res.data.productItems?.productItemsList,
                         itemsDataTemp: res.data.productItems?.productItemsList
                     }));
+                }else{
+                    setState(prevState => ({
+                        ...prevState,
+                        itemsData: [],
+                        itemsDataTemp: []
+                    }));
                 }
             }, (err) => {
-                if (err) CustomToast.error("Something went wrong");
+                if (err.status === 400&&err.response) error400(err.response)
+                else if (err&&err.response) error400(err.response);
+                else if(err) error400(err);
             }, '');
     }
     useEffect(useCallback(() => {

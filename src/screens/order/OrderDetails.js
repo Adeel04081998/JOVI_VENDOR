@@ -336,14 +336,14 @@ function OrderDetails(props) {
                                         <Text style={{ flex: 1, ...tabStyles.tabDescription(12, props.activeTheme.black, 1, '300') }}>Rs. {item.price}</Text>
                                     </View>
                                 </View>
-                                {state.orderObj.orderStatus === 1 ? <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
+                                {state.orderObj.orderStatus !== 1 ? <View style={{ flexDirection: 'row', alignSelf: 'center', justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
                                     {
                                         ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: disableQuantityCounter(item, idx), height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item, idx)}>
                                             <Text style={{}}>{btn}</Text>
                                         </TouchableOpacity>)
                                     }
                                 </View>
-                                    : <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 19, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 25, height: 25 }}>
+                                    : <View style={{ flexDirection: 'row', alignSelf: 'center', marginRight: 0, justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 25, height: 25 }}>
                                         {
                                             <Text>{item.quantity}</Text>
                                         }
