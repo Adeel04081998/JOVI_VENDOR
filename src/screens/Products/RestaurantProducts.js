@@ -77,7 +77,9 @@ function RestaurantProducts(props) {
                     }))
                 }
             }, (err) => {
-                if (err) CustomToast.error("Something went wrong");
+                if (err.status === 400) error400(err.response)
+                else if (err&&err.response) error400(err.response);
+                else if(err) error400(err);
             }, '');
     }
     const searchProduct = (val) => {

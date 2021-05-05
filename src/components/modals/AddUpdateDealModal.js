@@ -9,7 +9,7 @@ import { getRequest, postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { TextInput } from 'react-native-gesture-handler';
 import modalCam from '../../assets/profile/camera.svg'
-import { camelToTitleCase, renderPicture } from '../../utils/sharedActions';
+import { camelToTitleCase, priceValidation, renderPicture } from '../../utils/sharedActions';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
@@ -216,6 +216,10 @@ const AddUpdateDealModal = (props) => {
     }, []);
     const onSave = () => {
         let check = false;
+        if(parseInt(state.deal.price) === 0 ||state.deal.price === '' ){
+            CustomToast.error('Price can\'t be empty or zero');
+            return;
+        }
         if (state.deal.title === '' || state.deal.startDate === '' || state.deal.endDate === '' || state.deal.description === '' || state.deal.price === 0 || state.deal.dealImagesList.length < 1) {
             check = true;
         }
@@ -383,7 +387,7 @@ const AddUpdateDealModal = (props) => {
                                         onlyText={props?.user?.canUpdatePrices === true ? false : true}
                                         inputProps={{ keyboardType: 'numeric' }}
                                         parentViewStyle={{ paddingLeft: 0 }}
-                                        onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: val } }))}
+                                        onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: priceValidation(val) ?val:pre.deal.price } }))}
                                         inputViewStyle={{ width: '100%' }}
                                     />
 

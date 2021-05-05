@@ -722,6 +722,9 @@ export const attachOrderRecieveModal = () => {
         })
     });
 };
+export const priceValidation = (val) => {
+    return val.includes(',') ||val.includes(' ') || val.includes('-') ||val.includes('.') ?false:true;
+}
 export const error400 = (response) => {
     if (response && response.status === 500) {
         CustomToast.error('Error 500:Something went wrong!')

@@ -10,7 +10,7 @@ import { postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { closeModalAction } from '../../redux/actions/modal';
 import { CustomInput } from '../SharedComponents';
-import { error400 } from '../../utils/sharedActions';
+import { error400, priceValidation } from '../../utils/sharedActions';
 const UpdateR_Product = (props) => {
     const { product } = props;
     const [state, setState] = useState({
@@ -38,6 +38,10 @@ const UpdateR_Product = (props) => {
         setState(pre => ({ ...pre, product: { ...pre.product, [key]: selectedTime.join(':') } }));
     }
     const onSave = () => {
+        if(state.product.basePrice===''||parseInt(state.product.basePrice) === 0){
+            CustomToast.error('Price can\'t be empty or zero');
+            return;
+        }
         let attributes = [];
         state.product.itemGroupedOptions?.map(itt => {
             itt.itemOptions.map(attr => {
@@ -147,7 +151,7 @@ const UpdateR_Product = (props) => {
                                     parentViewStyle={{ paddingLeft: 0 }}
                                     inputViewStyle={{ width: '100%' }}
                                     inputProps={{ keyboardType: 'numeric' }}
-                                    onChangeText={(val) => setState(pre => ({ ...pre, product: { ...pre.product, basePrice: val.includes(',') || val.includes(' ') || val.includes('-') ? pre.product.basePrice : val } }))}
+                                    onChangeText={(val) => setState(pre => ({ ...pre, product: { ...pre.product, basePrice: !priceValidation(val) ? pre.product.basePrice : val } }))}
                                 />
                                 <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
                                     Description
@@ -331,7 +335,7 @@ const UpdateR_Product = (props) => {
                                                         flexDirection: 'row'
                                                     }}>
                                                         {props?.user?.canUpdatePrices === true ?
-                                                            <TextInput keyboardType='numeric' style={{}} onChangeText={val => changeAttribute(val, i, j, 'price')} value={itemOptions.price?.toString()} />
+                                                            <TextInput keyboardType='numeric' style={{}} onChangeText={val => priceValidation(val)?changeAttribute(val, i, j, 'price'):()=>{}} value={itemOptions.price?.toString()} />
                                                             :
                                                             <Text>{itemOptions.price?.toString()}</Text>
                                                         }

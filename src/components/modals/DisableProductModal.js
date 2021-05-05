@@ -9,7 +9,7 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { CustomInput } from '../SharedComponents';
-import { error400 } from '../../utils/sharedActions';
+import { error400, priceValidation } from '../../utils/sharedActions';
 const DisableProductModal = (props) => {
     const { brandObj, productObj, item } = props;
     console.log(item)
@@ -30,7 +30,7 @@ const DisableProductModal = (props) => {
     //     }))
     // }
     const onSave = () => {
-        if(state.item.price === null || state.item.price === undefined || state.item.price ===''){
+        if(state.item.price === null || state.item.price === undefined||parseInt(state.item.price) === 0 || state.item.price ===''){
             CustomToast.error('Price cant be empty');
         }else{
             postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
@@ -135,7 +135,7 @@ const DisableProductModal = (props) => {
                                     parentViewStyle={{ paddingLeft: 0 }}
                                     inputViewStyle={{ width: '100%' }}
                                     inputProps={{ keyboardType: 'numeric' }}
-                                    onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: val.includes(' ') || val.includes('-') ? pre.item.price : val } }))}
+                                    onChangeText={(val) => setState(pre => ({ ...pre, item: { ...pre.item, price: !priceValidation(val)? pre.item.price : val } }))}
                                 />
                                 {state.item.attributes && state.item.attributes.length > 0 ?
                                     state.item.attributes.filter(it => it.attributeName !== 'Quantity').map((it, i) => {

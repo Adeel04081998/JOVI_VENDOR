@@ -13,6 +13,7 @@ import AddBrandModal from '../../components/modals/AddBrandModal';
 import AddProductModalR from '../../components/modals/AddProductModalR';
 import plateformSpecific from '../../utils/plateformSpecific';
 import {SCROLL_DECLERATIONRATE} from '../../config/config';
+import { error400 } from '../../utils/sharedActions';
 function Orders(props) {
     const { navigation, modalState, userObj, activeTheme } = props;
     const [state, setState] = useState({
@@ -70,7 +71,8 @@ function Orders(props) {
                 }
             }, (err) => {
                 if (err.statusCode === 404) { CustomToast.error("No Orders Found"); setState(pre => ({ ...pre, itemsPerPage: 10, orderList: [], orderListTemp: [], paginationInfo: { totalItems: 0 } })) }
-                else if (err) CustomToast.error("Something went wrong");
+                else if (err&&err.response) error400(err.response);
+                else if(err) error400(err);
             }, '');
     }
     const searchOrder = debounce((val) => {
