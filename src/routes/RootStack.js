@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 // import EmailOtpVerify from '../screens/otpScreen/EmailOtpVerify';
 // import ResetPassword from '../screens/userRegister/ResetPassword';
 // import MainDrawer from './navigations';
-import { setIsForceTurnOnLocDialogVisible, setIsForcePermissionLocDialogVisible, sharedHubConnectionInitiator, sharedHubConnectionStopper, statusBarHandler, sharedGetNotificationsHandler, sharedSendFCMTokenToServer, getBackgroundSignalRConnectivityDelay, handleSignalRConnectionCreationIfRequired, handleForcingVersionUpdate } from '../utils/sharedActions';
+import { setIsForceTurnOnLocDialogVisible, setIsForcePermissionLocDialogVisible, sharedHubConnectionInitiator, sharedHubConnectionStopper, statusBarHandler, sharedGetNotificationsHandler, sharedSendFCMTokenToServer, getBackgroundSignalRConnectivityDelay, handleSignalRConnectionCreationIfRequired, handleForcingVersionUpdate, error400 } from '../utils/sharedActions';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getRequest, postRequest } from '../services/api';
 import { userAction } from '../redux/actions/user';
@@ -146,7 +146,7 @@ const RootStack = (props) => {
                     },
                     err => {
                         console.log("Problem is here--- :", JSON.stringify(err))
-                        if (err) CustomToast.error("Something went wrong!")
+                        if (err.response&&err.response.data.StatusCode !== 401) error400(err.response)
                         if (err?.response?.data && err.response.data.StatusCode !== 401) {
                             setState({ ...state, initRoute: "Exceptions", initRouteSub: 'home' })
                         }

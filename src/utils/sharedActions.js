@@ -723,7 +723,7 @@ export const attachOrderRecieveModal = () => {
     });
 };
 export const priceValidation = (val) => {
-    return val.includes(',') ||val.includes(' ') || val.includes('-') ||val.includes('.') ?false:true;
+    return val.includes(',') ||val.includes(' ') || val.includes('-') ||val.includes('.') || (parseInt(val)>100000) ?false:true;
 }
 export const error400 = (response) => {
     if (response && response.status === 500) {

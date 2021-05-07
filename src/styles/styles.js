@@ -25,7 +25,7 @@ export const tabStyles = {
         fontWeight,
     }),
     tabCounter: (props,noOfItems) => { return {right:-15, flex: 0.1, width:noOfItems>99?50:30, height: 28, margin: 3, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 20, backgroundColor: props.activeTheme.background } },
-    tabTextContainer: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 20, top: 5 },
+    tabTextContainer: { flex: 0.8, alignSelf: 'flex-start', borderRadius: 25, left: 8, top: 5 },
     imageTabContainer: {  margin: 7,height:95,width:110, overflow: 'hidden', borderRadius: 10 },
     imageTab: {
         width: '100%',
