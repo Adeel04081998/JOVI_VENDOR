@@ -2,7 +2,7 @@
  * @format
  */
 
-import {AppRegistry, ImageBackground, Text, TextInput } from 'react-native';
+import {AppRegistry, ImageBackground, Text, TextInput,ScrollView } from 'react-native';
 import React from 'react';
 import App from './App';
 import {name as appName} from './app.json';
@@ -46,4 +46,7 @@ TextInput.defaultProps.allowFontScaling = false;
 //         // }
 //       });
 // });
+ScrollView.defaultProps = ScrollView.defaultProps || {};
+ScrollView.defaultProps.showsVerticalScrollIndicator = false;
+ScrollView.defaultProps.showsHorizontalScrollIndicator = false;
 AppRegistry.registerComponent(appName, () => HeadlessCheck);
