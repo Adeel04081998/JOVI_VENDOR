@@ -25,6 +25,7 @@ import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import errorsUI from '../validations';
 import { CustomInput } from '../SharedComponents';
 import { APP_VERSION } from '../../config/config';
+import { searchConnectPrinter } from '../../utils/genericPrinterConfiguration';
 const ProfileModal = (props) => {
     console.log('User:', props.user)
     const { dispatch } = props;
@@ -227,7 +228,10 @@ const ProfileModal = (props) => {
                         <View style={{ flex: 1, ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                             <View style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }}>
                                 <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.default, 3) }}>Profile</Text>
-                                <View style={{ backgroundColor: props.activeTheme.warning, padding: 5, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => { props.dispatch(closeModalAction()); sharedlogoutUser(props.navigation, postRequest, props.dispatch, props.user, false) }}>Logout</Text></View>
+                                <View style={{flexDirection:'row'}}>
+                                    <View style={{ backgroundColor: props.activeTheme.warning, padding: 5,marginRight:5, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => {searchConnectPrinter()}}>Connect Printer</Text></View>
+                                    <View style={{ backgroundColor: props.activeTheme.warning, padding: 5, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.white, 3) }} onPress={() => { props.dispatch(closeModalAction()); sharedlogoutUser(props.navigation, postRequest, props.dispatch, props.user, false) }}>Logout</Text></View>
+                                </View>
 
                             </View>
                             <TouchableOpacity style={{ justifyContent: 'space-between', width: '100%', paddingHorizontal: 10, flexDirection: 'row' }} onPress={() => setState(pre => ({ ...pre, mode: 'balance_modal' }))}>

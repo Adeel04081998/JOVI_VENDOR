@@ -9,7 +9,7 @@ import reAssign from '../../assets/svgIcons/common/reAssign.svg';
 import commonIcons from '../../assets/svgIcons/common/common';
 import { getRequest, postRequest } from '../../services/api';
 import SharedFooter from '../../components/footer/SharedFooter';
-import { getHubConnectionInstance, renderPictureResizeable } from '../../utils/sharedActions';
+import { error400, getHubConnectionInstance, renderPictureResizeable } from '../../utils/sharedActions';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { SvgXml } from 'react-native-svg';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
@@ -17,8 +17,9 @@ import plateformSpecific from '../../utils/plateformSpecific';
 import { openModalAction } from '../../redux/actions/modal';
 import { CheckBox } from 'native-base';
 import { OPEN_MODAL } from '../../redux/actions/types';
+import { printReceipt, searchConnectPrinter } from '../../utils/genericPrinterConfiguration';
 function ResOrderDetails(props) {
-    const { navigation, userObj, activeTheme } = props;
+    const { navigation, userObj,printerReducer, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'ResOrderDetails')[0]?.params?.item;
     const [state, setState] = useState({
         "loader": false,
@@ -157,8 +158,9 @@ function ResOrderDetails(props) {
                 }
             }, (err) => {
                 console.log('err:  ------->', err)
-                debugger;
-                if (err) CustomToast.error("Something went wrong");
+                if (err.statusCode === 404) { CustomToast.error("No Items Found");  }
+                else if (err&&err.response) error400(err.response);
+                else if(err) error400(err);
             }, '');
     }
     useEffect(useCallback(() => {
@@ -238,7 +240,11 @@ function ResOrderDetails(props) {
             <View style={{ flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Order List</Text>
-                    <Text style={{ marginRight: 14 }}>Total: {state.orderList.length < 1 ? '0' : state.orderList.length < 10 ? '0' + state.orderList.length : state.orderList.length}</Text>
+                    <View style={{ width: 130, flexDirection: 'row', justifyContent: 'flex-end' }}>
+                        {state.orderObj.orderStatus ===1&&<TouchableOpacity onPress={printerReducer.currentPrinter===null?()=>searchConnectPrinter():() => printReceipt(state.orderList,state.orderObj,props.user?.pitstopName)} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor:printerReducer.currentPrinter===null?props.activeTheme.grey:props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Print</Text></TouchableOpacity>}
+                        {/* {state.orderObj.orderStatus !== 1 && state.qrCodeSuccess !== true ? <TouchableOpacity onPress={() => toggleQR_CodeScan(true)} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Return</Text></TouchableOpacity> : null} */}
+                        <Text style={{ marginRight: 14 }}>Total: {state.orderList.length < 1 ? '0' : state.orderList.length < 10 ? '0' + state.orderList.length : state.orderList.length}</Text>
+                    </View>
                 </View>
                 <FlatList
                     data={[...state.orderList]}
@@ -355,7 +361,8 @@ function ResOrderDetails(props) {
 }
 const mapStateToProps = (store) => {
     return {
-        userObj: store.userReducer
+        userObj: store.userReducer,
+        printerReducer: store.printerReducer
     }
 };
 const stylesOrder = StyleSheet.create({

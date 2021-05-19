@@ -14,7 +14,6 @@ import AddProductModalR from '../../components/modals/AddProductModalR';
 import plateformSpecific from '../../utils/plateformSpecific';
 import {SCROLL_DECLERATIONRATE} from '../../config/config';
 import { error400 } from '../../utils/sharedActions';
-import { printTextTest, searchConnectPrinter } from '../../utils/genericPrinterConfiguration';
 function Orders(props) {
     const { navigation, modalState, userObj, activeTheme } = props;
     const [state, setState] = useState({
@@ -112,8 +111,8 @@ function Orders(props) {
             />
             <View style={{ zIndex: 1, flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => searchConnectPrinter()}>Orders</Text>
-                    <Text style={{ marginRight: 14 }} onPress={()=>printTextTest()}>Total: {state.paginationInfo.totalItems < 1 ? '0' : state.paginationInfo.totalItems < 10 ? '0' + state.paginationInfo.totalItems : state.paginationInfo.totalItems}</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
+                    <Text style={{ marginRight: 14 }}>Total: {state.paginationInfo.totalItems < 1 ? '0' : state.paginationInfo.totalItems < 10 ? '0' + state.paginationInfo.totalItems : state.paginationInfo.totalItems}</Text>
                 </View>
                 <View style={{ width: '100%', flexDirection: 'row', height: 30, marginVertical: 10 }}>
                     {
