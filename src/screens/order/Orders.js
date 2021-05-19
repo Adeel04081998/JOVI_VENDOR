@@ -12,10 +12,34 @@ import { openModalAction } from '../../redux/actions/modal';
 import AddBrandModal from '../../components/modals/AddBrandModal';
 import AddProductModalR from '../../components/modals/AddProductModalR';
 import plateformSpecific from '../../utils/plateformSpecific';
-import {SCROLL_DECLERATIONRATE} from '../../config/config';
+import { SCROLL_DECLERATIONRATE } from '../../config/config';
 import { error400 } from '../../utils/sharedActions';
+import {
+    BLEPrinter,
+} from "react-native-thermal-receipt-printer";
 function Orders(props) {
     const { navigation, modalState, userObj, activeTheme } = props;
+    const [printers, setPrinters] = useState([]);
+    const [currentPrinter, setCurrentPrinter] = useState();
+    const _connectPrinter = (printer) => {
+        //connect printer
+        BLEPrinter.connectPrinter(printer.inner_mac_address).then(
+            setCurrentPrinter,
+            error => console.warn(error))
+    }
+    const searchPrinter = () => {
+        BLEPrinter.init().then(() => {
+            console.log('Devices:',BLEPrinter.getDeviceList())
+            BLEPrinter.getDeviceList().then(setPrinters);
+        });
+    }
+    const printTextTest = () => {
+        currentPrinter && BLEPrinter.printText("<C>sample text</C>\n");
+    }
+
+    const printBillTest = () => {
+        currentPrinter && BLEPrinter.printBill("<C>sample bill</C>");
+    }
     const [state, setState] = useState({
         "loader": false,
         orderList: [],
@@ -71,8 +95,8 @@ function Orders(props) {
                 }
             }, (err) => {
                 if (err.statusCode === 404) { CustomToast.error("No Orders Found"); setState(pre => ({ ...pre, itemsPerPage: 10, orderList: [], orderListTemp: [], paginationInfo: { totalItems: 0 } })) }
-                else if (err&&err.response) error400(err.response);
-                else if(err) error400(err);
+                else if (err && err.response) error400(err.response);
+                else if (err) error400(err);
             }, '');
     }
     const searchOrder = debounce((val) => {
@@ -111,9 +135,22 @@ function Orders(props) {
             />
             <View style={{ zIndex: 1, flex: 1, marginTop: 30 }}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Orders</Text>
+                    <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => searchPrinter()}>Orders</Text>
                     <Text style={{ marginRight: 14 }}>Total: {state.paginationInfo.totalItems < 1 ? '0' : state.paginationInfo.totalItems < 10 ? '0' + state.paginationInfo.totalItems : state.paginationInfo.totalItems}</Text>
                 </View>
+                {
+                    printers.map(printer => (
+                        <TouchableOpacity key={printer.inner_mac_address} onPress={() => _connectPrinter(printer)}>
+                            <Text>{`device_name: ${printer.device_name}, inner_mac_address: ${printer.inner_mac_address}`}</Text>
+                        </TouchableOpacity>
+                    ))
+                }
+                <TouchableOpacity onPress={printTextTest}>
+                    <Text>Print Text</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={printBillTest}>
+                    <Text>Print Bill Text</Text>
+                </TouchableOpacity>
                 <View style={{ width: '100%', flexDirection: 'row', height: 30, marginVertical: 10 }}>
                     {
                         ['Active', 'History'].map((item, i) => {
@@ -152,23 +189,23 @@ function Orders(props) {
                                             <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Total Price: </Text><Text>{item.totalPrice}</Text>
                                             </View>
-                                           {item.actualPrice? <View style={{ ...stylesOrder.orderDetails }}>
+                                            {item.actualPrice ? <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Actual Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.actualPrice}</Text>
-                                            </View>:null}
+                                            </View> : null}
                                             <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>No of Items: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.noOfItems}</Text>
                                             </View>
-                                            {item.riderName && item.riderName !== '' ? 
-                                            <View style={{ ...stylesOrder.orderDetails }}>
-                                                <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 4) }}>Rider: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 3) }}>{item.riderName}</Text>
-                                            </View> : <></>}
-                                            <View style={{position:'absolute',top:-5,right:10}}>
-                                                <Text style={{...commonStyles.fontStyles(13, props.activeTheme.default,4)}}>
+                                            {item.riderName && item.riderName !== '' ?
+                                                <View style={{ ...stylesOrder.orderDetails }}>
+                                                    <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 4) }}>Rider: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.default, 3) }}>{item.riderName}</Text>
+                                                </View> : <></>}
+                                            <View style={{ position: 'absolute', top: -5, right: 10 }}>
+                                                <Text style={{ ...commonStyles.fontStyles(13, props.activeTheme.default, 4) }}>
                                                     {item?.orderCreationTime}
                                                 </Text>
                                             </View>
-                                            <View style={{position:'absolute',top:'30%',right:10}}>
-                                                <Text style={{...commonStyles.fontStyles(14, item.orderStatus === 3 ? props.activeTheme.grey : item.isVendorConfirmed === true && item.orderStatus === 1 ? '#ff8c00' : item.orderStatus === 1 ? props.activeTheme.defaultLight : props.activeTheme.black,4)}}>
+                                            <View style={{ position: 'absolute', top: '30%', right: 10 }}>
+                                                <Text style={{ ...commonStyles.fontStyles(14, item.orderStatus === 3 ? props.activeTheme.grey : item.isVendorConfirmed === true && item.orderStatus === 1 ? '#ff8c00' : item.orderStatus === 1 ? props.activeTheme.defaultLight : props.activeTheme.black, 4) }}>
                                                     {item.orderStatusDesc}
                                                 </Text>
                                             </View>
@@ -180,7 +217,7 @@ function Orders(props) {
 
                 </ScrollView>
             </View>
-            {props.stackState.keypaidOpen === false && <SharedFooter activeTheme={activeTheme} activeTab={props?.user?.canAddUpdateProduct===true&&props?.user?.canUpdatePrices===true?1:0} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
+            {props.stackState.keypaidOpen === false && <SharedFooter activeTheme={activeTheme} activeTab={props?.user?.canAddUpdateProduct === true && props?.user?.canUpdatePrices === true ? 1 : 0} mainDrawerComponentProps={props} drawerProps={props.navigation.drawerProps} onPress={onFooterItemPressed} />}
         </View>
     )
 }
@@ -215,7 +252,7 @@ const stylesOrder = StyleSheet.create({
         zIndex: 900,
         "height": "90%",
     },
-    productName: { flex: 4,height:'80%', justifyContent: 'space-between', paddingLeft: 8, paddingRight: 8, alignItems: 'flex-start', width: '100%', flexDirection: 'column', },
+    productName: { flex: 4, height: '80%', justifyContent: 'space-between', paddingLeft: 8, paddingRight: 8, alignItems: 'flex-start', width: '100%', flexDirection: 'column', },
     counter: (props) => { return { position: 'absolute', top: 5, right: 10, zIndex: 999, width: 20, justifyContent: 'center', alignItems: 'center', borderColor: props.activeTheme.background, borderWidth: 1, borderRadius: 90, backgroundColor: props.activeTheme.background } }
 
 
