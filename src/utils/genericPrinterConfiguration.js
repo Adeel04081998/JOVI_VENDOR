@@ -33,13 +33,13 @@ export const searchConnectPrinter = () => {
                 }
             );
         });
-    }).catch(err=>{
+    }).catch(err => {
         // console.log(err)
         // if(err.toString().contains('n'))
-        if(err === 'No Device Found'){
+        if (err === 'No Device Found') {
             err = err + '. Please make sure printer(s) are paired with the device.'
         }
-        Alert.alert('Error',err,[],{cancelable:true});
+        Alert.alert('Error', err, [], { cancelable: true });
     });
 }
 const setPrinter = (printer) => {
@@ -85,30 +85,32 @@ export const printBillTest = () => {
 //     await RNXprinter.print();
 //     dispatch(showHideLoader(false, ''));
 // }
-export const printReceipt = (orderDetails, orderInfo,restaurantName) => {
+export const printReceipt = (orderDetails, orderInfo, userInfo) => {
     let jobItems = ''
     orderDetails.map((item, i) => {
         let orderItem = '';
         let index = i + 1;
-        if(i === 0){
-            orderItem = (index + ". " + item.jobItemName + "  x  " + item.quantity + "\n    ");
-        }else{
-            orderItem = ("    "+index + ". " + item.jobItemName + "  x  " + item.quantity + "\n    ");
+        if (item.jobItemStatus !== 1) {
+            if (i === 0) {
+                orderItem = (index + ". " + (userInfo?.pitstopType === 4 ? item.jobItemName : item.brandName + " " + item.jobItemName) + "  x  " + item.quantity + "\n    ");
+            } else {
+                orderItem = ("    " + index + ". " + (userInfo?.pitstopType === 4 ? item.jobItemName : item.brandName + " " + item.jobItemName) + "  x  " + item.quantity + "\n    ");
+            }
+            if (item.jobItemOptionList && item.jobItemOptionList.length > 0) {
+                item.jobItemOptionList.map((attr, j) => {
+                    orderItem = orderItem + ("------ " + attr.productAttributeName + "\n    ");
+                });
+            }
+            if (item.jobDealOptionList && item.jobDealOptionList.length > 0) {
+                item.jobDealOptionList.map((attr, j) => {
+                    orderItem = orderItem + ("------ " + attr.itemName + "\n    ");
+                });
+            }
+            jobItems = jobItems + orderItem + '\n';
         }
-        if (item.jobItemOptionList && item.jobItemOptionList.length > 0) {
-            item.jobItemOptionList.map((attr, j) => {
-                orderItem = orderItem + ("------ " + attr.productAttributeName + "\n    ");
-            });
-        }
-        if (item.jobDealOptionList && item.jobDealOptionList.length > 0) {
-            item.jobDealOptionList.map((attr, j) => {
-                orderItem = orderItem + ("------ " + attr.itemName + "\n    ");
-            });
-        }
-        jobItems = jobItems + orderItem + '\n';
     });
     let bill = `<C><D>Jovi</D></C>\n
-    <C>${restaurantName}</C>\n
+    <C>${userInfo?.pitstopName}</C>\n
     Order No: ${orderInfo?.orderNo}       ${orderInfo?.orderCreationTime}\n
     <D>----------------------</D>\n
     ${jobItems}
