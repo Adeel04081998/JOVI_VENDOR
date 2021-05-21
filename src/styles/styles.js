@@ -45,6 +45,39 @@ export default fontFamilyStyles = {
             backgroundColor
         }
     },
+    "caption": {
+        position: "relative",
+        left: 10,
+        fontSize: 15,
+        color: '#7359BE',
+        marginVertical: 10,
+    },
+    "wrapper":{
+         // alignItems: 'flex-start',
+         flexDirection: 'column',
+         backgroundColor: '#fff',
+         width: '100%', //'85%'
+         borderTopLeftRadius: 10,
+         borderTopRightRadius: 10,
+         // position: 'absolute',
+         bottom: 0,
+         height: '100%',
+         justifyContent: 'center',
+         alignSelf: 'center',
+         zIndex: 5,
+         shadowColor: '#000',
+         // paddingLeft: 15,
+         // paddingRight: 15,
+         paddingTop: 15,
+         paddingBottom: 0, //15
+         shadowOffset: {
+             width: 0,
+             height: 2,
+         },
+         shadowOpacity: 0.25,
+         shadowRadius: 3.84,
+         elevation: 5
+    },
     "borderedViewStyles": (borderRadius, borderWidth, borderColor, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius, borderTopLeftRadius, backgroundColor) => {
         return {
             borderRadius,

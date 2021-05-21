@@ -1,27 +1,93 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, ImageBackground, TouchableOpacity } from 'react-native'
+import { View, Text, ImageBackground, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native'
 import { doneIcon } from "../assets/svgIcons/customerorder/customerorder";
 import topNoRiderFound from '../assets/svgIcons/rider/topNoRiderFound.svg';
 import retryNoRiderFound from '../assets/svgIcons/rider/retryNoRiderFound.svg';
 import cancelNoRiderFound from '../assets/svgIcons/rider/cancelNoRiderFound.svg';
+import { Picker } from 'native-base';
 
 
 import { SvgXml } from "react-native-svg";
 import allocatingRiderIcon from "../assets/allocating-rider.gif";
-import { calculateTimeDifference, getHubConnectionInstance, navigateWithResetScreen } from '../utils/sharedActions';
+import { calculateTimeDifference, camelToTitleCase, getHubConnectionInstance, navigateWithResetScreen } from '../utils/sharedActions';
 import { getRequest } from '../services/api';
 import AsyncStorage from '@react-native-community/async-storage';
 import CustomToast from '../components/toast/CustomToast';
 import { closeModalAction } from '../redux/actions/modal';
 import commonStyles from '../styles/styles';
 import { TextInput } from 'react-native-gesture-handler';
-export const CustomInput = ({ label,textStyle,textProps,parentViewStyle,inputViewStyle, value,svgIcon, onChangeText,rightIcon,inputProps,activeTheme,onlyText }) => {
-    return <View style={{ width: '100%', paddingLeft: 10,position:'relative',...parentViewStyle }}>
+export const TimePicker12 = ({ time, title, onTimeChange, activeTheme,saveTime ,onCancel}) => {
+    return <KeyboardAvoidingView style={{ ...commonStyles.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+        <Text style={{ ...commonStyles.fontStyles(16, activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(title??'')}</Text>
+        <View style={{ width: '100%', flexDirection: 'row' }}>
+            <Text style={{ ...commonStyles.caption, paddingLeft: 20, width: '33%', left: 0, color: '#000' }}>Hour</Text>
+            <Text style={{ ...commonStyles.caption, paddingLeft: 17, width: '33%', left: 0, color: '#000' }}>Minutes</Text>
+            <Text style={{ ...commonStyles.caption, paddingLeft: 17, width: '33%', left: 0, color: '#000' }}>AM/PM</Text>
+        </View>
+        <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+            <Picker
+                accessibilityLabel={"hours"}
+                style={{ zIndex: 500, width: 115 }}
+                mode="dialog" // "dialog" || "dropdown"
+                // prompt="Select Hours"
+                selectedValue={(time || "HH:MM").split(":")[0]}
+                onValueChange={(value, i) => onTimeChange(value, 0)}
+            >
+                {
+                    Array.from(Array(12), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                        .map((item, i) => (
+                            <Picker.Item key={i} label={item} value={item} />
+                        ))
+                }
+            </Picker>
+            <Text style={{ ...commonStyles.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+            <Picker
+                accessibilityLabel={"minutes"}
+                style={{ zIndex: 500, width: 115 }}
+                mode="dialog" // "dialog" || "dropdown"
+                selectedValue={(time || "HH:MM").split(":")[1]}
+                onValueChange={(value, i) => onTimeChange(value, 1)}
+            >
+                {
+                    Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                        .map((item, i) => (
+                            <Picker.Item key={i} label={item} value={item} />
+                        ))
+                }
+            </Picker>
+            <Text style={{ ...commonStyles.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>  </Text>
+            <Picker
+                accessibilityLabel={"Period"}
+                style={{ zIndex: 500, width: 115 }}
+                mode="dialog" // "dialog" || "dropdown"
+                selectedValue={(time || "HH:MM").split(":")[1]}
+                onValueChange={(value, i) => onTimeChange(value, 1)}
+            >
+                {
+
+                    ['am', 'pm'].map((item, i) => (
+                        <Picker.Item key={i} label={item} value={item} />
+                    ))
+                }
+            </Picker>
+        </View>
+        <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => onCancel()}>
+                <Text style={{ ...commonStyles.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
+                <Text style={{ ...commonStyles.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
+            </TouchableOpacity>
+        </View>
+    </KeyboardAvoidingView>
+}
+export const CustomInput = ({ label, textStyle, textProps, parentViewStyle, inputViewStyle, value, svgIcon, onChangeText, rightIcon, inputProps, activeTheme, onlyText }) => {
+    return <View style={{ width: '100%', paddingLeft: 10, position: 'relative', ...parentViewStyle }}>
         <Text style={[commonStyles.fontStyles(14, activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
             {label}
         </Text>
         {
-            rightIcon&& <SvgXml xml={svgIcon} height={18} width={18} style={{ alignSelf: 'flex-end',position:'absolute',right:25,top:50 }} />
+            rightIcon && <SvgXml xml={svgIcon} height={18} width={18} style={{ alignSelf: 'flex-end', position: 'absolute', right: 25, top: 50 }} />
         }
         <View style={{
             paddingHorizontal: 12,
@@ -37,14 +103,14 @@ export const CustomInput = ({ label,textStyle,textProps,parentViewStyle,inputVie
             ...inputViewStyle,
         }}>
             {
-                onlyText===true?
-                <Text {...textProps} style={{...textStyle, maxWidth: '95%', minWidth: '90%' }}>{value?.toString()}</Text>
-                :
-                <TextInput value={value} placeholder={label} style={{ width: '100%' }} onChangeText={onChangeText} {...inputProps} />
+                onlyText === true ?
+                    <Text {...textProps} style={{ ...textStyle, maxWidth: '95%', minWidth: '90%' }}>{value?.toString()}</Text>
+                    :
+                    <TextInput value={value} placeholder={label} style={{ width: '100%' }} onChangeText={onChangeText} {...inputProps} />
 
             }
         </View>
-        
+
     </View>
 }
 const CommonRiderAllocation = props => {

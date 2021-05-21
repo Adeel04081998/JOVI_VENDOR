@@ -23,7 +23,7 @@ import { userAction } from '../../redux/actions/user';
 import { connect } from 'react-redux';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import errorsUI from '../validations';
-import { CustomInput } from '../SharedComponents';
+import { CustomInput, TimePicker12 } from '../SharedComponents';
 import { APP_VERSION } from '../../config/config';
 import { searchConnectPrinter } from '../../utils/genericPrinterConfiguration';
 const ProfileModal = (props) => {
@@ -481,57 +481,12 @@ const ProfileModal = (props) => {
                             </>
                             :
                             <>
-                                <KeyboardAvoidingView style={{ ...stylesHome.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
-                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(state.timePickMode)}</Text>
-
-                                    <View style={{ width: '100%', flexDirection: 'row' }}>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                                    </View>
-                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                        <Picker
-                                            accessibilityLabel={"hours"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Hours"
-                                            selectedValue={(state.selectedValue || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0)}
-                                        >
-                                            {
-                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-
-                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
-
-                                        <Picker
-                                            accessibilityLabel={"minutes"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Minutes"
-                                            selectedValue={(state.selectedValue || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1)}
-                                        >
-                                            {
-                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                    </View>
-                                    <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: false })) }}>
-                                            <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
-                                            <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </KeyboardAvoidingView>
+                                <TimePicker12 
+                                    activeTheme={props.activeTheme}
+                                    time={state[state.timePickMode]}
+                                    title={state.timePickMode}
+                                    onCancel={()=>{dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: false }));}}
+                                />
                             </>
             }
         </View>
