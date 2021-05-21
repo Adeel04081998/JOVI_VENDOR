@@ -19,7 +19,7 @@ import { openModalAction } from '../../redux/actions/modal';
 import { OPEN_MODAL } from '../../redux/actions/types';
 import { printReceipt, searchConnectPrinter } from '../../utils/genericPrinterConfiguration';
 function OrderDetails(props) {
-    const { navigation, userObj,printerReducer, activeTheme } = props;
+    const { navigation, userObj, printerReducer, activeTheme } = props;
     const data = navigation.dangerouslyGetState()?.routes?.filter(item => item.name === 'OrderDetails')[0]?.params?.item;
     const [state, setState] = useState({
         "loader": false,
@@ -27,7 +27,23 @@ function OrderDetails(props) {
         totalAmount: 0,
         joviJobID: 0,
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
+        disablePrint: false,
+        interval: null
     });
+    const printReceiptHandler = () => {
+        let interval = setTimeout(() => {
+            setState(pre => ({
+                ...pre,
+                disablePrint: false,
+            }));
+            clearInterval(interval);
+        }, 1500);
+        setState(pre => ({
+            ...pre,
+            disablePrint: true,
+        }));
+        printReceipt(state.orderList, state.orderObj, props.user);
+    }
     const counterChange = (item, index) => {
         if (index === 0 && item.quantity - 1 === 0) return;
         if (index !== 0 && (item.quantity + 1) > item.actualQuantity) {
@@ -216,7 +232,7 @@ function OrderDetails(props) {
     useEffect(useCallback(() => {
         getData();
         getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
-            if(data?.item?.orderNo === orderId){
+            if (parseInt(data?.item?.orderNo) === parseInt(orderId)) {
                 navigation.goBack();
             }
             console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
@@ -243,10 +259,12 @@ function OrderDetails(props) {
             });
         });
         return () => {
+            clearInterval(state.interval);
             setState({
                 ...state,
                 orderList: [],
-                paginationInfo: {}
+                paginationInfo: {},
+                interval: null
             });
             getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
                 console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
@@ -289,7 +307,7 @@ function OrderDetails(props) {
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Order List</Text>
                     <View style={{ width: 130, flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        {state.orderObj.orderStatus ===1&&<TouchableOpacity onPress={printerReducer.currentPrinter===null?()=>searchConnectPrinter():() => printReceipt(state.orderList,state.orderObj,props.user)} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor:printerReducer.currentPrinter===null?props.activeTheme.grey:props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Print</Text></TouchableOpacity>}
+                        {state.orderObj.orderStatus === 1 && <TouchableOpacity onPress={state.disablePrint === true ? () => {CustomToast.error('Please Wait...') } :printerReducer.currentPrinter === null ? () => searchConnectPrinter() : () => printReceipt(state.orderList, state.orderObj, props.user)} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: printerReducer.currentPrinter === null|| state.disablePrint === true  ? props.activeTheme.grey : props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Print</Text></TouchableOpacity>}
                         {/* {state.orderObj.orderStatus !== 1 && state.qrCodeSuccess !== true ? <TouchableOpacity onPress={() => toggleQR_CodeScan(true)} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Return</Text></TouchableOpacity> : null} */}
                         <Text style={{ marginRight: 14 }}>Total: {state.orderList.length < 1 ? '0' : state.orderList.length < 10 ? '0' + state.orderList.length : state.orderList.length}</Text>
                     </View>
@@ -331,7 +349,7 @@ function OrderDetails(props) {
                                 </View>
                                 <View style={tabStyles.tabTextContainer}>
                                     <View style={{ flex: 0.9 }}>
-                                        <Text style={{ flex: 2, ...tabStyles.tabTitle(14, props.activeTheme.black, 3, '300'), maxWidth: 255 }}>{item.brandName+' '+item.jobItemName}</Text>
+                                        <Text style={{ flex: 2, ...tabStyles.tabTitle(14, props.activeTheme.black, 3, '300'), maxWidth: 255 }}>{item.brandName + ' ' + item.jobItemName}</Text>
                                         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, ...tabStyles.tabDescription(12, props.activeTheme.black, 1, '300') }}>{item.attributeDataVMList.filter(it => it.attributeTypeName !== 'Quantity').map((it, j) => {
                                             if (it.attributeTypeName === 'Color') {
                                                 return <View key={j + state.orderList.length} style={{ backgroundColor: it.productAttrName.toLowerCase(), height: 13, width: 13, borderRadius: 10, marginRight: 5 }}></View>
@@ -341,7 +359,7 @@ function OrderDetails(props) {
                                         <Text style={{ flex: 1, ...tabStyles.tabDescription(12, props.activeTheme.black, 1, '300') }}>Rs. {item.price}</Text>
                                     </View>
                                 </View>
-                                {state.orderObj.orderStatus === 1 ? <View style={{ flexDirection: 'row',left:25, alignSelf: 'center', justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
+                                {state.orderObj.orderStatus === 1 ? <View style={{ flexDirection: 'row', left: 25, alignSelf: 'center', justifyContent: 'space-around', alignItems: 'center', backgroundColor: props.activeTheme.lightGrey, borderRadius: 20, width: 70, height: 25 }}>
                                     {
                                         ['-', item.quantity, '+'].map((btn, idx) => idx === 1 ? <Text key={idx} style={{}}>{btn}</Text> : <TouchableOpacity key={idx} style={{ backgroundColor: disableQuantityCounter(item, idx), height: 22, width: 22, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }} onPress={() => counterChange(item, idx)}>
                                             <Text style={{}}>{btn}</Text>

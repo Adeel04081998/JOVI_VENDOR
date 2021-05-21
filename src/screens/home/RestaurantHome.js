@@ -86,7 +86,7 @@ function RestaurantHome(props) {
         // getData(val);
         setState(pre => ({
             ...pre,
-            categoryData: val === '' ? pre.categoryDataTemp : pre.categoryDataTemp.filter(item => { return item.name.toLowerCase().includes(val.toLowerCase()) })
+            categoryData: val === '' ? pre.categoryDataTemp : pre.categoryDataTemp.filter(item => { return item.name.toLowerCase().includes(val.toLowerCase()) || (item.subCategories.filter(subItem => {return subItem.name.toLowerCase().includes(val.toLowerCase())}).length>0) })
         }))
     }, 100)
     useFocusEffect(useCallback(() => {

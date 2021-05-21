@@ -28,7 +28,23 @@ function ResOrderDetails(props) {
         joviJobID: 0,
         orderObj: data && data.item && data.item.orderNo ? data?.item : 0,
         focusedItem: null,
+        disablePrint:false,
+        interval:null
     });
+    const printReceiptHandler = () => {
+        let interval =  setTimeout(() => {
+            setState(pre=>({
+                ...pre,
+                disablePrint:false,
+            }));
+            clearInterval(interval);
+        },1500);
+        setState(pre=>({
+            ...pre,
+            disablePrint:true,
+        }));
+        printReceipt(state.orderList,state.orderObj,props.user);
+    }
     const changeStatusItem = (item) => {
         if (item.pitstopDealID > 0) {
             outOfStock(item);
@@ -167,7 +183,7 @@ function ResOrderDetails(props) {
         getData();
         console.log('UseEffect OrderDEtails:',getHubConnectionInstance('VendorJobCompleted'))
         getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
-            if(data?.item?.orderNo === orderId){
+            if(parseInt(data?.item?.orderNo) === parseInt(orderId)){
                 navigation.goBack();
             }
             console.log('---------------------------> On Vendor Job Complete Signal R in OrderPage: ', orderId, orderMsg);
@@ -194,10 +210,12 @@ function ResOrderDetails(props) {
             });
         });
         return () => {
+            clearInterval(state.interval);
             setState({
                 ...state,
                 orderList: [],
-                paginationInfo: {}
+                paginationInfo: {},
+                interval:null
             });
             getHubConnectionInstance('VendorJobCompleted')?.on('VendorJobCompleted', (orderId, orderMsg) => {
                 console.log('---------------------------> On Vendor Job Complete Signal R: ', orderId, orderMsg);
@@ -241,7 +259,7 @@ function ResOrderDetails(props) {
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Order List</Text>
                     <View style={{ width: 130, flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        {state.orderObj.orderStatus ===1&&<TouchableOpacity onPress={printerReducer.currentPrinter===null?()=>searchConnectPrinter():() => printReceipt(state.orderList,state.orderObj,props.user)} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor:printerReducer.currentPrinter===null?props.activeTheme.grey:props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Print</Text></TouchableOpacity>}
+                        {state.orderObj.orderStatus === 1 &&<TouchableOpacity onPress={state.disablePrint===true?()=>{CustomToast.error('Please Wait...')}:printerReducer.currentPrinter===null?()=>searchConnectPrinter():() => printReceiptHandler()} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor:printerReducer.currentPrinter===null || state.disablePrint === true?props.activeTheme.grey:props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Print</Text></TouchableOpacity>}
                         {/* {state.orderObj.orderStatus !== 1 && state.qrCodeSuccess !== true ? <TouchableOpacity onPress={() => toggleQR_CodeScan(true)} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Return</Text></TouchableOpacity> : null} */}
                         <Text style={{ marginRight: 14 }}>Total: {state.orderList.length < 1 ? '0' : state.orderList.length < 10 ? '0' + state.orderList.length : state.orderList.length}</Text>
                     </View>

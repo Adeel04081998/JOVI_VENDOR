@@ -111,9 +111,9 @@ export const getRequest = async (url, customHeaders, dispatch, onSuccess, onErro
             else if (error.response.data.statusCode === 500) CustomToast.error('Something Went Wrong!!');
         }
         else if (error?.response?.status) {
-            if (error.response.status === 400) CustomToast.error('Something Went Wrong!!');
-            else if (error.response.status === 404) CustomToast.error('Something Went Wrong ddd!!');
-            else if (error.response.status === 500) CustomToast.error('Something Went Wrong!!');
+            // if (error.response.status === 400) CustomToast.error('Something Went Wrong!!');
+            // else if (error.response.status === 404) CustomToast.error('Something Went Wrong ddd!!');
+            if (error.response.status === 500) CustomToast.error('Something Went Wrong!!');
         }
         hideLoaderAfterCall && (modalLoader === true ? dispatch(showHideModalLoader(false)) : dispatch(showHideLoader(false, '')));
         onError(error);

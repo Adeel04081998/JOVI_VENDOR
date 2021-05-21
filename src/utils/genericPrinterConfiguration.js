@@ -87,10 +87,10 @@ export const printBillTest = () => {
 // }
 export const printReceipt = (orderDetails, orderInfo, userInfo) => {
     let jobItems = ''
-    orderDetails.map((item, i) => {
+    orderDetails.filter(item => item.jobItemStatus === 1).map((item, i) => {
         let orderItem = '';
         let index = i + 1;
-        if (item.jobItemStatus !== 1) {
+        if (item.jobItemStatus === 1) {
             if (i === 0) {
                 orderItem = (index + ". " + (userInfo?.pitstopType === 4 ? item.jobItemName : item.brandName + " " + item.jobItemName) + "  x  " + item.quantity + "\n    ");
             } else {
@@ -110,7 +110,7 @@ export const printReceipt = (orderDetails, orderInfo, userInfo) => {
         }
     });
     let bill = `<C><D>Jovi</D></C>\n
-    <C>${userInfo?.pitstopName}</C>\n
+    ${userInfo?.pitstopName}\n
     Order No: ${orderInfo?.orderNo}       ${orderInfo?.orderCreationTime}\n
     <D>----------------------</D>\n
     ${jobItems}

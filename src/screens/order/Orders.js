@@ -58,8 +58,8 @@ function Orders(props) {
                     setState(prevState => ({
                         ...prevState,
                         itemsPerPage: itemsPerPageNew !== false ? itemsPerPageNew : prevState.itemsPerPage,
-                        orderList: res.data.vendorOrdersViewModel.ordersDataList.sort((a, b) => { if (a['orderNo'] < b['orderNo']) { return 1; } else if (a['orderNo'] > b['orderNo']) { return -1; } else { return 0; } }).sort((a, b) => { if (a['orderStatus'] < b['orderStatus']) { return -1; } else if (a['orderStatus'] > b['orderStatus']) { return 1; } else { return 0; } }),
-                        orderListTemp: res.data.vendorOrdersViewModel.ordersDataList.sort((a, b) => { if (a['orderNo'] < b['orderNo']) { return 1; } else if (a['orderNo'] > b['orderNo']) { return -1; } else { return 0; } }).sort((a, b) => { if (a['orderStatus'] < b['orderStatus']) { return -1; } else if (a['orderStatus'] > b['orderStatus']) { return 1; } else { return 0; } }),
+                        orderList: res.data.vendorOrdersViewModel.ordersDataList,
+                        orderListTemp: res.data.vendorOrdersViewModel.ordersDataList,
                         paginationInfo: res.data?.vendorOrdersViewModel?.paginationInfo
                     }))
                 } else {
