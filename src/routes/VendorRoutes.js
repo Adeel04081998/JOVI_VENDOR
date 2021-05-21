@@ -21,7 +21,7 @@ import { localNotificationService } from '../services/LocalNotificationServices'
 import Legal from '../screens/legal/Legal';
 import { sharedSendFCMTokenToServer } from '../utils/sharedActions';
 import { postRequest } from '../services/api';
-
+import { clearPrinter } from '../utils/genericPrinterConfiguration';
 // const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 const VendorRoutes = (props) => {
@@ -89,19 +89,19 @@ const VendorRoutes = (props) => {
                 //     }
                 // }
                 console.log("onNotification.notify -> ", notify)
-                if(!notify.notification){
-                    notify={
+                if (!notify.notification) {
+                    notify = {
                         ...notify,
-                        notification:{
-                            title:notify.title,
-                            body:notify.body
+                        notification: {
+                            title: notify.title,
+                            body: notify.body
                         }
                     }
                 }
                 localNotificationService.showNotification(10, notify.notification.title, notify.notification.body, notify, {
                     soundName: Platform.select({ android: "my_sound.mp3", ios: "default" }),
-                            sound:'android.resource://com.jovivendors/raw/my_sound.mp3',
-                            playSound: true,
+                    sound: 'android.resource://com.jovivendors/raw/my_sound.mp3',
+                    playSound: true,
                     userInteraction: true,
                 },
                     // actions array
@@ -110,8 +110,8 @@ const VendorRoutes = (props) => {
             };
             function onOpenNotification(notify) {
                 console.log("onOpenNotification.notify -> ", notify)
-                if(notify && notify.title){
-                    if(notify.title.toString().toLowerCase().includes('recieved')){
+                if (notify && notify.title) {
+                    if (notify.title.toString().toLowerCase().includes('recieved')) {
                         props.navigatorPros.navigation?.navigate('Orders');
                     }
                 }
@@ -132,6 +132,7 @@ const VendorRoutes = (props) => {
                 console.log('[MainDrawer] cleared!!');
                 localNotificationService.unRegister();
                 fcmService.unRegister();
+                clearPrinter();
             }
         }
 
