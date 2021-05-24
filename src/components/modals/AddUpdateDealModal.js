@@ -9,13 +9,13 @@ import { getRequest, postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { TextInput } from 'react-native-gesture-handler';
 import modalCam from '../../assets/profile/camera.svg'
-import { camelToTitleCase, priceValidation, renderPicture } from '../../utils/sharedActions';
+import { camelToTitleCase, convert24To12Hour, convertTime12to24, handleTimeChange, priceValidation, renderPicture } from '../../utils/sharedActions';
 import { UPDATE_MODAL_HEIGHT } from '../../redux/actions/types';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 import { sharedImagePickerHandler } from '../../utils/sharedActions';
 import { closeModalAction } from '../../redux/actions/modal';
-import { CustomInput } from '../SharedComponents';
+import { CustomInput, TimePicker12 } from '../SharedComponents';
 const AddUpdateDealModal = (props) => {
     const { dispatch, updateDeal } = props;
     // console.log(item)
@@ -67,9 +67,8 @@ const AddUpdateDealModal = (props) => {
     }
     const onTimeChange = (val, index) => {
         let selectedVal = state.selectedDate?.split(' ');
-        let selectedTime = selectedVal[1]?.split(':');
-        selectedTime[index] = val;
-        selectedVal[1] = selectedTime.join(':');
+        let newTime = handleTimeChange(val,selectedVal[1],index);
+        selectedVal[1] = convertTime12to24(newTime);
         console.log('Test:', selectedVal, selectedVal.join(' '))
         setState(pre => ({ ...pre, selectedDate: selectedVal.join(' ') }));
     }
@@ -216,7 +215,7 @@ const AddUpdateDealModal = (props) => {
     }, []);
     const onSave = () => {
         let check = false;
-        if(parseInt(state.deal.price) === 0 ||state.deal.price === '' ){
+        if (parseInt(state.deal.price) === 0 || state.deal.price === '') {
             CustomToast.error('Price can\'t be empty or zero');
             return;
         }
@@ -232,7 +231,7 @@ const AddUpdateDealModal = (props) => {
         formData.append('StartDate', state.deal.pitstopDealID === 0 ? state.deal.startDate + ' 00:10' : state.deal.startDate);
         formData.append('EndDate', state.deal.pitstopDealID === 0 ? state.deal.endDate + ' 23:50' : state.deal.endDate);
         formData.append('Description', state.deal.description);
-        formData.append('DealPrice', state.deal.price === ''?0:state.deal.price);
+        formData.append('DealPrice', state.deal.price === '' ? 0 : state.deal.price);
         formData.append('IsActive', state.deal.inActiveIndex === 0 ? true : false);
         formData.append(
             'DealImageList[0].joviImageID',
@@ -289,7 +288,7 @@ const AddUpdateDealModal = (props) => {
                 props.onSave();
             }, (err) => {
                 if (err) CustomToast.error('Something went wrong!');
-            }, '',false,true);
+            }, '', false, true);
 
         }
     }
@@ -342,7 +341,7 @@ const AddUpdateDealModal = (props) => {
                 <Animated.View style={{ flex: new Animated.Value(4), backgroundColor: 'transparent' }}>
                     <View style={{ ...styles.tempWrapper(props.activeTheme, props.keypaidOpen, 2) }}>
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
-                            {props?.user?.canUpdatePrices !== true?<Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text>:<></>}
+                            {props?.user?.canUpdatePrices !== true ? <Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text> : <></>}
                             {/* <Text style={{ margin: 15, ...commonStyles.fontStyles(18, props.activeTheme.black, 5), alignSelf: 'flex-start' }, styles.catpion(props.activeTheme)}>Create a Deal</Text> */}
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
@@ -387,7 +386,7 @@ const AddUpdateDealModal = (props) => {
                                         onlyText={props?.user?.canUpdatePrices === true ? false : true}
                                         inputProps={{ keyboardType: 'numeric' }}
                                         parentViewStyle={{ paddingLeft: 0 }}
-                                        onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: priceValidation(val) ?val:pre.deal.price } }))}
+                                        onChangeText={(val) => setState(pre => ({ ...pre, deal: { ...pre.deal, price: priceValidation(val) ? val : pre.deal.price } }))}
                                         inputViewStyle={{ width: '100%' }}
                                     />
 
@@ -419,7 +418,7 @@ const AddUpdateDealModal = (props) => {
                                                 label={'Start Date'}
                                                 activeTheme={props.activeTheme}
                                                 onlyText={true}
-                                                parentViewStyle={{marginLeft:-10}}
+                                                parentViewStyle={{ marginLeft: -10 }}
                                                 textProps={{ onPress: props?.user?.canUpdatePrices === true ? () => setDatePickerState('startDate') : () => { } }}
                                                 inputViewStyle={{ width: '100%' }}
                                                 textStyle={{ ...commonStyles.fontStyles(13, props.activeTheme.grey, 3) }}
@@ -643,47 +642,13 @@ const AddUpdateDealModal = (props) => {
                                     }
                                 </Picker>
                             </View>
-                            <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Time</Text>
-
-                            <View style={{ width: '100%', flexDirection: 'row' }}>
-                                <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                            </View>
-                            <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                <Picker
-                                    accessibilityLabel={"hours"}
-                                    style={{ zIndex: 500, width: 115 }}
-                                    mode="dialog" // "dialog" || "dropdown"
-                                    // prompt="Select Hours"
-                                    selectedValue={(state.selectedDate.split(' ')[1] || "HH:MM").split(":")[0]}
-                                    onValueChange={(value, i) => onTimeChange(value, 0)}
-                                >
-                                    {
-                                        Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                            .map((item, i) => (
-                                                <Picker.Item key={i} label={item} value={item} />
-                                            ))
-                                    }
-                                </Picker>
-
-                                <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
-
-                                <Picker
-                                    accessibilityLabel={"minutes"}
-                                    style={{ zIndex: 500, width: 115 }}
-                                    mode="dialog" // "dialog" || "dropdown"
-                                    // prompt="Select Minutes"
-                                    selectedValue={(state.selectedDate.split(' ')[1] || "HH:MM").split(":")[1]}
-                                    onValueChange={(value, i) => onTimeChange(value, 1)}
-                                >
-                                    {
-                                        Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                            .map((item, i) => (
-                                                <Picker.Item key={i} label={item} value={item} />
-                                            ))
-                                    }
-                                </Picker>
-                            </View>
+                            <TimePicker12
+                                activeTheme={props.activeTheme}
+                                time={convert24To12Hour(state.selectedDate.split(' ')[1]).time}
+                                title={'Set Time'}
+                                noButtons={true}
+                                onTimeChange={(val, index) => onTimeChange(val, index)}
+                            />
                             <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
                                 <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: '' })) }}>
                                     <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>

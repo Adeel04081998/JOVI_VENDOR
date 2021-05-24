@@ -99,7 +99,6 @@ export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinati
                                             </View>
                                             : null
                                     }
-
                                 </>
                                 :
                                 <TouchableOpacity onPress={rightIconHandler}>
@@ -107,7 +106,6 @@ export default function ScreenHeader({ leftIcon, leftIconHandler, finalDestinati
                                         <SvgXml xml={rightIcon} height={height || 22} width={width || 22} />
                                     </View>
                                 </TouchableOpacity>
-
                         }
                     </Right>
                     : null

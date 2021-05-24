@@ -9,10 +9,17 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { closeModalAction } from '../../redux/actions/modal';
-import { CustomInput } from '../SharedComponents';
-import { error400, priceValidation } from '../../utils/sharedActions';
+import { CustomInput, TimePicker12,TimePicker24 } from '../SharedComponents';
+import { convert24To12Hour, convertTime12to24, error400, handleTimeChange, priceValidation } from '../../utils/sharedActions';
 const UpdateR_Product = (props) => {
-    const { product } = props;
+    let { product } = props;
+    if(product.startTime||product.endTime||product.estimateTime){
+        product = {...product,
+        startTime: convert24To12Hour(product.startTime).time,
+        endTime: convert24To12Hour(product.endTime).time,
+        // estimateTime: convert24To12Hour(product.estimateTime).time,
+        }
+    }
     const [state, setState] = useState({
         showDropdown: false,
         product: product ? { endTime: '', startTime: '', estimateTime: '', ...product } : {},
@@ -33,12 +40,10 @@ const UpdateR_Product = (props) => {
 
     }
     const onTimeChange = (val, index, key) => {
-        let selectedTime = state.product[key]?.split(':');
-        selectedTime[index] = val;
-        setState(pre => ({ ...pre, product: { ...pre.product, [key]: selectedTime.join(':') } }));
+        setState(pre => ({ ...pre, product: { ...pre.product, [key]: handleTimeChange(val, state.product[key], index,key === 'estimateTime'?true:false) } }));
     }
     const onSave = () => {
-        if(state.product.basePrice===''||parseInt(state.product.basePrice) === 0){
+        if (state.product.basePrice === '' || parseInt(state.product.basePrice) === 0) {
             CustomToast.error('Price can\'t be empty or zero');
             return;
         }
@@ -48,7 +53,7 @@ const UpdateR_Product = (props) => {
                 attributes.push({
                     "itemOptionID": attr.itemOptionID,
                     "productAttributeID": attr.attributeID,
-                    "addOnPrice": attr.price===''?0:attr.price,
+                    "addOnPrice": attr.price === '' ? 0 : attr.price,
                     "isActive": attr.isActive
                 })
             })
@@ -56,10 +61,11 @@ const UpdateR_Product = (props) => {
         console.log('Update Product:', state.product)
         postRequest('Api/Vendor/Pitstop/PitstopItem/Update', {
             "pitstopItemID": state.product.pitstopItemID,
-            "price": state.product.basePrice===''?0:state.product.basePrice,
+            "price": state.product.basePrice === '' ? 0 : state.product.basePrice,
             "estimateTime": state.product.estimateTime,
-            "startTime": state.product.startTime,
-            "endTime": state.product.endTime,
+            // "estimateTime": convertTime12to24(state.product.estimateTime),
+            "startTime": convertTime12to24(state.product.startTime),
+            "endTime":convertTime12to24(state.product.endTime),
             "availablityStatus": state.product.availabilityStatusStr === 'Available' ? 1 : state.product.availabilityStatusStr === 'Out Of Stock' ? 2 : 3,
             "itemOptions": attributes
         }, {}, props.dispatch, (res) => {
@@ -69,7 +75,7 @@ const UpdateR_Product = (props) => {
         }, (err) => {
             if (err.status === 400) error400(err)
             else CustomToast.error('Something went wrong!');
-        }, '',false,true);
+        }, '', false, true);
     }
     // const renderSelectionList = () => {
     //     let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
@@ -104,7 +110,7 @@ const UpdateR_Product = (props) => {
                             }
                         </View> */}
                         <View style={{ paddingHorizontal: 15, width: '100%', flex: 1 }}>
-                            {props?.user?.canUpdatePrices !== true?<Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text>:<></>}
+                            {props?.user?.canUpdatePrices !== true ? <Text style={{ ...commonStyles.fontStyles(undefined, props.activeTheme.default, 1, 'bold') }}>{"*Please Contact Your Account Manager For Update"}</Text> : <></>}
                             <ScrollView style={{ marginBottom: 15 }}>
                                 <CustomInput
                                     value={state.product.productName}
@@ -172,131 +178,32 @@ const UpdateR_Product = (props) => {
                                     <Text>{state.product.description}</Text>
                                 </View>
                                 <>
-                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Preparation Time</Text>
-                                    <View style={{ width: '100%', flexDirection: 'row' }}>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                                    </View>
-                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                        <Picker
-                                            accessibilityLabel={"hours"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Hours"
-                                            selectedValue={(state.product.estimateTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0, 'estimateTime')}
-                                        >
-                                            {
-                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-
-                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
-
-                                        <Picker
-                                            accessibilityLabel={"minutes"}
-                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Minutes"
-                                            selectedValue={(state.product.estimateTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1, 'estimateTime')}
-                                        >
-                                            {
-                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                    </View>
+                                    <TimePicker24
+                                        activeTheme={props.activeTheme}
+                                        time={state.product.estimateTime}
+                                        title={'Set Preparation Time'}
+                                        noButtons={true}
+                                        onTimeChange={(val, index) => onTimeChange(val, index, 'estimateTime')}
+                                    />
                                 </>
                                 <>
                                     <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Available Time</Text>
-                                    <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4), left: 10 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Start Time</Text>
-                                    <View style={{ width: '100%', flexDirection: 'row' }}>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                                    </View>
-                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                        <Picker
-                                            accessibilityLabel={"hours"}
-                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            selectedValue={(state.product.startTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0, 'startTime')}
-                                        >
-                                            {
-                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
-                                        <Picker
-                                            accessibilityLabel={"minutes"}
-                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            selectedValue={(state.product.startTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1, 'startTime')}
-                                        >
-                                            {
-                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                    </View>
+                                    <TimePicker12
+                                        activeTheme={props.activeTheme}
+                                        time={state.product.startTime}
+                                        title={'Start Time'}
+                                        noButtons={true}
+                                        onTimeChange={(val, index) => onTimeChange(val, index, 'startTime')}
+                                    />
                                 </>
                                 <>
-                                    <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4), left: 10 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>End Time</Text>
-                                    <View style={{ width: '100%', flexDirection: 'row' }}>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                                    </View>
-                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                        <Picker
-                                            accessibilityLabel={"hours"}
-                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Hours"
-                                            selectedValue={(state.product.endTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0, 'endTime')}
-                                        >
-                                            {
-                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
-                                        <Picker
-                                            accessibilityLabel={"minutes"}
-                                            enabled={props?.user?.canUpdatePrices === true ? true : false}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Minutes"
-                                            selectedValue={(state.product.endTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1, 'endTime')}
-                                        >
-                                            {
-                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                    </View>
+                                    <TimePicker12
+                                        activeTheme={props.activeTheme}
+                                        time={state.product.endTime}
+                                        title={'End Time'}
+                                        noButtons={true}
+                                        onTimeChange={(val, index) => onTimeChange(val, index, 'endTime')}
+                                    />
                                 </>
                                 {state.product.itemGroupedOptions && state.product.itemGroupedOptions.length > 0 ?
                                     state.product.itemGroupedOptions.map((it, i) => {
@@ -310,7 +217,7 @@ const UpdateR_Product = (props) => {
                                                     <View style={{ flexDirection: 'row' }}>
                                                         <CheckBox
                                                             checked={itemOptions.isActive ? itemOptions.isActive : false}
-                                                            onPress={props?.user?.canUpdatePrices === true ?(e) => changeAttribute(e, i, j, 'isActive'):()=>{}}
+                                                            onPress={props?.user?.canUpdatePrices === true ? (e) => changeAttribute(e, i, j, 'isActive') : () => { }}
                                                             style={{
                                                                 alignSelf: "center",
                                                                 color: '#7359BE',
@@ -335,7 +242,7 @@ const UpdateR_Product = (props) => {
                                                         flexDirection: 'row'
                                                     }}>
                                                         {props?.user?.canUpdatePrices === true ?
-                                                            <TextInput keyboardType='numeric' style={{}} onChangeText={val => priceValidation(val)?changeAttribute(val, i, j, 'price'):()=>{}} value={itemOptions.price?.toString()} />
+                                                            <TextInput keyboardType='numeric' style={{}} onChangeText={val => priceValidation(val) ? changeAttribute(val, i, j, 'price') : () => { }} value={itemOptions.price?.toString()} />
                                                             :
                                                             <Text>{itemOptions.price?.toString()}</Text>
                                                         }

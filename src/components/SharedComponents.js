@@ -9,22 +9,21 @@ import { Picker } from 'native-base';
 
 import { SvgXml } from "react-native-svg";
 import allocatingRiderIcon from "../assets/allocating-rider.gif";
-import { calculateTimeDifference, camelToTitleCase, getHubConnectionInstance, navigateWithResetScreen } from '../utils/sharedActions';
+import { calculateTimeDifference, camelToTitleCase, convert24To12Hour, getHubConnectionInstance, navigateWithResetScreen } from '../utils/sharedActions';
 import { getRequest } from '../services/api';
 import AsyncStorage from '@react-native-community/async-storage';
 import CustomToast from '../components/toast/CustomToast';
 import { closeModalAction } from '../redux/actions/modal';
 import commonStyles from '../styles/styles';
 import { TextInput } from 'react-native-gesture-handler';
-export const TimePicker12 = ({ time, title, onTimeChange, activeTheme,saveTime ,onCancel}) => {
-    return <KeyboardAvoidingView style={{ ...commonStyles.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
+export const TimePicker24 = ({ time,noButtons, title, onTimeChange, activeTheme,saveTime ,onCancel}) => {
+    return <>
         <Text style={{ ...commonStyles.fontStyles(16, activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(title??'')}</Text>
         <View style={{ width: '100%', flexDirection: 'row' }}>
-            <Text style={{ ...commonStyles.caption, paddingLeft: 20, width: '33%', left: 0, color: '#000' }}>Hour</Text>
-            <Text style={{ ...commonStyles.caption, paddingLeft: 17, width: '33%', left: 0, color: '#000' }}>Minutes</Text>
-            <Text style={{ ...commonStyles.caption, paddingLeft: 17, width: '33%', left: 0, color: '#000' }}>AM/PM</Text>
+            <Text style={{ ...commonStyles.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
+            <Text style={{ ...commonStyles.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
         </View>
-        <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom: 60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+        <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom:noButtons===true?0:60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
             <Picker
                 accessibilityLabel={"hours"}
                 style={{ zIndex: 500, width: 115 }}
@@ -34,7 +33,7 @@ export const TimePicker12 = ({ time, title, onTimeChange, activeTheme,saveTime ,
                 onValueChange={(value, i) => onTimeChange(value, 0)}
             >
                 {
-                    Array.from(Array(12), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                    Array.from(Array(24), (item, i) => ( i.toString()))
                         .map((item, i) => (
                             <Picker.Item key={i} label={item} value={item} />
                         ))
@@ -55,31 +54,85 @@ export const TimePicker12 = ({ time, title, onTimeChange, activeTheme,saveTime ,
                         ))
                 }
             </Picker>
-            <Text style={{ ...commonStyles.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>  </Text>
-            <Picker
-                accessibilityLabel={"Period"}
-                style={{ zIndex: 500, width: 115 }}
-                mode="dialog" // "dialog" || "dropdown"
-                selectedValue={(time || "HH:MM").split(":")[1]}
-                onValueChange={(value, i) => onTimeChange(value, 1)}
-            >
-                {
-
-                    ['am', 'pm'].map((item, i) => (
-                        <Picker.Item key={i} label={item} value={item} />
-                    ))
-                }
-            </Picker>
         </View>
-        <View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+        {noButtons === true?null:<View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
             <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => onCancel()}>
                 <Text style={{ ...commonStyles.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
                 <Text style={{ ...commonStyles.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
             </TouchableOpacity>
+        </View>}
+    </>
+}
+export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,saveTime ,onCancel}) => {
+    let timeConvert = convert24To12Hour(time);
+    let time12 = null;
+    if(timeConvert.validation === true){
+        time12 = timeConvert.time;
+    }
+    return <>
+        <Text style={{ ...commonStyles.fontStyles(16, activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(title??'')}</Text>
+        <View style={{ width: '100%', flexDirection: 'row' }}>
+            <Text style={{ ...commonStyles.caption, paddingLeft: 20, width: '33%', left: 0, color: '#000' }}>Hour</Text>
+            <Text style={{ ...commonStyles.caption, paddingLeft: 17, width: '33%', left: 0, color: '#000' }}>Minutes</Text>
+            <Text style={{ ...commonStyles.caption, paddingLeft: 17, width: '33%', left: 0, color: '#000' }}>AM/PM</Text>
         </View>
-    </KeyboardAvoidingView>
+        <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, marginBottom:noButtons===true?0:60, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
+            <Picker
+                accessibilityLabel={"hours"}
+                style={{ zIndex: 500, width: 115 }}
+                mode="dialog" // "dialog" || "dropdown"
+                // prompt="Select Hours"
+                selectedValue={(time || "HH:MM AM").split(" ")[0].split(":")[0]}
+                onValueChange={(value, i) => onTimeChange(value, 0)}
+            >
+                {
+                    Array.from(Array(13), (item, i) => ( i.toString()))
+                        .filter(item=>parseInt(item)!==0).map((item, i) => (
+                            <Picker.Item key={i} label={item} value={item} />
+                        ))
+                }
+            </Picker>
+            <Text style={{ ...commonStyles.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
+            <Picker
+                accessibilityLabel={"minutes"}
+                style={{ zIndex: 500, width: 115 }}
+                mode="dialog" // "dialog" || "dropdown"
+                selectedValue={(time || "HH:MM AM").split(" ")[0].split(":")[1]}
+                onValueChange={(value, i) => onTimeChange(value, 1)}
+            >
+                {
+                    Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
+                        .map((item, i) => (
+                            <Picker.Item key={i} label={item} value={item} />
+                        ))
+                }
+            </Picker>
+            <Text style={{ ...commonStyles.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>  </Text>
+            <Picker
+                accessibilityLabel={"Period"}
+                style={{ zIndex: 500, width: 115 }}
+                mode="dialog" // "dialog" || "dropdown"
+                selectedValue={(time || "HH:MM AM").split(" ")[1]}
+                onValueChange={(value, i) => onTimeChange(value, 2)}
+            >
+                {
+                    ['AM', 'PM'].map((item, i) => (
+                        <Picker.Item key={i} label={item} value={item} />
+                    ))
+                }
+            </Picker>
+        </View>
+        {noButtons === true?null:<View style={{ position: 'absolute', bottom: 0, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => onCancel()}>
+                <Text style={{ ...commonStyles.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CANCEL</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ width: '50%', paddingVertical: 20, height: 60, backgroundColor: '#7359BE', justifyContent: 'center', alignItems: 'center' }} onPress={() => saveTime()}>
+                <Text style={{ ...commonStyles.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>CONTINUE{/*SAVE */}</Text>
+            </TouchableOpacity>
+        </View>}
+    </>
 }
 export const CustomInput = ({ label, textStyle, textProps, parentViewStyle, inputViewStyle, value, svgIcon, onChangeText, rightIcon, inputProps, activeTheme, onlyText }) => {
     return <View style={{ width: '100%', paddingLeft: 10, position: 'relative', ...parentViewStyle }}>

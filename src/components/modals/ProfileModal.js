@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 // import LinearGradient from 'react-native-linear-gradient';
 import Animated, { set } from 'react-native-reanimated';
 import styles from '../../screens/userRegister/UserRegisterStyles';
-import {camelToTitleCase, sharedlogoutUser, error400 } from '../../utils/sharedActions';
+import {camelToTitleCase, sharedlogoutUser, error400, convert24To12Hour,convertTime12to24,handleTimeChange } from '../../utils/sharedActions';
 // import CustomAndroidPickerItem from '../dropdowns/picker.android';
 // import { favHomeIcon } from '../../assets/svgIcons/customerorder/customerorder'
 import { SvgXml } from 'react-native-svg';
@@ -38,9 +38,9 @@ const ProfileModal = (props) => {
         mode: false,
         selectedValue: null,
         timePickMode: null,
-        openingTime: props.user.openingTime.split(':')[0] + ':' + props.user.openingTime.split(':')[1],
+        openingTime: convert24To12Hour(props.user.openingTime.split(':')[0] + ':' + props.user.openingTime.split(':')[1]).time,
         active: props.user.pitstopStatus === 1 ? true : false,
-        closingTime: props.user.closingTime.split(':')[0] + ':' + props.user.closingTime.split(':')[1],
+        closingTime: convert24To12Hour(props.user.closingTime.split(':')[0] + ':' + props.user.closingTime.split(':')[1]).time,
         workingDays: weekArr,
         vendorList: props?.user?.vendorPitstopDetailsList?.map(item => { return { ...item, text: item.personName } }),
         vendor: props?.user?.vendorPitstopDetailsList[0],
@@ -99,14 +99,14 @@ const ProfileModal = (props) => {
             return;
         }
         console.log('Profile Update Req:',{
-            "openingTime": state.openingTime,
-            "closingTime": state.closingTime,
+            "openingTime": convertTime12to24(state.openingTime),
+            "closingTime": convertTime12to24(state.closingTime),
             "daysOfWeek": state.workingDays.map((it, i) => { if (it === true) { return i } }).filter(it => it !== undefined),
             "pitstopStatus": state.active === true ? 1 : 4,
         });
         postRequest('Api/Vendor/Pitstop/Timings/Update', {
-            "openingTime": state.openingTime,
-            "closingTime": state.closingTime,
+            "openingTime": convertTime12to24(state.openingTime),
+            "closingTime": convertTime12to24(state.closingTime),
             "daysOfWeek": state.workingDays.map((it, i) => { if (it === true) { return i } }).filter(it => it !== undefined),
             "pitstopStatus": state.active === true ? 1 : 4,
         }, {}, props.dispatch, (res) => {
@@ -123,9 +123,7 @@ const ProfileModal = (props) => {
         }, '',false,true);
     }
     const onTimeChange = (val, index) => {
-        let selectedVal = state.selectedValue.split(':');
-        selectedVal[index] = val;
-        setState(pre => ({ ...pre, selectedValue: selectedVal.join(':') }));
+        setState(pre => ({ ...pre, selectedValue:handleTimeChange(val,pre.selectedValue,index) }));
     }
     const setWorkingDay = (i) => {
         let wrkingD = state.workingDays;
@@ -480,14 +478,16 @@ const ProfileModal = (props) => {
                                 </KeyboardAvoidingView>
                             </>
                             :
-                            <>
+                            <KeyboardAvoidingView style={{ ...commonStyles.wrapper }} behavior={Platform.OS === "ios" ? "padding" : null} onTouchStart={Platform.OS === "ios" ? null : null}>
                                 <TimePicker12 
                                     activeTheme={props.activeTheme}
-                                    time={state[state.timePickMode]}
+                                    time={state.selectedValue}
                                     title={state.timePickMode}
+                                    onTimeChange={onTimeChange}
+                                    saveTime={saveTime}
                                     onCancel={()=>{dispatch({ type: UPDATE_MODAL_HEIGHT, payload: false }); setState(pre => ({ ...pre, mode: false }));}}
                                 />
-                            </>
+                            </KeyboardAvoidingView>
             }
         </View>
     );

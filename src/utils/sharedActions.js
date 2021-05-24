@@ -240,7 +240,7 @@ export const handleForcingVersionUpdate = (postRequest, currentVersion, cbAllow,
             cbAllow && cbAllow();
         },
         (error) => {
-    console.log(`--> Error from "CheckAppVersion" API:`, ((error?.response) ? error.response : {}), error);
+            console.log(`--> Error from "CheckAppVersion" API:`, ((error?.response) ? error.response : {}), error);
             if (error?.statusCode === 417) {
                 const versionUpdateURL = (`market://details?id=com.jovivendors`);
                 cbForce && cbForce(versionUpdateURL);
@@ -723,7 +723,7 @@ export const attachOrderRecieveModal = () => {
     });
 };
 export const priceValidation = (val) => {
-    return val.includes(',') ||val.includes(' ') || val.includes('-') ||val.includes('.') || (parseInt(val)>100000) ?false:true;
+    return val.includes(',') || val.includes(' ') || val.includes('-') || val.includes('.') || (parseInt(val) > 100000) ? false : true;
 }
 export const error400 = (response) => {
     if (response && response.status === 500) {
@@ -813,7 +813,50 @@ const cameraResponseHandler = (response, cb, next) => {
         next(response);
     }
 }
-
+export const handleTimeChange = (value, prevValue, index, format24 = false) => {
+    if (format24 === true) {
+        let selectedVal = prevValue.split(':');
+        selectedVal[index] = value;
+        return selectedVal.join(':');
+    }
+    let selectedVal = prevValue.split(' ');
+    let firstHalf = selectedVal[0];
+    let secondHalf = selectedVal[1];
+    if (index !== 2) {
+        let splittedFH = firstHalf.split(':');
+        splittedFH[index] = value;
+        firstHalf = splittedFH.join(':');
+    } else {
+        secondHalf = value;
+    }
+    selectedVal[0] = firstHalf;
+    selectedVal[1] = secondHalf;
+    return selectedVal.join(' ');
+}
+export const convertTime12to24 = (time12h) => {
+    if(time12h === ''){
+        return '';
+    }
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    if (hours === '12') {
+        hours = '00';
+    }
+    if (modifier === 'PM') {
+        hours = parseInt(hours, 10) + 12;
+    }
+    return `${hours < 10 ? '0' + hours : hours}:${minutes}`;
+}
+export const convert24To12Hour = (time) => {
+    // Check correct time format and split into components
+    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+    if (time.length > 1) { // If time format correct
+        time = time.slice(1); // Remove full string match value
+        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+        time[0] = +(time[0] % 12 < 10 ? '0' + time[0] % 12 : time[0] % 12) || 12; // Adjust hours
+    }
+    return { time: time.join(''), validation: time.length > 1 }; // return adjusted time or original string
+}
 
 export const sharedLounchCameraOrGallary = async (pressType, cb, next) => {
     // debugger;
