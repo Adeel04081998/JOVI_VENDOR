@@ -29,7 +29,7 @@ export const TimePicker24 = ({ time,noButtons, title, onTimeChange,enabled, acti
                 style={{ zIndex: 500, width: 115 }}
                 mode="dialog" // "dialog" || "dropdown"
                 // prompt="Select Hours"
-                enabled={enabled??false}
+                enabled={enabled===false?false:true}
                 selectedValue={(time || "HH:MM").split(":")[0]}
                 onValueChange={(value, i) => onTimeChange(value, 0)}
             >
@@ -45,7 +45,7 @@ export const TimePicker24 = ({ time,noButtons, title, onTimeChange,enabled, acti
                 accessibilityLabel={"minutes"}
                 style={{ zIndex: 500, width: 115 }}
                 mode="dialog" // "dialog" || "dropdown"
-                enabled={enabled??false}
+                enabled={enabled===false?false:true}
                 selectedValue={(time || "HH:MM").split(":")[1]}
                 onValueChange={(value, i) => onTimeChange(value, 1)}
             >
@@ -84,7 +84,7 @@ export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,
             <Picker
                 accessibilityLabel={"hours"}
                 style={{ zIndex: 500, width: 115 }}
-                enabled={enabled??false}
+                enabled={enabled===false?false:true}
                 mode="dialog" // "dialog" || "dropdown"
                 // prompt="Select Hours"
                 selectedValue={(time || "HH:MM AM").split(" ")[0].split(":")[0]}
@@ -101,7 +101,7 @@ export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,
             <Picker
                 accessibilityLabel={"minutes"}
                 style={{ zIndex: 500, width: 115 }}
-                enabled={enabled??false}
+                enabled={enabled===false?false:true}
                 mode="dialog" // "dialog" || "dropdown"
                 selectedValue={(time || "HH:MM AM").split(" ")[0].split(":")[1]}
                 onValueChange={(value, i) => onTimeChange(value, 1)}
@@ -118,7 +118,7 @@ export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,
                 accessibilityLabel={"Period"}
                 style={{ zIndex: 500, width: 115 }}
                 mode="dialog" // "dialog" || "dropdown"
-                enabled={enabled??false}
+                enabled={enabled===false?false:true}
                 selectedValue={(time || "HH:MM AM").split(" ")[1]}
                 onValueChange={(value, i) => onTimeChange(value, 2)}
             >

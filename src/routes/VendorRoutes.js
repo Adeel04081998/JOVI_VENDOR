@@ -132,7 +132,7 @@ const VendorRoutes = (props) => {
                 console.log('[MainDrawer] cleared!!');
                 localNotificationService.unRegister();
                 fcmService.unRegister();
-                clearPrinter();
+                // clearPrinter();
             }
         }
 

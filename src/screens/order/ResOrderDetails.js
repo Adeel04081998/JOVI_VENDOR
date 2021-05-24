@@ -162,6 +162,7 @@ function ResOrderDetails(props) {
                         ...prevState,
                         orderList: res.data.vendorRestaurantOrderDetailsVM.itemsList,
                         joviJobID: res.data.vendorRestaurantOrderDetailsVM.joviJobID,
+                        disablePrint:res.data.vendorRestaurantOrderDetailsVM.itemsList.filter(it=>it.jobItemStatus === 1).length<1?'true':false,
                         totalAmount: res.data.vendorRestaurantOrderDetailsVM.totalAmount
                     }))
                 } else {
@@ -259,7 +260,7 @@ function ResOrderDetails(props) {
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }} onPress={() => { }}>Order List</Text>
                     <View style={{ width: 130, flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        {state.orderObj.orderStatus === 1 &&<TouchableOpacity onPress={state.disablePrint===true?()=>{CustomToast.error('Please Wait...')}:printerReducer.currentPrinter===null?()=>searchConnectPrinter():() => printReceiptHandler()} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor:printerReducer.currentPrinter===null || state.disablePrint === true?props.activeTheme.grey:props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Print</Text></TouchableOpacity>}
+                        {state.orderObj.orderStatus === 1 && <TouchableOpacity onPress={state.disablePrint===true || state.disablePrint === 'true'?()=>{CustomToast.error(state.disablePrint==='true'?'No Available Item(s) Found':'Please Wait...')}:printerReducer.currentPrinter===null?()=>searchConnectPrinter():() => printReceiptHandler()} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor:printerReducer.currentPrinter===null || state.disablePrint === true?props.activeTheme.grey:props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Print</Text></TouchableOpacity>}
                         {/* {state.orderObj.orderStatus !== 1 && state.qrCodeSuccess !== true ? <TouchableOpacity onPress={() => toggleQR_CodeScan(true)} style={{ width: 60, height: 25, marginRight: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: props.activeTheme.warning, borderRadius: 5 }}><Text style={{ ...commonStyles.fontStyles(15, props.activeTheme.white, 4) }}>Return</Text></TouchableOpacity> : null} */}
                         <Text style={{ marginRight: 14 }}>Total: {state.orderList.length < 1 ? '0' : state.orderList.length < 10 ? '0' + state.orderList.length : state.orderList.length}</Text>
                     </View>
