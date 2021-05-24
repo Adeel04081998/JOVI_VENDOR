@@ -2,7 +2,7 @@ import { Alert } from "react-native";
 import {
     BLEPrinter,
 } from "react-native-thermal-receipt-printer";
-import { SET_PRINTER } from "../redux/actions/types";
+import { SET_PRINTER, CLEAR_PRINTER } from "../redux/actions/types";
 import store from '../redux/store';
 let bluetoothPrinterHandler = BLEPrinter;
 const _connectPrinter = (printer) => {
@@ -47,6 +47,15 @@ const setPrinter = (printer) => {
         type: SET_PRINTER,
         payload: printer
     });
+}
+export const clearPrinter = (printer) => {
+    if (bluetoothPrinterHandler && store.getState().printerReducer) {
+        bluetoothPrinterHandler.closeConn().then(()=>{
+            store.dispatch({
+                type: CLEAR_PRINTER,
+            });
+        });
+    }
 }
 export const printTextTest = () => {
     store.getState().printerReducer && bluetoothPrinterHandler.printText("<C>sample text</C>\n");
