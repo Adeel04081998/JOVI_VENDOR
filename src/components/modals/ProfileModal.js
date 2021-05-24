@@ -348,7 +348,7 @@ const ProfileModal = (props) => {
                                     <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Wallet</Text>
                                     <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0 }}>Balance: {state.wallet.balance}</Text>
                                 </View>
-                                <ScrollView style={{ flex: 1, marginBottom: 30, width: '100%' }}
+                                <ScrollView style={{ flex: 1, width: '100%' }}
                                     onScroll={(e) => {
                                         let paddingToBottom = 10;
                                         paddingToBottom += e.nativeEvent.layoutMeasurement.height;
@@ -381,7 +381,7 @@ const ProfileModal = (props) => {
                                         })
                                     }
                                 </ScrollView>
-                                <View style={{ position: 'absolute', bottom: -30, flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                                <View style={{  flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
                                     <TouchableOpacity style={{ width: '100%', paddingVertical: 20, height: 60, backgroundColor: props.activeTheme.warning, justifyContent: 'center', alignItems: 'center' }} onPress={() => { setState(pre => ({ ...pre, mode: false })); }}>
                                         <Text style={{ ...stylesHome.caption, left: 0, color: 'white', marginVertical: 0, paddingVertical: 6, fontWeight: "bold" }}>Back</Text>
                                     </TouchableOpacity>
@@ -533,7 +533,7 @@ const stylesHome = StyleSheet.create({
         shadowColor: '#000',
         // paddingLeft: 15,
         // paddingRight: 15,
-        paddingBottom: 30, //15
+        // paddingBottom: 30, //15
         shadowOffset: {
             width: 0,
             height: 2,

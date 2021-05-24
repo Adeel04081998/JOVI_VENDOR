@@ -16,7 +16,7 @@ import CustomToast from '../components/toast/CustomToast';
 import { closeModalAction } from '../redux/actions/modal';
 import commonStyles from '../styles/styles';
 import { TextInput } from 'react-native-gesture-handler';
-export const TimePicker24 = ({ time,noButtons, title, onTimeChange, activeTheme,saveTime ,onCancel}) => {
+export const TimePicker24 = ({ time,noButtons, title, onTimeChange,enabled, activeTheme,saveTime ,onCancel}) => {
     return <>
         <Text style={{ ...commonStyles.fontStyles(16, activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set {camelToTitleCase(title??'')}</Text>
         <View style={{ width: '100%', flexDirection: 'row' }}>
@@ -29,6 +29,7 @@ export const TimePicker24 = ({ time,noButtons, title, onTimeChange, activeTheme,
                 style={{ zIndex: 500, width: 115 }}
                 mode="dialog" // "dialog" || "dropdown"
                 // prompt="Select Hours"
+                enabled={enabled??false}
                 selectedValue={(time || "HH:MM").split(":")[0]}
                 onValueChange={(value, i) => onTimeChange(value, 0)}
             >
@@ -44,6 +45,7 @@ export const TimePicker24 = ({ time,noButtons, title, onTimeChange, activeTheme,
                 accessibilityLabel={"minutes"}
                 style={{ zIndex: 500, width: 115 }}
                 mode="dialog" // "dialog" || "dropdown"
+                enabled={enabled??false}
                 selectedValue={(time || "HH:MM").split(":")[1]}
                 onValueChange={(value, i) => onTimeChange(value, 1)}
             >
@@ -65,7 +67,7 @@ export const TimePicker24 = ({ time,noButtons, title, onTimeChange, activeTheme,
         </View>}
     </>
 }
-export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,saveTime ,onCancel}) => {
+export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,saveTime ,enabled,onCancel}) => {
     let timeConvert = convert24To12Hour(time);
     let time12 = null;
     if(timeConvert.validation === true){
@@ -82,6 +84,7 @@ export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,
             <Picker
                 accessibilityLabel={"hours"}
                 style={{ zIndex: 500, width: 115 }}
+                enabled={enabled??false}
                 mode="dialog" // "dialog" || "dropdown"
                 // prompt="Select Hours"
                 selectedValue={(time || "HH:MM AM").split(" ")[0].split(":")[0]}
@@ -98,6 +101,7 @@ export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,
             <Picker
                 accessibilityLabel={"minutes"}
                 style={{ zIndex: 500, width: 115 }}
+                enabled={enabled??false}
                 mode="dialog" // "dialog" || "dropdown"
                 selectedValue={(time || "HH:MM AM").split(" ")[0].split(":")[1]}
                 onValueChange={(value, i) => onTimeChange(value, 1)}
@@ -114,6 +118,7 @@ export const TimePicker12 = ({ time,noButtons, title, onTimeChange, activeTheme,
                 accessibilityLabel={"Period"}
                 style={{ zIndex: 500, width: 115 }}
                 mode="dialog" // "dialog" || "dropdown"
+                enabled={enabled??false}
                 selectedValue={(time || "HH:MM AM").split(" ")[1]}
                 onValueChange={(value, i) => onTimeChange(value, 2)}
             >

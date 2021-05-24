@@ -182,6 +182,7 @@ const UpdateR_Product = (props) => {
                                         activeTheme={props.activeTheme}
                                         time={state.product.estimateTime}
                                         title={'Set Preparation Time'}
+                                        enabled={props?.user?.canUpdatePrices === true ? true : false}
                                         noButtons={true}
                                         onTimeChange={(val, index) => onTimeChange(val, index, 'estimateTime')}
                                     />
@@ -191,6 +192,7 @@ const UpdateR_Product = (props) => {
                                     <TimePicker12
                                         activeTheme={props.activeTheme}
                                         time={state.product.startTime}
+                                        enabled={props?.user?.canUpdatePrices === true ? true : false}
                                         title={'Start Time'}
                                         noButtons={true}
                                         onTimeChange={(val, index) => onTimeChange(val, index, 'startTime')}
@@ -199,6 +201,7 @@ const UpdateR_Product = (props) => {
                                 <>
                                     <TimePicker12
                                         activeTheme={props.activeTheme}
+                                        enabled={props?.user?.canUpdatePrices === true ? true : false}
                                         time={state.product.endTime}
                                         title={'End Time'}
                                         noButtons={true}

@@ -46,6 +46,12 @@ function Orders(props) {
         props.dispatch(openModalAction(ModalComponent));
     }
     const getData = (keywords = false, itemsPerPageNew = false, newTab = false) => {
+        console.log({
+            "pageNumber": 1,
+            "itemsPerPage": itemsPerPageNew !== false ? itemsPerPageNew : state.itemsPerPage,
+            'genericSearch': keywords !== false ? keywords : '',
+            'isLive': newTab !== false ? (newTab === 'Active' ? true : false) : (state.activeTab === 'Active' ? true : false)
+        })
         postRequest('/api/Vendor/OrdersSummary', {
             "pageNumber": 1,
             "itemsPerPage": itemsPerPageNew !== false ? itemsPerPageNew : state.itemsPerPage,
@@ -152,7 +158,7 @@ function Orders(props) {
                                             <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4) }}>Total Price: </Text><Text>{item.totalPrice}</Text>
                                             </View>
-                                           {item.actualPrice? <View style={{ ...stylesOrder.orderDetails }}>
+                                           {item.actualPrice !== null || item.actualPrice !== undefined? <View style={{ ...stylesOrder.orderDetails }}>
                                                 <Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 4) }}>Actual Price: </Text><Text style={{ ...commonStyles.fontStyles(12, props.activeTheme.black, 3) }}>{item.actualPrice}</Text>
                                             </View>:null}
                                             <View style={{ ...stylesOrder.orderDetails }}>
