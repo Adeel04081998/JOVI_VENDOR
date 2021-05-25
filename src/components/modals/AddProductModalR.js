@@ -9,6 +9,8 @@ import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handle
 import DefaultBtn from '../buttons/DefaultBtn';
 import { closeModalAction } from '../../redux/actions/modal';
 import { postRequest } from '../../services/api';
+import { CustomInput, TimePicker12, TimePicker24 } from '../SharedComponents';
+import { convertTime12to24, error400, handleTimeChange } from '../../utils/sharedActions';
 const AddProductModalR = (props) => {
     const [state, setState] = useState({
         showDropdown: '',
@@ -31,10 +33,8 @@ const AddProductModalR = (props) => {
         //     lastOffset: 0
         // });
     }
-    const onTimeChange = (val, index,key) => {
-        let selectedTime = state.selectedProduct[key].split(':');
-        selectedTime[index] = val;
-        setState(pre => ({ ...pre, selectedProduct: {...pre.selectedProduct,[key]:selectedTime.join(':')}}));
+    const onTimeChange = (val, index, key) => {
+        setState(pre => ({ ...pre, selectedProduct: { ...pre.selectedProduct, [key]: handleTimeChange(val, state.selectedProduct[key], index,key === 'estimateTime'?true:false) } }));
     }
     const changeAttribute = (e, i, j, varName) => {
         let selectedP = state.selectedProduct;
@@ -55,7 +55,7 @@ const AddProductModalR = (props) => {
                 it.attributeTypeGroupedList?.map(itt => {
                     itt.productAttributeList.map(attr => {
                         attrList.push({
-                            addOnPrice: attr.price === ''?0:attr.price,
+                            addOnPrice: attr.price === '' ? 0 : attr.price,
                             isActive: attr.isActive,
                             productAttributeID: attr.attributeID
                         })
@@ -63,10 +63,10 @@ const AddProductModalR = (props) => {
                 });
                 return {
                     "genericProductID": it.genericProductID,
-                    "baseprice": it.basePrice===''?0:it.basePrice,
+                    "baseprice": it.basePrice === '' ? 0 : it.basePrice,
                     "estimateTime": it.estimateTime,
-                    "startTime": it.startTime,
-                    "endTime": it.endTime,
+                    "startTime": convertTime12to24(it.startTime),
+                    "endTime": convertTime12to24(it.endTime),
                     "productAttributes": attrList
                 }
             }),
@@ -81,9 +81,9 @@ const AddProductModalR = (props) => {
             }
             props.dispatch(closeModalAction());
         }, (err) => {
-            if (err.statusCode === 404) CustomToast.error(err.message);
-            else if (err) CustomToast.error("Something went wrong!");
-        }, '',false,true);
+            if (err) error400(err);
+            else CustomToast.error("Something went wrong!");
+        }, '', false, true);
     }
     const renderSelectionList = (options, onChange, filter = false) => {
         // let data = [{ text: 'Activate', value: 'Activated' }, { text: 'Deactivate', value: 'Deactivated' }];
@@ -91,7 +91,7 @@ const AddProductModalR = (props) => {
         if (optionsFilter.length < 1) {
             return <TouchableOpacity onPress={() => { setState(prevState => ({ ...prevState, showDropdown: '' })); }} style={{
                 borderBottomColor: props.activeTheme.lightGrey,
-                height:50,
+                height: 50,
                 justifyContent: "space-between",
                 backgroundColor: 'white',
                 zIndex: 999,
@@ -158,7 +158,7 @@ const AddProductModalR = (props) => {
                 }
             }, (err) => {
                 if (err) CustomToast.error("Something went wrong");
-            }, '', false,true);
+            }, '', false, true);
     }
     useEffect(useCallback(() => {
         getData();
@@ -204,7 +204,7 @@ const AddProductModalR = (props) => {
                                 borderBottomLeftRadius: 10,
                                 borderBottomRightRadius: 10, position: 'absolute', marginTop: 80, backgroundColor: 'white', zIndex: 1000, paddingHorizontal: 3
                             }} keyboardShouldPersistTaps="always">
-                                {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', selectedProduct: {...e,estimateTime:'00:00',startTime:'00:00',endTime:'00:00'}, mode: 'select-attr' })); }, state.filter)}
+                                {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', selectedProduct: { ...e, estimateTime: '00:20', startTime: '12:01 AM', endTime: '11:59 PM' }, mode: 'select-attr' })); }, state.filter)}
                                 {/* {renderSelectionList(state.productList, (e) => { Keyboard.dismiss(); setState(prevState => ({ ...prevState, filter: '', addedItems: prevState.addedItems.filter(item => item.productID === e.productID).length < 1 ? [...prevState.addedItems, e] : prevState.addedItems })); }, state.filter)} */}
                             </ScrollView>
                                 :
@@ -240,144 +240,43 @@ const AddProductModalR = (props) => {
                         <Text style={styles.catpion(props.activeTheme), { alignSelf: 'center' }}>Select Attributes</Text>
                         <ScrollView style={{ flex: 1, marginBottom: 60, width: '100%' }} keyboardShouldPersistTaps="always">
                             <View style={{ paddingHorizontal: 7, width: '100%', height: '100%' }}>
-                                <Text style={[commonStyles.fontStyles(14, props.activeTheme.black, 1), { paddingVertical: 10, left: 3 }]}>
-                                    Base Price
-                                </Text>
-                                <View style={{
-                                    paddingHorizontal: 8,
-                                    paddingHorizontal: 8,
-                                    borderWidth: 1,
-                                    borderRadius: 5,
-                                    borderColor: 'rgba(0,0,0,0.1)',
-                                    backgroundColor: 'transparent',
-                                    height: 40,
-                                    width: '100%',
-                                    justifyContent: "space-between",
-                                    alignItems: 'center',
-                                    flexDirection: 'row'
-                                }}>
-                                    <TextInput keyboardType='numeric' style={{}} onChangeText={(val) => { setState(pre => ({ ...pre, selectedProduct: { ...pre.selectedProduct, basePrice: val } })) }} value={state.selectedProduct.basePrice.toString()} />
-                                </View>
+                                <CustomInput
+                                    value={state?.selectedProduct?.basePrice?.toString()}
+                                    label={'Base Price'}
+                                    activeTheme={props.activeTheme}
+                                    parentViewStyle={{ paddingLeft: 0 }}
+                                    inputViewStyle={{ width: '100%' }}
+                                    inputProps={{ keyboardType: 'numeric' }}
+                                    onChangeText={(val) => { setState(pre => ({ ...pre, selectedProduct: { ...pre.selectedProduct, basePrice: val } })) }}
+                                />
                                 <>
-                                    <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Preparation Time</Text>
-                                    <View style={{ width: '100%', flexDirection: 'row' }}>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                                    </View>
-                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20,flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                        <Picker
-                                            accessibilityLabel={"hours"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Hours"
-                                            selectedValue={(state.selectedProduct.estimateTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0,'estimateTime')}
-                                        >
-                                            {
-                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-
-                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
-
-                                        <Picker
-                                            accessibilityLabel={"minutes"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Minutes"
-                                            selectedValue={(state.selectedProduct.estimateTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1,'estimateTime')}
-                                        >
-                                            {
-                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                    </View>
+                                    <TimePicker24
+                                        activeTheme={props.activeTheme}
+                                        time={state?.selectedProduct?.estimateTime}
+                                        title={'Set Preparation Time'}
+                                        noButtons={true}
+                                        onTimeChange={(val, index) => onTimeChange(val, index, 'estimateTime')}
+                                    />
                                 </>
                                 <>
                                     <Text style={{ ...commonStyles.fontStyles(16, props.activeTheme.black, 4), left: 7 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Set Available Time</Text>
-                                    <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4), left: 10 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>Start Time</Text>
-                                    <View style={{ width: '100%', flexDirection: 'row' }}>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                                    </View>
-                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20,flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                        <Picker
-                                            accessibilityLabel={"hours"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            selectedValue={(state.selectedProduct.startTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0,'startTime')}
-                                        >
-                                            {
-                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
-                                        <Picker
-                                            accessibilityLabel={"minutes"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            selectedValue={(state.selectedProduct.startTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1,'startTime')}
-                                        >
-                                            {
-                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                    </View>
+                                    <TimePicker12
+                                        activeTheme={props.activeTheme}
+                                        time={state?.selectedProduct?.startTime}
+                                        enabled={props?.user?.canUpdatePrices === true ? true : false}
+                                        title={'Start Time'}
+                                        noButtons={true}
+                                        onTimeChange={(val, index) => onTimeChange(val, index, 'startTime')}
+                                    />
                                 </>
                                 <>
-                                    <Text style={{ ...commonStyles.fontStyles(14, props.activeTheme.black, 4), left: 10 /* -5 */, color: '#000', marginVertical: 0, paddingVertical: 6 }}>End Time</Text>
-                                    <View style={{ width: '100%', flexDirection: 'row' }}>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 20, width: '50%', left: 0, color: '#000' }}>Hour</Text>
-                                        <Text style={{ ...stylesHome.caption, paddingLeft: 17, width: '50%', left: 0, color: '#000' }}>Minutes</Text>
-                                    </View>
-                                    <View style={{ marginTop: 2, paddingLeft: 20, paddingRight: 20, flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
-                                        <Picker
-                                            accessibilityLabel={"hours"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Hours"
-                                            selectedValue={(state.selectedProduct.endTime || "HH:MM").split(":")[0]}
-                                            onValueChange={(value, i) => onTimeChange(value, 0,'endTime')}
-                                        >
-                                            {
-                                                Array.from(Array(24), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                        <Text style={{ ...stylesHome.caption, left: 0, top: 2.5, color: "#000", fontWeight: "bold" }}>:</Text>
-                                        <Picker
-                                            accessibilityLabel={"minutes"}
-                                            style={{ zIndex: 500, width: 115 }}
-                                            mode="dialog" // "dialog" || "dropdown"
-                                            // prompt="Select Minutes"
-                                            selectedValue={(state.selectedProduct.endTime || "HH:MM").split(":")[1]}
-                                            onValueChange={(value, i) => onTimeChange(value, 1,'endTime')}
-                                        >
-                                            {
-                                                Array.from(Array(60), (item, i) => (i < 10 ? 0 + i.toString() : i.toString()))
-                                                    .map((item, i) => (
-                                                        <Picker.Item key={i} label={item} value={item} />
-                                                    ))
-                                            }
-                                        </Picker>
-                                    </View>
+                                    <TimePicker12
+                                        activeTheme={props.activeTheme}
+                                        time={state?.selectedProduct?.endTime}
+                                        title={'End Time'}
+                                        noButtons={true}
+                                        onTimeChange={(val, index) => onTimeChange(val, index, 'endTime')}
+                                    />
                                 </>
                                 {
                                     state.selectedProduct.attributeTypeGroupedList.map((item, i) => {

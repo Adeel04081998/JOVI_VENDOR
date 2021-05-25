@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Text, ImageBackground, StyleSheet, View, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
@@ -23,6 +23,7 @@ import UpdateR_Product from '../../components/modals/UpdateR_ProductModal';
 function RestaurantHome(props) {
     const { navigation, userObj, activeTheme } = props;
     console.log(navigation)
+    let scrollViewMain = useRef();
     const [state, setState] = useState({
         "isImgLoad": false,
         categoryData: [],
@@ -50,6 +51,14 @@ function RestaurantHome(props) {
             screenProps: { ...props }
         };
         props.dispatch(openModalAction(ModalComponent));
+    }
+    const expandSubCategories = (i) => {
+        setState(pre => ({ ...pre, focusedField: pre.focusedField !== null && pre.focusedField === i ? null : i }));
+        setTimeout(() => {
+            if(i === (state.categoryData.filter(it => it.name !== "Deals").length-1)){
+                scrollViewMain.current.scrollToEnd({animated: true});
+            }
+        }, 10);
     }
     const getData = (keywords = false) => {
         postRequest('Api/Vendor/Restaurant/GetRestaurantCategory', {
@@ -146,7 +155,7 @@ function RestaurantHome(props) {
                     <Text style={{ ...commonStyles.fontStyles(18, props.activeTheme.background, 4), marginLeft: 20 }}>Menu</Text>
                     <Text style={{ marginRight: 14 }}>Total: {state.categoryData.length < 1 ? '0' : state.categoryData.length < 10 ? '0' + state.categoryData.length : state.categoryData.length}</Text>
                 </View>
-                <ScrollView style={{ flex: 1, marginHorizontal: 8 }} onTouchEnd={() => {
+                <ScrollView style={{ flex: 1, marginHorizontal: 8 }} ref={scrollViewMain} onTouchEnd={() => {
                     if (state.isSmModalOpen) showHideModal(false, 1);
                 }}>
                     <View style={{ ...tabStyles.tabContainer(props.activeTheme,null,null,null,null,0.3)}}>
@@ -198,7 +207,7 @@ function RestaurantHome(props) {
                                             height={'100%'}
                                         />
                                     </View>
-                                    <TouchableOpacity style={tabStyles.tabTextContainer} onPress={() => setState(pre => ({ ...pre, focusedField: pre.focusedField !== null && pre.focusedField === i ? null : i }))}>
+                                    <TouchableOpacity style={tabStyles.tabTextContainer} onPress={() => expandSubCategories(i)}>
                                         <View style={{ flex: 0.9 }}>
                                             <Text style={{ ...tabStyles.tabTitle(18, props.activeTheme.black, 1, '300')}}>{item.name}</Text>
                                         </View>

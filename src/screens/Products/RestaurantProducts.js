@@ -144,7 +144,7 @@ function RestaurantProducts(props) {
                                 <TouchableOpacity style={tabStyles.tabText} onPress={() => updateRestaurantProduct(item)}>
                                     <View style={{ flex: 0.9,paddingTop:5 }}>
                                         <Text style={{...tabStyles.tabTitle(15, props.activeTheme.black, 1, '300')}}>{item?.productName}</Text>
-                                        <Text style={{ ...tabStyles.tabDescription(10, props.activeTheme.black, 1, '300') }}>{item?.description?.toLocaleUpperCase()}</Text>
+                                        <Text style={{ ...tabStyles.tabDescription(10, props.activeTheme.black, 1, '300'),maxHeight:50,maxWidth:250 }}>{item?.description?.toLocaleUpperCase()}</Text>
                                         <Text style={{ ...tabStyles.tabDescription(12, props.activeTheme.black, 4) }}>Rs.{item?.basePrice}</Text>
                                     </View>
                                 </TouchableOpacity>

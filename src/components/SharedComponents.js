@@ -158,6 +158,7 @@ export const CustomInput = ({ label, textStyle, textProps, parentViewStyle, inpu
             justifyContent: "space-between",
             alignItems: 'center',
             flexDirection: 'row',
+            overflow:'hidden',
             ...inputViewStyle,
         }}>
             {

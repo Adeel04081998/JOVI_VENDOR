@@ -845,7 +845,7 @@ export const convertTime12to24 = (time12h) => {
     if (modifier === 'PM') {
         hours = parseInt(hours, 10) + 12;
     }
-    return `${hours < 10 ? '0' + hours : hours}:${minutes}`;
+    return `${hours < 10 && hours !== '00' ? '0' + hours : hours}:${minutes}`;
 }
 export const convert24To12Hour = (time) => {
     // Check correct time format and split into components

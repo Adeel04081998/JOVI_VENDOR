@@ -47,6 +47,6 @@ TextInput.defaultProps.allowFontScaling = false;
 //       });
 // });
 ScrollView.defaultProps = ScrollView.defaultProps || {};
-ScrollView.defaultProps.showsVerticalScrollIndicator = false;
+// ScrollView.defaultProps.showsVerticalScrollIndicator = false;
 ScrollView.defaultProps.showsHorizontalScrollIndicator = false;
 AppRegistry.registerComponent(appName, () => HeadlessCheck);

@@ -9,15 +9,16 @@ import DefaultBtn from '../buttons/DefaultBtn';
 import { postRequest } from '../../services/api';
 import CustomToast from '../toast/CustomToast';
 import { closeModalAction } from '../../redux/actions/modal';
-import { CustomInput, TimePicker12,TimePicker24 } from '../SharedComponents';
+import { CustomInput, TimePicker12, TimePicker24 } from '../SharedComponents';
 import { convert24To12Hour, convertTime12to24, error400, handleTimeChange, priceValidation } from '../../utils/sharedActions';
 const UpdateR_Product = (props) => {
     let { product } = props;
-    if(product.startTime||product.endTime||product.estimateTime){
-        product = {...product,
-        startTime: convert24To12Hour(product.startTime).time,
-        endTime: convert24To12Hour(product.endTime).time,
-        // estimateTime: convert24To12Hour(product.estimateTime).time,
+    if (product.startTime || product.endTime || product.estimateTime) {
+        product = {
+            ...product,
+            startTime: convert24To12Hour(product.startTime).time,
+            endTime: convert24To12Hour(product.endTime).time,
+            // estimateTime: convert24To12Hour(product.estimateTime).time,
         }
     }
     const [state, setState] = useState({
@@ -40,7 +41,7 @@ const UpdateR_Product = (props) => {
 
     }
     const onTimeChange = (val, index, key) => {
-        setState(pre => ({ ...pre, product: { ...pre.product, [key]: handleTimeChange(val, state.product[key], index,key === 'estimateTime'?true:false) } }));
+        setState(pre => ({ ...pre, product: { ...pre.product, [key]: handleTimeChange(val, state.product[key], index, key === 'estimateTime' ? true : false) } }));
     }
     const onSave = () => {
         if (state.product.basePrice === '' || parseInt(state.product.basePrice) === 0) {
@@ -65,7 +66,7 @@ const UpdateR_Product = (props) => {
             "estimateTime": state.product.estimateTime,
             // "estimateTime": convertTime12to24(state.product.estimateTime),
             "startTime": convertTime12to24(state.product.startTime),
-            "endTime":convertTime12to24(state.product.endTime),
+            "endTime": convertTime12to24(state.product.endTime),
             "availablityStatus": state.product.availabilityStatusStr === 'Available' ? 1 : state.product.availabilityStatusStr === 'Out Of Stock' ? 2 : 3,
             "itemOptions": attributes
         }, {}, props.dispatch, (res) => {
@@ -174,8 +175,7 @@ const UpdateR_Product = (props) => {
                                     alignItems: 'center',
                                     flexDirection: 'row'
                                 }}>
-                                    {/* <TextInput value={state.product.description} multiline={true} numberOfLines={5} placeholder={'Description'} onChangeText={(val) => setState(pre => ({ ...pre,product:{...pre.product,description:val} }))} /> */}
-                                    <Text>{state.product.description}</Text>
+                                    <TextInput multiline enabled={false} style={{maxHeight:90}} value={state.product.description}/>
                                 </View>
                                 <>
                                     <TimePicker24
