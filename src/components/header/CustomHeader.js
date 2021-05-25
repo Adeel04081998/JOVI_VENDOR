@@ -175,6 +175,7 @@ export const HeaderApp = (props) => {
                 }}
                 placeholder="Search"
                 onChangeText={onChangeText?(val)=>onChangeText(val):()=>{}}
+                ref={props.searchInputRef??null}
             />
         </View>}
         {/* <View style={{ alignItems: 'center', justifyContent: 'center', right: 10, flex: 0.8 }}>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState,useRef, useCallback, useEffect } from 'react';
 import { Text, ImageBackground, View, StyleSheet, Alert, TouchableOpacity, ScrollView, Dimensions, BackHandler } from 'react-native';
 import commonStyles from '../../styles/styles';
 import CustomToast from '../../components/toast/CustomToast';
@@ -24,6 +24,7 @@ function Orders(props) {
         itemsPerPage: 10,
         paginationInfo: { totalItems: 0 }
     });
+    let searchInputRef = useRef(null);
     const addBrandProductModal = () => {
         let ModalComponent = {
             visible: true,
@@ -49,13 +50,14 @@ function Orders(props) {
         console.log({
             "pageNumber": 1,
             "itemsPerPage": itemsPerPageNew !== false ? itemsPerPageNew : state.itemsPerPage,
-            'genericSearch': keywords !== false ? keywords : '',
+            'genericSearch': keywords !== false ? keywords :searchInputRef.current,
             'isLive': newTab !== false ? (newTab === 'Active' ? true : false) : (state.activeTab === 'Active' ? true : false)
-        })
+        },searchInputRef.current)
+        // searchInputRef.current.clear();
         postRequest('/api/Vendor/OrdersSummary', {
             "pageNumber": 1,
             "itemsPerPage": itemsPerPageNew !== false ? itemsPerPageNew : state.itemsPerPage,
-            'genericSearch': keywords !== false ? keywords : '',
+            'genericSearch': keywords !== false ? keywords : searchInputRef.current,
             'isLive': newTab !== false ? (newTab === 'Active' ? true : false) : (state.activeTab === 'Active' ? true : false)
         }, {}
             , props.dispatch, (res) => {
@@ -83,6 +85,7 @@ function Orders(props) {
     }
     const searchOrder = debounce((val) => {
         getData(val, false);
+        searchInputRef.current = val;
     }, 900)
     const onFooterItemPressed = async (pressedTab, index) => {
         if (pressedTab.title === 'Add') {
