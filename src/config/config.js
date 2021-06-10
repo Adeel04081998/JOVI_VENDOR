@@ -30,7 +30,7 @@ if (Platform.OS === "android" && Config.BUILD_TYPE === "debug") {
 }
 
 export { APP_MODE, SENDING_LOCATIONS_ENABLED };
-export const APP_VERSION = '1.0.13';
+export const APP_VERSION = '1.0.14';
 // export const APP_VERSION = Config['VERSION_NAME']
 export const isJoviCustomerApp = true;
 
